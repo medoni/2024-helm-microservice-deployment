@@ -1,0 +1,58 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: pizza-service
+  labels:
+    app: pizza-service
+spec:
+  replicas: {{ .Values.replicaCount }}
+  revisionHistoryLimit: 0
+  selector:
+    matchLabels:
+      app: pizza-service
+  template:
+    metadata:
+      labels:
+        app: pizza-service
+    spec:
+      containers:
+        - name: pizza-service
+          image: "{{ .Values.image.pizzaService.repository }}:{{ .Values.image.pizzaService.tag }}"
+          ports:
+            - containerPort: {{ .Values.service.pizzaService.port }}
+          
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: {{ .Values.service.pizzaService.port }}
+            initialDelaySeconds: 5
+            periodSeconds: 5
+
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: {{ .Values.service.pizzaService.port }}
+            initialDelaySeconds: 5
+            periodSeconds: 5
+  
+          startupProbe:
+            httpGet:
+              path: /health
+              port: {{ .Values.service.pizzaService.port }}
+            failureThreshold: 10
+            periodSeconds: 10
+
+          env:
+            - name: ASPNETCORE_ENVIRONMENT
+              value: "Development"
+            - name: ConnectionStrings__PizzaDb
+              value: "Host={{ .Values.postgres.host }};Database={{ .Values.postgres.database }};Username={{ .Values.postgres.user }};Password={{ .Values.postgres.password }}"
+            - name: Logging__LogLevel__Default
+              value: Trace
+            - name: Logging__LogLevel__Microsoft.AspNetCore
+              value: Trace
+            - name: Logging__LogLevel__Microsoft.Extensions.Diagnostics.HealthChecks
+              value: Error
+            - name: Swagger__Enabled
+              value: "true"
+              

@@ -1,0 +1,40 @@
+replicaCount: 1
+
+image:
+  pizzaService:
+    repository: localhost:5000/pizza-ordering-service
+    tag: latest
+  pgweb:
+    repository: sosedoff/pgweb
+    tag: 0.15.0
+  postgres: 
+    repository: postgres
+    tag: 16.4
+
+service:
+  pizzaService:
+    type: ClusterIP
+    port: 8080
+  pgweb:
+    type: ClusterIP
+    port: 8081
+
+ingress:
+  hosts:
+    - host: pizza-ordering-service.dev-local.rancher.localhost
+      paths:
+        - path: /api
+          pathType: Prefix
+          service: pizza-service
+          servicePort: 8080
+        # - path: /_pgweb
+        #   pathType: Prefix
+        #   service: pgweb
+        #   servicePort: 8081
+
+postgres:
+  host: postgres
+  database: pizza_ordering
+  user: postgres
+  password: postgres
+  port: 5432

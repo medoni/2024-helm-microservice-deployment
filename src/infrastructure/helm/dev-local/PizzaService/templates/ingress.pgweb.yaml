@@ -1,0 +1,24 @@
+apiVersion: traefik.containo.us/v1alpha1
+kind: IngressRoute
+metadata:
+  name: ir-pgweb
+spec:
+  entryPoints:
+    - web
+  routes:
+    - match: Host(`pizza-ordering-service.dev-local.rancher.localhost`) && PathPrefix(`/_pgweb/`)
+      kind: Rule
+      services:
+        - name: pgweb
+          port: 8081
+      middlewares:
+        - name: irm-pgweb
+---
+apiVersion: traefik.containo.us/v1alpha1
+kind: Middleware
+metadata:
+  name: irm-pgweb
+spec:
+  stripPrefix:
+    prefixes:
+      - /_pgweb

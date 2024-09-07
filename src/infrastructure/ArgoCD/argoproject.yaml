@@ -1,0 +1,14 @@
+apiVersion: argoproj.io/v1alpha1
+kind: AppProject
+metadata:
+  name: 2024-helm-microservice-deployment
+  namespace: argocd
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  description: Example project how to deploy a single helm chart for multiple environments
+  sourceRepos:
+  - '*'
+  destinations:
+  - namespace: 2024-helm-microservice-deployment
+    server: https://kubernetes.default.svc

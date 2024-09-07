@@ -1,0 +1,5 @@
+apiVersion: v2
+name: pizza-service
+description: PizzaService for local development
+version: 0.1.0
+appVersion: "1.0"

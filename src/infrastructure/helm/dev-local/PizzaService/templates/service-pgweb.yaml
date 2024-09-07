@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: pgweb
+spec:
+  type: {{ .Values.service.pgweb.type }}
+  ports:
+    - port: {{ .Values.service.pgweb.port }}
+      targetPort: {{ .Values.service.pgweb.port }}
+  selector:
+    app: pgweb

@@ -1,4 +1,4 @@
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using PizzaOrderingService.Data;
 
 internal static class Program
@@ -10,6 +10,7 @@ internal static class Program
         builder.Services.AddEndpointsApiExplorer();
         builder.Services.AddSwaggerGen();
         builder.Services.AddControllers();
+        builder.Services.AddHealthChecks();
 
         builder.Services.AddPizzaDbContext(
             builder.Configuration
@@ -19,6 +20,7 @@ internal static class Program
 
         app.ConfigureSwagger(builder.Configuration);
         app.MapControllers();
+        app.MapHealthChecks("/health");
 
         await app.InitializePizzaDbAsync(builder.Configuration);
 

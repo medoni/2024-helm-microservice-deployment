@@ -1,0 +1,24 @@
+apiVersion: traefik.containo.us/v1alpha1
+kind: IngressRoute
+metadata:
+  name: ir-pizza-ordering
+spec:
+  entryPoints:
+    - web
+  routes:
+    - match: Host(`pizza-ordering-service.dev-local.rancher.localhost`) && PathPrefix(`/api`)
+      kind: Rule
+      services:
+        - name: pizza-service
+          port: 8080
+      middlewares:
+        - name: irm-pizza-ordering
+---
+apiVersion: traefik.containo.us/v1alpha1
+kind: Middleware
+metadata:
+  name: irm-pizza-ordering
+spec:
+  stripPrefix:
+    prefixes:
+      - /api
