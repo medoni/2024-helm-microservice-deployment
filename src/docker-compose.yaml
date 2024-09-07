@@ -1,5 +1,5 @@
 services:
-  web:
+  PizzaService:
     image: pizza-ordering-app
     build:
       context: backend/PizzaOrderingService
@@ -9,6 +9,9 @@ services:
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - ConnectionStrings__PizzaDb=Host=PizzaDb;Database=pizza_ordering;Username=postgres;Password=postgres
+      - Swagger__Enabled=True
+      - PizzaDbContext__MigrateOnStartup=True
+      - PizzaDbContext__SeedExampleData=True
     depends_on:
       - PizzaDb
    
@@ -22,6 +25,15 @@ services:
       - postgres_data:/var/lib/postgresql/data
     ports:
       - "5432:5432"
+  
+  pgweb:
+    image: sosedoff/pgweb:0.15.0
+    depends_on:
+      - PizzaDb
+    ports:
+      - "5001:8081"
+    environment:
+      - DATABASE_URL=postgres://postgres:postgres@PizzaDb:5432/pizza_ordering?sslmode=disable
 
 volumes:
   postgres_data:
