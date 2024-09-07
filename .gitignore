@@ -1,0 +1,39 @@
+# Ignore .NET build artifacts
+bin/
+obj/
+*.user
+*.rsuser
+*.suo
+
+# Ignore Rider IDE specific files
+.idea/
+*.sln.iml
+
+# Ignore user-specific files
+*.vs/
+.vscode/
+
+# Ignore any compiled binaries
+*.dll
+*.exe
+*.pdb
+
+# Ignore logs, database, and debug information
+*.log
+*.tlog
+*.out
+.vscode/
+
+# Ignore IDE and Editor specific files
+.vs/
+.idea/
+*.sln.ide
+
+# Ignore build directory
+build/
+
+# Ignore Publish directory
+publish/
+
+# Ignore OS-specific files
+*.DS_Store

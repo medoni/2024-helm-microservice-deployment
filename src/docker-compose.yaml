@@ -1,0 +1,27 @@
+services:
+  web:
+    image: pizza-ordering-app
+    build:
+      context: backend/PizzaOrderingService
+      dockerfile: Dockerfile
+    ports:
+      - "5000:8080"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ConnectionStrings__PizzaDb=Host=PizzaDb;Database=pizza_ordering;Username=postgres;Password=postgres
+    depends_on:
+      - PizzaDb
+   
+  PizzaDb:
+    image: postgres:16.4
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: pizza_ordering
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+
+volumes:
+  postgres_data:

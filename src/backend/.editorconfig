@@ -1,0 +1,29 @@
+# .editorconfig is root
+root = true
+
+# General rule for all files
+[*]
+end_of_line = lf
+insert_final_newline = true
+trim_trailing_whitespace = true
+
+# C# files
+[*.cs]
+charset = utf-8-bom
+indent_style = space
+indent_size = 4
+
+# .csproj and .sln files
+[*.{csproj,sln}]
+indent_style = space
+indent_size = 2
+
+# JSON files
+[*.json]
+indent_style = space
+indent_size = 2
+
+# YAML files
+[*.{yml,yaml}]
+indent_style = space
+indent_size = 2
