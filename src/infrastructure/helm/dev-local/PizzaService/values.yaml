@@ -2,7 +2,7 @@ replicaCount: 1
 
 image:
   pizzaService:
-    repository: localhost:5000/pizza-ordering-service
+    repository: registry.rancher.localhost/pizza-ordering-service
     tag: latest
   pgweb:
     repository: sosedoff/pgweb
