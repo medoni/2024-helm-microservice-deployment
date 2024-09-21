@@ -5,7 +5,7 @@ metadata:
 spec:
   type: ClusterIP
   ports:
-    - port: {{ .Values.postgres.port }}
-      targetPort: {{ .Values.postgres.port }}
+    - port: {{ .Values.services.postgres.container.port }}
+      targetPort: {{ .Values.services.postgres.container.port }}
   selector:
     app: postgres

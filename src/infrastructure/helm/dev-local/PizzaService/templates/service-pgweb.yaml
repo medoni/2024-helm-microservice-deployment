@@ -1,11 +1,15 @@
+{{ if .Values.services.pgweb.enabled }}
+
 apiVersion: v1
 kind: Service
 metadata:
   name: pgweb
 spec:
-  type: {{ .Values.service.pgweb.type }}
+  type: ClusterIP
   ports:
-    - port: {{ .Values.service.pgweb.port }}
-      targetPort: {{ .Values.service.pgweb.port }}
+    - port: {{ .Values.services.pgweb.container.port }}
+      targetPort: {{ .Values.services.pgweb.container.port }}
   selector:
     app: pgweb
+
+{{ end }}

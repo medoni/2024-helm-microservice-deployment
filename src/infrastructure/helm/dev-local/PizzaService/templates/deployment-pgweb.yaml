@@ -1,3 +1,5 @@
+{{ if .Values.services.pgweb.enabled }}
+
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -5,7 +7,7 @@ metadata:
   labels:
     app: pgweb
 spec:
-  replicas: {{ .Values.replicaCount }}
+  replicas: 1
   revisionHistoryLimit: 0
   selector:
     matchLabels:
@@ -17,9 +19,20 @@ spec:
     spec:
       containers:
         - name: pgweb
-          image: "{{ .Values.image.pgweb.repository }}:{{ .Values.image.pgweb.tag }}"
+          image: "{{ .Values.services.pgweb.image }}:{{ .Values.services.pgweb.tag }}"
           ports:
-            - containerPort: {{ .Values.service.pgweb.port }}
+            - containerPort: {{ .Values.services.pgweb.container.port }}
           env:
             - name: DATABASE_URL
-              value: "postgres://{{ .Values.postgres.user }}:{{ .Values.postgres.password }}@{{ .Values.postgres.host }}:{{ .Values.postgres.port }}/{{ .Values.postgres.database }}?sslmode=disable"
+              value: "postgres://{{ .Values.services.postgres.container.host }}:{{ .Values.services.postgres.port }}/{{ .Values.services.postgres.database }}?sslmode=disable"
+            - name: PGUSER
+              valueFrom:
+                secretKeyRef:
+                  name: postgres-db-secrets
+                  key: username
+            - name: PGPASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: postgres-db-secrets
+                  key: password
+{{ end }}

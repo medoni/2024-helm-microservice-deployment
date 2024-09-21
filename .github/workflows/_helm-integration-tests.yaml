@@ -1,0 +1,122 @@
+name: Helm integration tests
+
+on:
+  workflow_call:
+    inputs:
+      image-tag:
+        required: true
+        type: string
+      debug:
+        required: false
+        type: boolean
+        default: false
+  
+  # todo: remove. 
+  workflow_dispatch:
+    inputs:
+      image-tag:
+        description: The image tag for own services
+        required: true
+        type: string
+        default: pr-8b128dd9ddb2529f71686e97ea7e9edc0772de9c
+      debug:
+        description: "Debug: true for additional debug messages"
+        required: false
+        type: boolean
+        default: true
+
+env:
+  POS_NAMESPACE: pizza-ordering-service-dev-local   # Kubernetes namespace of the Pizza-ordering-service application
+
+jobs:
+  helm-integration-tests:
+    name: Helm integration tests
+    runs-on: ubuntu-latest
+    steps:
+    - name: "[SETUP] Checkout code"
+      uses: actions/checkout@v4
+
+    - name: "[SETUP] Start a local k3s cluster"
+      uses: jupyterhub/action-k3s-helm@v4
+      with:
+        k3s-channel: latest
+    
+    - name: "[SETUP] Create Kubernetes namespaces"
+      run: |
+        kubectl create namespace $POS_NAMESPACE --dry-run=client -o yaml | kubectl apply -f -
+    
+    - name: "[SETUP] Create Kubernetes secrets"
+      run: |
+        kubectl create secret generic postgres-db-secrets \
+          --save-config \
+          --dry-run=client \
+          --from-literal=username=postgres \
+          --from-literal=password="secret-1234" \
+          -n $POS_NAMESPACE \
+          -o yaml \
+          | kubectl apply -f -
+    
+    - name: "[SETUP] Helm install `pizza-ordering-service`"
+      run: |
+        helm install $POS_NAMESPACE ./src/infrastructure/helm/dev-local/PizzaService \
+          --set image.repository=ghcr.io/${{ github.repository }}/ \
+          --set image.tag=${{ inputs.image-tag }} \
+          --set global.domain=pos.mycluster.localhost \
+          -n $POS_NAMESPACE \
+          --debug
+
+    - name: "[TEST] Check ingress /health of `pizza-ordering-service`"
+      run: |
+        curl --fail -v pizza-ordering-service.pos.mycluster.localhost/api/health \
+          --retry-all-errors \
+          --max-time 10 \
+          --retry 10 \
+          --retry-delay 0 \
+          --retry-max-time 60 \
+    
+    - name: "[TEST] Check ingress /swagger/index.html of `pizza-ordering-service`"
+      run: |
+        curl --fail -v pizza-ordering-service.pos.mycluster.localhost/api/swagger/index.html
+
+    - name: "[TEST] Check ingress /_pgweb of `pizza-ordering-service`"
+      run: |
+        curl --fail -v pizza-ordering-service.pos.mycluster.localhost/_pgweb/ \
+          --retry-all-errors \
+          --max-time 10 \
+          --retry 10 \
+          --retry-delay 0 \
+          --retry-max-time 60 \
+
+    - name: "[TEST] Check example data"
+      run: |
+        API_URL="pizza-ordering-service.pos.mycluster.localhost/api/pizza"
+        RESPONSE=$(curl -s $API_URL)
+        if [ "$(echo $RESPONSE | jq 'length')" -eq 0 ]; then
+          echo "Expected at least one pizza. Got zero."
+          exit 1
+        fi
+    
+    - name: "[CLEANUP] Kubernetes - Overview"
+      if: always()
+      run: |
+        kubectl get all -o wide
+    
+    - name: "[CLEANUP] Kubernetes - Deployment description"
+      if: always()
+      run: |
+        kubectl describe deployment -n $POS_NAMESPACE
+    
+    - name: "[CLEANUP] Kubernetes - POD description"
+      if: always()
+      run: |
+        kubectl describe pod -n $POS_NAMESPACE
+
+    - name: "[CLEANUP] Kubernetes - Logs pizza-ordering-service"
+      if: always()
+      run: |
+        kubectl logs -n $POS_NAMESPACE deployment/pizza-ordering-service --all-containers=true
+    
+    - name: "[CLEANUP] Kubernetes - Logs postgres"
+      if: always()
+      run: |
+        kubectl logs -n $POS_NAMESPACE deployment/postgres --all-containers=true

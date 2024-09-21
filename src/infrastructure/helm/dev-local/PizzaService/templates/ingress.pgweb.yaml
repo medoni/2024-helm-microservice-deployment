@@ -1,4 +1,6 @@
-apiVersion: traefik.containo.us/v1alpha1
+{{ if .Values.services.pgweb.enabled }}
+
+apiVersion: traefik.io/v1alpha1
 kind: IngressRoute
 metadata:
   name: ir-pgweb
@@ -6,15 +8,15 @@ spec:
   entryPoints:
     - web
   routes:
-    - match: Host(`pizza-ordering-service.dev-local.rancher.localhost`) && PathPrefix(`/_pgweb/`)
+    - match: Host(`pizza-ordering-service.{{ .Values.global.domain }}`) && PathPrefix(`/_pgweb/`)
       kind: Rule
       services:
         - name: pgweb
-          port: 8081
+          port: {{ .Values.services.pgweb.container.port }}
       middlewares:
         - name: irm-pgweb
 ---
-apiVersion: traefik.containo.us/v1alpha1
+apiVersion: traefik.io/v1alpha1
 kind: Middleware
 metadata:
   name: irm-pgweb
@@ -22,3 +24,5 @@ spec:
   stripPrefix:
     prefixes:
       - /_pgweb
+
+{{ end }}

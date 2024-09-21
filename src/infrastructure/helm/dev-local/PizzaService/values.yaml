@@ -1,40 +1,28 @@
-replicaCount: 1
+
+global:
+  domain: dev-local.pos.mycluster.localhost
 
 image:
-  pizzaService:
-    repository: registry.rancher.localhost/pizza-ordering-service
-    tag: latest
+  repository: ghcr.io/medoni/2024-helm-microservice-deployment/
+  tag: pr-d44450cfb1bb7bb1bf20f2db73b12a9d2c6e5a8a
+
+services:
+  pizza_ordering_service:  # todo: rename
+    image: pizza-ordering-service # default
+    container:
+      port: 8080 # default
+
   pgweb:
-    repository: sosedoff/pgweb
-    tag: 0.15.0
-  postgres: 
-    repository: postgres
-    tag: 16.4
-
-service:
-  pizzaService:
-    type: ClusterIP
-    port: 8080
-  pgweb:
-    type: ClusterIP
-    port: 8081
-
-ingress:
-  hosts:
-    - host: pizza-ordering-service.dev-local.rancher.localhost
-      paths:
-        - path: /api
-          pathType: Prefix
-          service: pizza-service
-          servicePort: 8080
-        # - path: /_pgweb
-        #   pathType: Prefix
-        #   service: pgweb
-        #   servicePort: 8081
-
-postgres:
-  host: postgres
-  database: pizza_ordering
-  user: postgres
-  password: postgres
-  port: 5432
+    enabled: true
+    image: sosedoff/pgweb # default
+    tag: 0.15.0 # default
+    container:
+      port: 8081 # default
+  
+  postgres:
+    image: postgres # default
+    tag: 16.4 # default
+    container:
+      host: postgres
+      port: 5432 # default, /postres.port
+    database: pizza_ordering

@@ -1,0 +1,21 @@
+name: Automatically cleanup
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "0 0 * * *"
+
+jobs:
+  clean:
+    runs-on: ubuntu-latest
+    name: Delete docker images
+    steps:
+      - uses: snok/container-retention-policy@v3.0.0
+        with:
+          # see https://github.com/marketplace/actions/container-retention-policy
+          account: user
+          token: ${{ secrets.THIS_REPO_PAT }}
+          image-names: "*"
+          image-tags: "pr-*"
+          cut-off: 1h
+          dry-run: false

@@ -1,0 +1,28 @@
+name: Pull Request main
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  build-and-publish-docker-image:
+    name: Build and publish docker image 
+    uses: ./.github/workflows/_build-and-publish-dockerfile.yaml
+    with:
+      dockerfile:           ./src/backend/PizzaOrderingService/Dockerfile
+      docker_build_context: ./src/backend/PizzaOrderingService
+      target_image_tag:     pizza-ordering-service:pr-${{ github.sha }}
+    secrets: inherit
+
+  helm-integration-tests:
+    name: Helm integration tests
+    needs: [ build-and-publish-docker-image ]
+    uses: ./.github/workflows/_helm-integration-tests.yaml
+    with:
+      image-tag: pr-${{ github.sha }}
+    secrets: inherit

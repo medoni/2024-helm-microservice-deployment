@@ -5,7 +5,7 @@ using PizzaOrderingService.Domain;
 namespace PizzaOrderingService.Api;
 
 [ApiController]
-[Route("api/[controller]")]
+[Route("[controller]")]
 public class PizzaController : ControllerBase
 {
     private readonly PizzaDbContext _context;
