@@ -1,5 +1,7 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Diagnostics.HealthChecks;
+using Microsoft.EntityFrameworkCore;
 using PizzaOrderingService.Data;
+using PizzaOrderingService.Services.HealthChecks;
 
 internal static class Program
 {
@@ -10,7 +12,9 @@ internal static class Program
         builder.Services.AddEndpointsApiExplorer();
         builder.Services.AddSwaggerGen();
         builder.Services.AddControllers();
-        builder.Services.AddHealthChecks();
+        builder.Services.AddHealthChecks()
+            .AddCheck<VersionInfoHealthCheck>("VersionInfo")
+            .AddCheck<PizzaDbContextHealthCheck>("PizzaDbContext");
 
         builder.Services.AddPizzaDbContext(
             builder.Configuration
@@ -20,7 +24,10 @@ internal static class Program
 
         app.ConfigureSwagger(builder.Configuration);
         app.MapControllers();
-        app.MapHealthChecks("/health");
+        app.MapHealthChecks("/health", new HealthCheckOptions
+        {
+            ResponseWriter = JsonResponseWriter.WriteResponse
+        });
 
         await app.InitializePizzaDbAsync(builder.Configuration);
 
