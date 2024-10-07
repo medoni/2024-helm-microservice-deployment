@@ -13,7 +13,8 @@ internal static class Program
         builder.Services.AddSwaggerGen();
         builder.Services.AddControllers();
         builder.Services.AddHealthChecks()
-            .AddCheck<VersionInfoHealthCheck>("VersionInfo");
+            .AddCheck<VersionInfoHealthCheck>("VersionInfo")
+            .AddCheck<PizzaDbContextHealthCheck>("PizzaDbContext");
 
         builder.Services.AddPizzaDbContext(
             builder.Configuration
