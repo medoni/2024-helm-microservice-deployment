@@ -1,0 +1,83 @@
+name: Docker integration tests
+
+on:
+  workflow_call:
+    inputs:
+      image-tag:
+        required: true
+        type: string
+      debug:
+        required: false
+        type: boolean
+        default: false
+  
+  # todo: remove. 
+  workflow_dispatch:
+    inputs:
+      image-tag:
+        description: The image tag for own services
+        required: true
+        type: string
+        default: pr-8b128dd9ddb2529f71686e97ea7e9edc0772de9c
+      debug:
+        description: "Debug: true for additional debug messages"
+        required: false
+        type: boolean
+        default: true
+
+jobs:
+  docker-integration-tests:
+    name: Docker integration tests
+    runs-on: ubuntu-latest
+    steps:
+    - name: "[SETUP] Checkout code"
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+    
+    - name: "[Setup] Install minver CLI"
+      run: dotnet tool install --tool-path ./minver minver-cli --version 4.3.0
+    
+    - name: "[Setup] Calculate version using minver CLI"
+      id: version
+      run: |
+          echo "version=$(./minver/minver --default-pre-release-identifiers alpha --tag-prefix v)" >> "$GITHUB_ENV"
+    
+    - name: "[Setup] Log in to GitHub Container Registry"
+      uses: docker/login-action@v2
+      with:
+        registry: ghcr.io
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: "[Setup] Run Docker compose"
+      run: |
+        export CONTAINER_REGISTRY="ghcr.io/${{ github.repository }}/"
+        export IMAGE_TAG="${{ inputs.image-tag }}"
+        docker compose \
+          -f ./src/docker-compose.yaml \
+          up -d
+ 
+    - name: "[TEST] Check /health of `pizza-ordering-service`"
+      run: |
+        curl --fail -v localhost:5000/health \
+          --retry-all-errors \
+          --max-time 10 \
+          --retry 10 \
+          --retry-delay 0 \
+          --retry-max-time 60 \
+    
+    - name: "[TEST] Check version of /health of `pizza-ordering-service`"
+      run: |
+        response=$(curl -s localhost:5000/health)
+        if [[ $? -ne 0 ]]; then
+          echo "Error: Failed to connect to the health endpoint."
+          exit 1
+        fi
+
+        version=$(echo $response | jq -r '.results.VersionInfo.data.Version')
+        EXPECTED_VERSION="${{ env.version }}+${{ github.sha }}"
+        if [[ "$version" != "$EXPECTED_VERSION" ]]; then
+          echo "Version of the /health endpoint is incorrect. Expected: '$EXPECTED_VERSION' Got: '$version'"                                                              
+          exit 1
+        fi

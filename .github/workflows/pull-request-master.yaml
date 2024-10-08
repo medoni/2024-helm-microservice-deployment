@@ -18,6 +18,14 @@ jobs:
       docker_build_context: ./src/backend/PizzaOrderingService
       target_image_tag:     pizza-ordering-service:pr-${{ github.sha }}
     secrets: inherit
+  
+  docker-integration-tests:
+    name: Docker integration tests
+    needs: [ build-and-publish-docker-image ]
+    uses: ./.github/workflows/_docker-integration-tests.yaml
+    with:
+      image-tag: pr-${{ github.sha }}
+    secrets: inherit
 
   helm-integration-tests:
     name: Helm integration tests

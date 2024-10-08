@@ -23,6 +23,21 @@ jobs:
     steps: 
     - name: Checkout code
       uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+    
+    - name: Setup dotnet
+      uses: actions/setup-dotnet@v2
+      with:
+        dotnet-version: '8.0.x'
+    
+    - name: Install minver CLI
+      run: dotnet tool install --tool-path ./minver minver-cli --version 4.3.0
+    
+    - name: Calculate version using minver CLI
+      id: version
+      run: |
+          echo "version=$(./minver/minver --default-pre-release-identifiers alpha --tag-prefix v)" >> "$GITHUB_ENV"
 
     - name: Set up Docker Buildx
       uses: docker/setup-buildx-action@v2
@@ -35,7 +50,14 @@ jobs:
         password: ${{ secrets.GITHUB_TOKEN }}
 
     - name: Build Docker image
-      run: docker build -t ghcr.io/${{ github.repository }}/${{ inputs.target_image_tag }} -f ${{ inputs.dockerfile }} ${{ inputs.docker_build_context }}
+      run: |
+        docker build \
+          --build-arg BUILD_VERSION=${{ env.version }} \
+          --build-arg BUILD_DATE=$( date -u +"%Y-%m-%dT%H:%M:%SZ" ) \
+          --build-arg GIT_SHA=${{ github.sha }} \
+          -t ghcr.io/${{ github.repository }}/${{ inputs.target_image_tag }} \
+          -f ${{ inputs.dockerfile }} \
+          ${{ inputs.docker_build_context }}
 
     - name: Push Docker image
       run: docker push ghcr.io/${{ github.repository }}/${{ inputs.target_image_tag }}
