@@ -8,7 +8,6 @@
 
   <PropertyGroup>
     <MinVerTagPrefix>v</MinVerTagPrefix>
-    <AssemblyInformationalVersion Condition="'$(GitSha)' != ''">$(MinVerVersion)+$(GitSha)</AssemblyInformationalVersion>
   </PropertyGroup>
 
   <ItemGroup>
