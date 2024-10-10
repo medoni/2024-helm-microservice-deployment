@@ -6,7 +6,7 @@ metadata:
   finalizers:
     - resources-finalizer.argocd.argoproj.io
 spec:
-  description: Example project how to deploy a single helm chart for multiple environments
+  description: Example project for the deployment of a single control chart across multiple environments
   sourceRepos:
   - '*'
   destinations:
