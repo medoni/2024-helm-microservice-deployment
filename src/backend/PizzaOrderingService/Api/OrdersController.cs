@@ -7,11 +7,11 @@ namespace PizzaOrderingService.Api;
 
 [ApiController]
 [Route("[controller]")]
-public class OrderController : ControllerBase
+public class OrdersController : ControllerBase
 {
     private readonly PizzaDbContext _context;
 
-    public OrderController(PizzaDbContext context)
+    public OrdersController(PizzaDbContext context)
     {
         _context = context;
     }

@@ -3,11 +3,11 @@ global:
   domain: dev-local.pos.mycluster.localhost
 
 image:
-  repository: ghcr.io/medoni/2024-helm-microservice-deployment/
-  tag: pr-d44450cfb1bb7bb1bf20f2db73b12a9d2c6e5a8a
+  repository: registry.mycluster.localhost/
+  tag: latest
 
 services:
-  pizza_ordering_service:  # todo: rename
+  pizza_ordering_service:
     image: pizza-ordering-service # default
     container:
       port: 8080 # default
