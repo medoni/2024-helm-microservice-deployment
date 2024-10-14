@@ -9,3 +9,6 @@
 *.yaml text
 *.md text
 *.editorconfig text
+
+*.drawio binary
+*.png binary

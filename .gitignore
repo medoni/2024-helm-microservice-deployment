@@ -28,6 +28,7 @@ obj/
 .vs/
 .idea/
 *.sln.ide
+*.bkp
 
 # Ignore build directory
 build/
