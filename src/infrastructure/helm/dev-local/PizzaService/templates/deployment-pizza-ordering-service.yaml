@@ -48,11 +48,7 @@ spec:
             - name: ConnectionStrings__PizzaDb
               value: "Host={{ .Values.services.postgres.container.host }};Database={{ .Values.services.postgres.database }};"
             - name: Logging__LogLevel__Default
-              value: Trace
-            - name: Logging__LogLevel__Microsoft.AspNetCore
-              value: Trace
-            - name: Logging__LogLevel__Microsoft.Extensions.Diagnostics.HealthChecks
-              value: Error
+              value: Information
             - name: Swagger__Enabled
               value: "true"
             - name: PizzaDbContext__MigrateOnStartup

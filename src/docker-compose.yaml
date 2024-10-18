@@ -17,7 +17,8 @@ services:
       - PizzaDbContext__MigrateOnStartup=True
       - PizzaDbContext__SeedExampleData=True
     depends_on:
-      - PizzaDb
+      PizzaDb:
+        condition: service_healthy
    
   PizzaDb:
     image: postgres:16.4
@@ -29,15 +30,22 @@ services:
       - postgres_data:/var/lib/postgresql/data
     ports:
       - "5432:5432"
+    healthcheck:
+      test: "psql -U postgres -d postgres -c 'SELECT 1' || exit 1"
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 5s
   
   pgweb:
     image: sosedoff/pgweb:0.15.0
-    depends_on:
-      - PizzaDb
     ports:
       - "5001:8081"
     environment:
       - DATABASE_URL=postgres://postgres:postgres@PizzaDb:5432/pizza_ordering?sslmode=disable
+    depends_on:
+      PizzaDb:
+        condition: service_healthy
 
 volumes:
   postgres_data:
