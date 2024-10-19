@@ -1,0 +1,29 @@
+name: Helm integration tests
+
+on:
+  workflow_call:
+    inputs:
+      image-tag:
+        required: true
+        type: string
+
+jobs:
+  helm-unit-tests:
+    name: Helm unit tests
+    runs-on: ubuntu-latest
+    steps:
+    - name: "[SETUP] Checkout code"
+      uses: actions/checkout@v4
+
+    - name: "[SETUP] Install Helm"
+      uses: azure/setup-helm@v4
+    
+    - name: "[TEST] Lint Helm chart"
+      run: |
+        helm lint ./src/infrastructure/helm/dev-local/PizzaService
+    
+    - name: "[Test] pizza-ordering-service Deployment image"
+      run: |
+        helm template ./src/infrastructure/helm/dev-local/PizzaService > generated.yaml
+
+        yq '.[] | select(.kind == "Deployment" and .metadata.name == "pizza-ordering-service") | .spec.template.spec.containers[0].image' generated.yaml | grep -q 'registry.mycluster.localhost/pizza-ordering-service:latest'

@@ -10,6 +10,10 @@ on:
   workflow_dispatch:
 
 jobs:
+  helm-unit-tests:
+    name: Helm unit tests
+    uses: ./.github/workflows/_helm-unit-tests.yaml
+
   build-and-publish-docker-image:
     name: Build and publish docker image 
     uses: ./.github/workflows/_build-and-publish-dockerfile.yaml
