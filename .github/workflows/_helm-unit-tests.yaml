@@ -20,6 +20,5 @@ jobs:
     
     - name: "[Test] pizza-ordering-service Deployment image"
       run: |
-        helm template ./src/infrastructure/helm/dev-local/PizzaService > generated.yaml
-
-        yq '.[] | select(.kind == "Deployment" and .metadata.name == "pizza-ordering-service") | .spec.template.spec.containers[0].image' generated.yaml | grep -q 'registry.mycluster.localhost/pizza-ordering-service:latest'
+        helm plugin install https://github.com/helm-unittest/helm-unittest.git --version 0.3.3
+        helm unittest ./src/infrastructure/helm/dev-local/PizzaService
