@@ -1,0 +1,103 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/helm-unittest/helm-unittest/main/schema/helm-testsuite.json
+suite: test deployment
+templates:
+  - deployment-pgweb.yaml
+  - deployment-pizza-ordering-service.yaml
+  - deployment-postgres.yaml
+  - ingress.pgweb.yaml
+  - ingress.pizza-ordering-service.yaml
+  - service-pgweb.yaml
+  - service-pizza-ordering-service.yaml
+  - service-postgres.yaml
+tests:
+
+  # Container ports
+  - it: Container port of `postgres` deployment should be correct
+    templates:
+      - deployment-postgres.yaml
+    asserts:
+      - equal:
+          path: spec.template.spec.containers[0].ports
+          value:
+            - containerPort: 5432
+  
+  - it: Container port of `pizza-ordering-service` deployment should be correct
+    templates:
+      - deployment-pizza-ordering-service.yaml
+    asserts:
+      - equal:
+          path: spec.template.spec.containers[0].ports
+          value:
+            - containerPort: 8080
+
+  - it: Container port of `pgweb` deployment should be correct
+    set:
+      services.pgweb.enabled: true
+    templates:
+      - deployment-pgweb.yaml
+    asserts:
+      - equal:
+          path: spec.template.spec.containers[0].ports
+          value:
+            - containerPort: 8081
+
+  # Service port mapping
+  - it: Service port mapping of `pgweb` should be correct
+    set:
+      services.pgweb.enabled: true
+    templates:
+      - service-pgweb.yaml
+    asserts:
+      - equal:
+          path: spec.ports
+          value:
+            - port: 8081
+              targetPort: 8081
+
+  - it: Service port mapping of `pizza-ordering-service` should be correct
+    templates:
+      - service-pizza-ordering-service.yaml
+    asserts:
+      - equal:
+          path: spec.ports
+          value:
+            - port: 8080
+              targetPort: 8080
+  
+  - it: Service port mapping of `postgres` should be correct
+    templates:
+      - service-postgres.yaml
+    asserts:
+      - equal:
+          path: spec.ports
+          value:
+            - port: 5432
+              targetPort: 5432
+
+  # Ingress routes
+  - it: Ingress route of `_pgweb` should be correct
+    set:
+      services.pgweb.enabled: true
+      global.domain: example.com
+    templates:
+      - ingress.pgweb.yaml
+    documentIndex: 0
+    asserts:
+      - equal:
+          path: spec.routes[?(@.match == 'Host(`pizza-ordering-service.example.com`) && PathPrefix(`/_pgweb/`)')].services
+          value:
+            - name: pgweb
+              port: 8081
+  
+  - it: Ingress route of `pizza-ordering-service` should be correct
+    set:
+      global.domain: example.com
+    templates:
+      - ingress.pizza-ordering-service.yaml
+    documentIndex: 0
+    asserts:
+      - equal:
+          path: spec.routes[?(@.match == 'Host(`pizza-ordering-service.example.com`) && PathPrefix(`/api`)')].services
+          value:
+            - name: pizza-ordering-service
+              port: 8080

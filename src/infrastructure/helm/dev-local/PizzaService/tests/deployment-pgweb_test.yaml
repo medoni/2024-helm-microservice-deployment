@@ -1,0 +1,21 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/helm-unittest/helm-unittest/main/schema/helm-testsuite.json
+suite: test deployment
+templates:
+  - deployment-pgweb.yaml
+tests:
+  - it: Default image name should be correct
+    set:
+      services.pgweb.enabled: true
+    template: deployment-pgweb.yaml
+    asserts:
+      - equal:
+          path: spec.template.spec.containers[0].image
+          value: sosedoff/pgweb:0.15.0
+
+  - it: Deployment should not rendered when enabled=false
+    set:
+      services.pgweb.enabled: false
+    template: deployment-pgweb.yaml
+    asserts:
+      - hasDocuments:
+          count: 0
