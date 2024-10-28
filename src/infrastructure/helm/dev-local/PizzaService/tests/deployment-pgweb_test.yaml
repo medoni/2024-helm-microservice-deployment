@@ -8,11 +8,13 @@ tests:
       services.pgweb.enabled: true
     template: deployment-pgweb.yaml
     asserts:
+      - hasDocuments:
+          count: 1
       - equal:
           path: spec.template.spec.containers[0].image
           value: sosedoff/pgweb:0.15.0
 
-  - it: Deployment should not rendered when enabled=false
+  - it: Deployment shouldn't be rendered when enabled=false is set
     set:
       services.pgweb.enabled: false
     template: deployment-pgweb.yaml

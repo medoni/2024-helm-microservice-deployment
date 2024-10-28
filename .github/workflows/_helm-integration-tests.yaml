@@ -43,7 +43,7 @@ jobs:
     
     - name: "[SETUP] Create Kubernetes namespaces"
       run: |
-        kubectl create namespace $POS_NAMESPACE --dry-run=client -o yaml | kubectl apply -f -
+        kubectl create namespace $POS_NAMESPACE
     
     - name: "[SETUP] Create Kubernetes secrets"
       run: |
