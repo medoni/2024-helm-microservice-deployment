@@ -4,8 +4,6 @@ templates:
   - deployment-postgres.yaml
 tests:
   - it: Default image name should be correct
-    set:
-      services.pgweb.enabled: true
     template: deployment-postgres.yaml
     asserts:
       - equal:
