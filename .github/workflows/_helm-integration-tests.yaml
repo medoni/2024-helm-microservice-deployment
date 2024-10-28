@@ -48,13 +48,9 @@ jobs:
     - name: "[SETUP] Create Kubernetes secrets"
       run: |
         kubectl create secret generic postgres-db-secrets \
-          --save-config \
-          --dry-run=client \
           --from-literal=username=postgres \
           --from-literal=password="secret-1234" \
-          -n $POS_NAMESPACE \
-          -o yaml \
-          | kubectl apply -f -
+          -n $POS_NAMESPACE
     
     - name: "[SETUP] Helm install `pizza-ordering-service`"
       run: |
