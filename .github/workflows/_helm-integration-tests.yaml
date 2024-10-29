@@ -68,7 +68,7 @@ jobs:
           --max-time 10 \
           --retry 10 \
           --retry-delay 0 \
-          --retry-max-time 60 \
+          --retry-max-time 60
     
     - name: "[TEST] Check ingress /swagger/index.html of `pizza-ordering-service`"
       run: |
@@ -81,7 +81,7 @@ jobs:
           --max-time 10 \
           --retry 10 \
           --retry-delay 0 \
-          --retry-max-time 60 \
+          --retry-max-time 60
 
     - name: "[TEST] Check example data"
       run: |
