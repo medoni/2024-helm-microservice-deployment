@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.OpenApi.Models;
 using PizzaOrderingService.Data;
 using PizzaOrderingService.Services.HealthChecks;
 
@@ -41,8 +42,7 @@ internal static class Program
     {
         if (configuration.GetValue<bool>("Swagger:Enabled"))
         {
-            app.UseSwagger();
-            app.UseSwaggerUI();
+            app.ConfigureSwaggerApp();
         }
 
         return app;
@@ -71,5 +71,25 @@ internal static class Program
     internal static async Task MigrateDatabaseAsync(PizzaDbContext dbContext)
     {
         await dbContext.Database.MigrateAsync();
+    }
+
+    internal static WebApplication ConfigureSwaggerApp(this WebApplication app)
+    {
+        app.UseSwagger(c =>
+        {
+            c.PreSerializeFilters.Add((swaggerDoc, request) =>
+            {
+                if (request.Headers.TryGetValue("X-Forwarded-Prefix", out var serverPath))
+                {
+                    swaggerDoc.Servers = new List<OpenApiServer>()
+                    {
+                        new OpenApiServer() { Description = "Pizza-Ordering-Service", Url = serverPath }
+                    };
+                }
+            });
+        });
+        app.UseSwaggerUI();
+
+        return app;
     }
 }
