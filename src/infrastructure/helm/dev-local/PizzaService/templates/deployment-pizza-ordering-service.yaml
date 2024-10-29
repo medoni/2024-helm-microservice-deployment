@@ -4,6 +4,8 @@ metadata:
   name: pizza-ordering-service
   labels:
     app: pizza-ordering-service
+  annotations:
+    link.argocd.argoproj.io/external-link: http://pizza-ordering-service.{{ .Values.global.domain }}/api/swagger
 spec:
   replicas: 1
   revisionHistoryLimit: 0
