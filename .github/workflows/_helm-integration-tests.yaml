@@ -43,18 +43,14 @@ jobs:
     
     - name: "[SETUP] Create Kubernetes namespaces"
       run: |
-        kubectl create namespace $POS_NAMESPACE --dry-run=client -o yaml | kubectl apply -f -
+        kubectl create namespace $POS_NAMESPACE
     
     - name: "[SETUP] Create Kubernetes secrets"
       run: |
         kubectl create secret generic postgres-db-secrets \
-          --save-config \
-          --dry-run=client \
           --from-literal=username=postgres \
           --from-literal=password="secret-1234" \
-          -n $POS_NAMESPACE \
-          -o yaml \
-          | kubectl apply -f -
+          -n $POS_NAMESPACE
     
     - name: "[SETUP] Helm install `pizza-ordering-service`"
       run: |
@@ -72,7 +68,7 @@ jobs:
           --max-time 10 \
           --retry 10 \
           --retry-delay 0 \
-          --retry-max-time 60 \
+          --retry-max-time 60
     
     - name: "[TEST] Check ingress /swagger/index.html of `pizza-ordering-service`"
       run: |
@@ -85,7 +81,7 @@ jobs:
           --max-time 10 \
           --retry 10 \
           --retry-delay 0 \
-          --retry-max-time 60 \
+          --retry-max-time 60
 
     - name: "[TEST] Check example data"
       run: |
