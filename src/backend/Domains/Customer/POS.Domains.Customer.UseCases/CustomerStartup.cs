@@ -1,6 +1,8 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
-using POS.Domains.Customer.UseCases.CRUDMenuUseCase;
-using POS.Domains.Customer.UseCases.PublishMenuUseCase;
+using POS.Domains.Customer.UseCases.Carts.CartUseCase;
+using POS.Domains.Customer.UseCases.Menus.CRUDMenuUseCase;
+using POS.Domains.Customer.UseCases.Menus.PublishMenuUseCase;
+using POS.Domains.Customer.UseCases.Orders.OrderUseCase;
 
 namespace POS.Domains.Customer.UseCases;
 
@@ -17,6 +19,8 @@ public static class CustomerStartup
         return services
             .AddTransient<ICRUDMenuUseCase, DefaultCRUDMenuUseCase>()
             .AddTransient<IPublishMenuUseCase, DefaultPublishMenuUseCase>()
+            .AddTransient<IOrderUseCase, DefaultOrderUseCase>()
+            .AddTransient<ICartUseCase, DefaultCartUseCase>()
         ;
     }
 }

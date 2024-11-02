@@ -3,9 +3,35 @@
 /// <summary>
 /// Dto for <see cref="Money"/>
 /// </summary>
-/// <param name="Amount">Amount.</param>
-/// <param name="Currency">Currency.</param>
-public record MoneyDto(
-    decimal Amount,
-    string Currency
-);
+public record MoneyDto
+{
+    /// <summary>
+    /// Amount.
+    /// </summary>
+    public required decimal Amount { get; init; }
+
+    /// <summary>
+    /// Currency.
+    /// </summary>
+    public required string Currency { get; init; }
+
+    /// <summary>
+    /// Creates a new MoneyDto.
+    /// </summary>
+    public MoneyDto() { }
+
+    /// <summary>
+    /// Creates a new MoneyDto.
+    /// </summary>
+    public static MoneyDto Create(
+        decimal amount,
+        string currency
+    )
+    {
+        return new()
+        {
+            Amount = amount,
+            Currency = currency
+        };
+    }
+}

@@ -1,59 +1,39 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using POS.Persistence.PostgreSql.Abstractions;
 
 namespace POS.Persistence.PostgreSql.Data.Customer;
 
 /// <summary>
 /// Entity for Menu.
 /// </summary>
-public class MenuEntity
+public class MenuEntity : IEntity<Guid>
 {
-    /// <summary>
-    /// Id of the Menu.
-    /// </summary>
     public Guid Id { get; set; }
 
-    /// <summary>
-    /// Date and time when the Menu was created.
-    /// </summary>
     public DateTimeOffset CreatedAt { get; set; }
 
-    /// <summary>
-    /// Date and time when the Menu was last changed at.
-    /// </summary>
     public DateTimeOffset LastChangedAt { get; set; }
 
-    /// <summary>
-    /// True, when the Menu is active.
-    /// </summary>
+    public string Currency { get; set; } = null!;
+
     public bool? IsActive { get; set; }
 
-    /// <summary>
-    /// Date and time when the menu was activated.
-    /// </summary>
     public DateTimeOffset? ActivatedAt { get; set; }
 
-    /// <summary>
-    /// List of sections
-    /// </summary>
     public ICollection<MenuSectionEntity> Sections { get; set; } = null!;
 
-    /// <summary>
-    /// Creates a new <see cref="MenuEntity"/>.
-    /// </summary>
     [Obsolete("For deserializing only.")]
     public MenuEntity()
     {
 
     }
 
-    /// <summary>
-    /// Creates a new <see cref="MenuEntity"/>.
-    /// </summary>
     public MenuEntity(
         Guid id,
         DateTimeOffset createdAt,
         DateTimeOffset lastChangedAt,
+        string currency,
         bool? isActive,
         DateTimeOffset? activatedAt,
         ICollection<MenuSectionEntity> sections
@@ -62,6 +42,7 @@ public class MenuEntity
         Id = id;
         CreatedAt = createdAt;
         LastChangedAt = lastChangedAt;
+        Currency = currency ?? throw new ArgumentNullException(nameof(currency));
         IsActive = isActive;
         ActivatedAt = activatedAt;
         Sections = sections ?? throw new ArgumentNullException(nameof(sections));
@@ -82,6 +63,8 @@ internal class MenuEntityConfiguration : IEntityTypeConfiguration<MenuEntity>
         builder.Property(x => x.CreatedAt);
 
         builder.Property(x => x.LastChangedAt);
+
+        builder.Property(x => x.Currency);
 
         builder.Property(x => x.IsActive);
 

@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using POS.Persistence.PostgreSql.Abstractions;
 using POS.Shared.Domain.Generic.Dtos;
 
 namespace POS.Persistence.PostgreSql.Data.Customer;
@@ -7,58 +8,32 @@ namespace POS.Persistence.PostgreSql.Data.Customer;
 /// <summary>
 /// Entity that represents a Menu item.
 /// </summary>
-public class MenuItemEntity
+public class MenuItemEntity : IEntity<Guid>
 {
-
-
-    /// <summary>
-    /// Id of the menu item.
-    /// </summary>
     public Guid Id { get; set; }
 
-    /// <summary>
-    /// Id of the section where the item belongs to.
-    /// </summary>
     public Guid MenuSectionId { get; set; }
 
-    /// <summary>
-    /// Name of the menu item.
-    /// </summary>
     public string Name { get; set; } = null!;
 
-    /// <summary>
-    /// Description of the menu item.
-    /// </summary>
     public string Description { get; set; } = null!;
 
-    /// <summary>
-    /// List of ingredients.
-    /// </summary>
     public List<string> Ingredients { get; set; } = new();
 
-    /// <summary>
-    /// Unit price of the item.
-    /// </summary>
-    public MoneyDto Price { get; set; } = null!;
+    public PriceInfoDto Price { get; set; } = null!;
 
-    /// <summary>
-    /// Creates a new <see cref="MenuItemEntity"/>.
-    /// </summary>
     [Obsolete("For deserializing only.")]
     public MenuItemEntity()
     {
     }
 
-    /// <summary>
-    /// Creates a new <see cref="MenuItemEntity"/>.
-    /// </summary>
     public MenuItemEntity(
         Guid id,
         Guid menuSectionId,
         string name,
         string description,
         List<string> ingredients,
-        MoneyDto price
+        PriceInfoDto price
     )
     {
         Id = id;
@@ -91,8 +66,14 @@ internal class MenuItemEntityConfiguration : IEntityTypeConfiguration<MenuItemEn
 
         builder.OwnsOne(x => x.Price, b =>
         {
-            b.Property(y => y.Amount).HasColumnName("Price");
-            b.Property(y => y.Currency).HasColumnName("PriceCur");
+            b.OwnsOne(x => x.Price, b =>
+            {
+                b.Property(x => x.Gross).HasColumnName("PriceGross");
+                b.Property(x => x.Net).HasColumnName("PriceNet");
+                b.Property(x => x.Vat).HasColumnName("PriceVat");
+                b.Property(x => x.Currency).HasColumnName("PriceCurrency");
+            });
+            b.Property(x => x.RegularyVatInPercent).HasColumnName("PriceRegVatPercent");
         });
     }
 }

@@ -14,7 +14,7 @@ public record MenuItem
 (
     Guid Id,
     string Name,
-    Money Price,
+    PriceInfo Price,
     string Description,
     IReadOnlyList<string> Ingredients
 )

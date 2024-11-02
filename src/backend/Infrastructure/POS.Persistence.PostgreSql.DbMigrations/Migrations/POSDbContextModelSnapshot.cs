@@ -22,6 +22,92 @@ namespace POS.Persistence.PostgreSql.DbMigrations.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
+            modelBuilder.Entity("POS.Persistence.PostgreSql.Data.Customer.CartCheckoutInfoEntity", b =>
+                {
+                    b.Property<Guid>("CartId")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTimeOffset>("CheckedOutAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid>("OrderId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("CartId");
+
+                    b.HasIndex("OrderId");
+
+                    b.ToTable("CartCheckoutInfos", "Customer");
+                });
+
+            modelBuilder.Entity("POS.Persistence.PostgreSql.Data.Customer.CartEntity", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTimeOffset>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Currency")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<DateTimeOffset>("LastChangedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid>("MenuId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("State")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("MenuId");
+
+                    b.ToTable("Carts", "Customer");
+                });
+
+            modelBuilder.Entity("POS.Persistence.PostgreSql.Data.Customer.CartItemEntity", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("CartId")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTimeOffset>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<DateTimeOffset>("LastChangedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid>("MenuItemId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<int>("Quantity")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CartId");
+
+                    b.HasIndex("Id", "MenuItemId");
+
+                    b.ToTable("CartItems", "Customer");
+                });
+
             modelBuilder.Entity("POS.Persistence.PostgreSql.Data.Customer.MenuEntity", b =>
                 {
                     b.Property<Guid>("Id")
@@ -33,6 +119,10 @@ namespace POS.Persistence.PostgreSql.DbMigrations.Migrations
 
                     b.Property<DateTimeOffset>("CreatedAt")
                         .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Currency")
+                        .IsRequired()
+                        .HasColumnType("text");
 
                     b.Property<bool?>("IsActive")
                         .HasColumnType("boolean");
@@ -96,6 +186,157 @@ namespace POS.Persistence.PostgreSql.DbMigrations.Migrations
                     b.ToTable("MenuSections", "Customer");
                 });
 
+            modelBuilder.Entity("POS.Persistence.PostgreSql.Data.Customer.OrderEntity", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTimeOffset>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTimeOffset>("LastChangedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("State")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Orders", "Customer");
+                });
+
+            modelBuilder.Entity("POS.Persistence.PostgreSql.Data.Customer.OrderItemEntity", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("CartItemId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<Guid>("OrderId")
+                        .HasColumnType("uuid");
+
+                    b.Property<int>("Quantity")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CartItemId");
+
+                    b.HasIndex("OrderId");
+
+                    b.ToTable("OrderItems", "Customer");
+                });
+
+            modelBuilder.Entity("POS.Persistence.PostgreSql.Data.Customer.OrderPriceInformationEntity", b =>
+                {
+                    b.Property<Guid>("OrderId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("OrderId");
+
+                    b.ToTable("OrderPriceInfos", "Customer");
+                });
+
+            modelBuilder.Entity("POS.Persistence.PostgreSql.Data.Customer.CartCheckoutInfoEntity", b =>
+                {
+                    b.HasOne("POS.Persistence.PostgreSql.Data.Customer.CartEntity", null)
+                        .WithOne("CheckoutInfo")
+                        .HasForeignKey("POS.Persistence.PostgreSql.Data.Customer.CartCheckoutInfoEntity", "CartId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("POS.Persistence.PostgreSql.Data.Customer.OrderEntity", null)
+                        .WithMany()
+                        .HasForeignKey("OrderId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("POS.Persistence.PostgreSql.Data.Customer.CartEntity", b =>
+                {
+                    b.HasOne("POS.Persistence.PostgreSql.Data.Customer.MenuEntity", null)
+                        .WithMany()
+                        .HasForeignKey("MenuId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("POS.Persistence.PostgreSql.Data.Customer.CartItemEntity", b =>
+                {
+                    b.HasOne("POS.Persistence.PostgreSql.Data.Customer.CartEntity", "Cart")
+                        .WithMany("Items")
+                        .HasForeignKey("CartId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.OwnsOne("POS.Shared.Domain.Generic.Dtos.PriceInfoDto", "UnitPrice", b1 =>
+                        {
+                            b1.Property<Guid>("CartItemEntityId")
+                                .HasColumnType("uuid");
+
+                            b1.Property<decimal>("RegularyVatInPercent")
+                                .HasColumnType("numeric")
+                                .HasColumnName("UnitPriceRegVatPercent");
+
+                            b1.HasKey("CartItemEntityId");
+
+                            b1.ToTable("CartItems", "Customer");
+
+                            b1.WithOwner()
+                                .HasForeignKey("CartItemEntityId");
+
+                            b1.OwnsOne("POS.Shared.Domain.Generic.Dtos.GrossNetPriceDto", "Price", b2 =>
+                                {
+                                    b2.Property<Guid>("PriceInfoDtoCartItemEntityId")
+                                        .HasColumnType("uuid");
+
+                                    b2.Property<string>("Currency")
+                                        .IsRequired()
+                                        .HasColumnType("text")
+                                        .HasColumnName("UnitPriceCurrency");
+
+                                    b2.Property<decimal>("Gross")
+                                        .HasColumnType("numeric")
+                                        .HasColumnName("UnitPriceGross");
+
+                                    b2.Property<decimal>("Net")
+                                        .HasColumnType("numeric")
+                                        .HasColumnName("UnitPriceNet");
+
+                                    b2.Property<decimal>("Vat")
+                                        .HasColumnType("numeric")
+                                        .HasColumnName("UnitPriceVat");
+
+                                    b2.HasKey("PriceInfoDtoCartItemEntityId");
+
+                                    b2.ToTable("CartItems", "Customer");
+
+                                    b2.WithOwner()
+                                        .HasForeignKey("PriceInfoDtoCartItemEntityId");
+                                });
+
+                            b1.Navigation("Price")
+                                .IsRequired();
+                        });
+
+                    b.Navigation("Cart");
+
+                    b.Navigation("UnitPrice")
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("POS.Persistence.PostgreSql.Data.Customer.MenuItemEntity", b =>
                 {
                     b.HasOne("POS.Persistence.PostgreSql.Data.Customer.MenuSectionEntity", null)
@@ -104,19 +345,14 @@ namespace POS.Persistence.PostgreSql.DbMigrations.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.OwnsOne("POS.Shared.Domain.Generic.Dtos.MoneyDto", "Price", b1 =>
+                    b.OwnsOne("POS.Shared.Domain.Generic.Dtos.PriceInfoDto", "Price", b1 =>
                         {
                             b1.Property<Guid>("MenuItemEntityId")
                                 .HasColumnType("uuid");
 
-                            b1.Property<decimal>("Amount")
+                            b1.Property<decimal>("RegularyVatInPercent")
                                 .HasColumnType("numeric")
-                                .HasColumnName("Price");
-
-                            b1.Property<string>("Currency")
-                                .IsRequired()
-                                .HasColumnType("text")
-                                .HasColumnName("PriceCur");
+                                .HasColumnName("PriceRegVatPercent");
 
                             b1.HasKey("MenuItemEntityId");
 
@@ -124,6 +360,39 @@ namespace POS.Persistence.PostgreSql.DbMigrations.Migrations
 
                             b1.WithOwner()
                                 .HasForeignKey("MenuItemEntityId");
+
+                            b1.OwnsOne("POS.Shared.Domain.Generic.Dtos.GrossNetPriceDto", "Price", b2 =>
+                                {
+                                    b2.Property<Guid>("PriceInfoDtoMenuItemEntityId")
+                                        .HasColumnType("uuid");
+
+                                    b2.Property<string>("Currency")
+                                        .IsRequired()
+                                        .HasColumnType("text")
+                                        .HasColumnName("PriceCurrency");
+
+                                    b2.Property<decimal>("Gross")
+                                        .HasColumnType("numeric")
+                                        .HasColumnName("PriceGross");
+
+                                    b2.Property<decimal>("Net")
+                                        .HasColumnType("numeric")
+                                        .HasColumnName("PriceNet");
+
+                                    b2.Property<decimal>("Vat")
+                                        .HasColumnType("numeric")
+                                        .HasColumnName("PriceVat");
+
+                                    b2.HasKey("PriceInfoDtoMenuItemEntityId");
+
+                                    b2.ToTable("MenuItems", "Customer");
+
+                                    b2.WithOwner()
+                                        .HasForeignKey("PriceInfoDtoMenuItemEntityId");
+                                });
+
+                            b1.Navigation("Price")
+                                .IsRequired();
                         });
 
                     b.Navigation("Price")
@@ -139,6 +408,255 @@ namespace POS.Persistence.PostgreSql.DbMigrations.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("POS.Persistence.PostgreSql.Data.Customer.OrderItemEntity", b =>
+                {
+                    b.HasOne("POS.Persistence.PostgreSql.Data.Customer.CartItemEntity", null)
+                        .WithMany()
+                        .HasForeignKey("CartItemId")
+                        .OnDelete(DeleteBehavior.SetNull)
+                        .IsRequired();
+
+                    b.HasOne("POS.Persistence.PostgreSql.Data.Customer.OrderEntity", null)
+                        .WithMany("Items")
+                        .HasForeignKey("OrderId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.OwnsOne("POS.Shared.Domain.Generic.Dtos.GrossNetPriceDto", "TotalPrice", b1 =>
+                        {
+                            b1.Property<Guid>("OrderItemEntityId")
+                                .HasColumnType("uuid");
+
+                            b1.Property<string>("Currency")
+                                .IsRequired()
+                                .HasColumnType("text")
+                                .HasColumnName("TotalPriceCurrency");
+
+                            b1.Property<decimal>("Gross")
+                                .HasColumnType("numeric")
+                                .HasColumnName("TotalPriceGross");
+
+                            b1.Property<decimal>("Net")
+                                .HasColumnType("numeric")
+                                .HasColumnName("TotalPriceNet");
+
+                            b1.Property<decimal>("Vat")
+                                .HasColumnType("numeric")
+                                .HasColumnName("TotalPriceVat");
+
+                            b1.HasKey("OrderItemEntityId");
+
+                            b1.ToTable("OrderItems", "Customer");
+
+                            b1.WithOwner()
+                                .HasForeignKey("OrderItemEntityId");
+                        });
+
+                    b.OwnsOne("POS.Shared.Domain.Generic.Dtos.PriceInfoDto", "UnitPrice", b1 =>
+                        {
+                            b1.Property<Guid>("OrderItemEntityId")
+                                .HasColumnType("uuid");
+
+                            b1.Property<decimal>("RegularyVatInPercent")
+                                .HasColumnType("numeric")
+                                .HasColumnName("UnitPriceRegVatPercent");
+
+                            b1.HasKey("OrderItemEntityId");
+
+                            b1.ToTable("OrderItems", "Customer");
+
+                            b1.WithOwner()
+                                .HasForeignKey("OrderItemEntityId");
+
+                            b1.OwnsOne("POS.Shared.Domain.Generic.Dtos.GrossNetPriceDto", "Price", b2 =>
+                                {
+                                    b2.Property<Guid>("PriceInfoDtoOrderItemEntityId")
+                                        .HasColumnType("uuid");
+
+                                    b2.Property<string>("Currency")
+                                        .IsRequired()
+                                        .HasColumnType("text")
+                                        .HasColumnName("UnitPriceCurrency");
+
+                                    b2.Property<decimal>("Gross")
+                                        .HasColumnType("numeric")
+                                        .HasColumnName("UnitPriceGross");
+
+                                    b2.Property<decimal>("Net")
+                                        .HasColumnType("numeric")
+                                        .HasColumnName("UnitPriceNet");
+
+                                    b2.Property<decimal>("Vat")
+                                        .HasColumnType("numeric")
+                                        .HasColumnName("UnitPriceVat");
+
+                                    b2.HasKey("PriceInfoDtoOrderItemEntityId");
+
+                                    b2.ToTable("OrderItems", "Customer");
+
+                                    b2.WithOwner()
+                                        .HasForeignKey("PriceInfoDtoOrderItemEntityId");
+                                });
+
+                            b1.Navigation("Price")
+                                .IsRequired();
+                        });
+
+                    b.Navigation("TotalPrice")
+                        .IsRequired();
+
+                    b.Navigation("UnitPrice")
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("POS.Persistence.PostgreSql.Data.Customer.OrderPriceInformationEntity", b =>
+                {
+                    b.HasOne("POS.Persistence.PostgreSql.Data.Customer.OrderEntity", null)
+                        .WithOne("PriceSummary")
+                        .HasForeignKey("POS.Persistence.PostgreSql.Data.Customer.OrderPriceInformationEntity", "OrderId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.OwnsOne("POS.Shared.Domain.Generic.Dtos.GrossNetPriceDto", "DeliverCosts", b1 =>
+                        {
+                            b1.Property<Guid>("OrderPriceInformationEntityOrderId")
+                                .HasColumnType("uuid");
+
+                            b1.Property<string>("Currency")
+                                .IsRequired()
+                                .HasColumnType("text")
+                                .HasColumnName("DeliverCostsCurrency");
+
+                            b1.Property<decimal>("Gross")
+                                .HasColumnType("numeric")
+                                .HasColumnName("DeliverCostsGross");
+
+                            b1.Property<decimal>("Net")
+                                .HasColumnType("numeric")
+                                .HasColumnName("DeliverCostsNet");
+
+                            b1.Property<decimal>("Vat")
+                                .HasColumnType("numeric")
+                                .HasColumnName("DeliverCostsVat");
+
+                            b1.HasKey("OrderPriceInformationEntityOrderId");
+
+                            b1.ToTable("OrderPriceInfos", "Customer");
+
+                            b1.WithOwner()
+                                .HasForeignKey("OrderPriceInformationEntityOrderId");
+                        });
+
+                    b.OwnsOne("POS.Shared.Domain.Generic.Dtos.GrossNetPriceDto", "Discount", b1 =>
+                        {
+                            b1.Property<Guid>("OrderPriceInformationEntityOrderId")
+                                .HasColumnType("uuid");
+
+                            b1.Property<string>("Currency")
+                                .IsRequired()
+                                .HasColumnType("text")
+                                .HasColumnName("DiscountCurrency");
+
+                            b1.Property<decimal>("Gross")
+                                .HasColumnType("numeric")
+                                .HasColumnName("DiscountGross");
+
+                            b1.Property<decimal>("Net")
+                                .HasColumnType("numeric")
+                                .HasColumnName("DiscountNet");
+
+                            b1.Property<decimal>("Vat")
+                                .HasColumnType("numeric")
+                                .HasColumnName("DiscountVat");
+
+                            b1.HasKey("OrderPriceInformationEntityOrderId");
+
+                            b1.ToTable("OrderPriceInfos", "Customer");
+
+                            b1.WithOwner()
+                                .HasForeignKey("OrderPriceInformationEntityOrderId");
+                        });
+
+                    b.OwnsOne("POS.Shared.Domain.Generic.Dtos.GrossNetPriceDto", "TotalItemPrice", b1 =>
+                        {
+                            b1.Property<Guid>("OrderPriceInformationEntityOrderId")
+                                .HasColumnType("uuid");
+
+                            b1.Property<string>("Currency")
+                                .IsRequired()
+                                .HasColumnType("text")
+                                .HasColumnName("TotalItemPriceCurrency");
+
+                            b1.Property<decimal>("Gross")
+                                .HasColumnType("numeric")
+                                .HasColumnName("TotalItemPriceGross");
+
+                            b1.Property<decimal>("Net")
+                                .HasColumnType("numeric")
+                                .HasColumnName("TotalItemPriceNet");
+
+                            b1.Property<decimal>("Vat")
+                                .HasColumnType("numeric")
+                                .HasColumnName("TotalItemPriceVat");
+
+                            b1.HasKey("OrderPriceInformationEntityOrderId");
+
+                            b1.ToTable("OrderPriceInfos", "Customer");
+
+                            b1.WithOwner()
+                                .HasForeignKey("OrderPriceInformationEntityOrderId");
+                        });
+
+                    b.OwnsOne("POS.Shared.Domain.Generic.Dtos.GrossNetPriceDto", "TotalPrice", b1 =>
+                        {
+                            b1.Property<Guid>("OrderPriceInformationEntityOrderId")
+                                .HasColumnType("uuid");
+
+                            b1.Property<string>("Currency")
+                                .IsRequired()
+                                .HasColumnType("text")
+                                .HasColumnName("TotalPriceCurrency");
+
+                            b1.Property<decimal>("Gross")
+                                .HasColumnType("numeric")
+                                .HasColumnName("TotalPriceGross");
+
+                            b1.Property<decimal>("Net")
+                                .HasColumnType("numeric")
+                                .HasColumnName("TotalPriceNet");
+
+                            b1.Property<decimal>("Vat")
+                                .HasColumnType("numeric")
+                                .HasColumnName("TotalPriceVat");
+
+                            b1.HasKey("OrderPriceInformationEntityOrderId");
+
+                            b1.ToTable("OrderPriceInfos", "Customer");
+
+                            b1.WithOwner()
+                                .HasForeignKey("OrderPriceInformationEntityOrderId");
+                        });
+
+                    b.Navigation("DeliverCosts")
+                        .IsRequired();
+
+                    b.Navigation("Discount")
+                        .IsRequired();
+
+                    b.Navigation("TotalItemPrice")
+                        .IsRequired();
+
+                    b.Navigation("TotalPrice")
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("POS.Persistence.PostgreSql.Data.Customer.CartEntity", b =>
+                {
+                    b.Navigation("CheckoutInfo");
+
+                    b.Navigation("Items");
+                });
+
             modelBuilder.Entity("POS.Persistence.PostgreSql.Data.Customer.MenuEntity", b =>
                 {
                     b.Navigation("Sections");
@@ -147,6 +665,14 @@ namespace POS.Persistence.PostgreSql.DbMigrations.Migrations
             modelBuilder.Entity("POS.Persistence.PostgreSql.Data.Customer.MenuSectionEntity", b =>
                 {
                     b.Navigation("Items");
+                });
+
+            modelBuilder.Entity("POS.Persistence.PostgreSql.Data.Customer.OrderEntity", b =>
+                {
+                    b.Navigation("Items");
+
+                    b.Navigation("PriceSummary")
+                        .IsRequired();
                 });
 #pragma warning restore 612, 618
         }

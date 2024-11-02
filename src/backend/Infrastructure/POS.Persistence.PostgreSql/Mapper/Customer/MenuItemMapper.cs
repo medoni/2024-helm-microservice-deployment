@@ -29,7 +29,7 @@ internal static class MenuItemMapper
         return new MenuItem(
             entity.Id,
             entity.Name,
-            entity.Price.ToEntity(),
+            entity.Price.ToDomain(),
             entity.Description,
             entity.Ingredients
         );

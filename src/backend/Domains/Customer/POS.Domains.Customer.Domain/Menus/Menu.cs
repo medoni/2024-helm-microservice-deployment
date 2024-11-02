@@ -1,4 +1,4 @@
-﻿using POS.Domains.Customer.Domain.Menus.States;
+﻿using POS.Domains.Customer.Domain.Menus.Events;
 using POS.Shared.Domain;
 
 namespace POS.Domains.Customer.Domain.Menus;
@@ -6,7 +6,7 @@ namespace POS.Domains.Customer.Domain.Menus;
 /// <summary>
 /// Aggregate root for Menu
 /// </summary>
-public class Menu : AggregateRoot<Guid>
+public class Menu : AggregateRoot
 {
     private readonly MenuState _state;
 
@@ -62,6 +62,11 @@ public class Menu : AggregateRoot<Guid>
         private set => _state.Sections = value;
     }
 
+    /// <summary>
+    /// Currency of the menu.
+    /// </summary>
+    public string Currency => _state.Currency;
+
     #region ctor
 
     /// <summary>
@@ -78,19 +83,23 @@ public class Menu : AggregateRoot<Guid>
     public Menu(
         Guid id,
         DateTimeOffset createdAt,
+        string currency,
         IReadOnlyList<MenuSection> sections
     )
     : this(
         new MenuState(
             id,
+            currency,
             createdAt
         )
-        {
-            LastChangedAt = createdAt,
-            Sections = sections
-        }
     )
     {
+        LastChangedAt = createdAt;
+        Sections = sections;
+
+        EnsureCorrectCurrency(currency, sections);
+
+        Apply(new MenuCreatedEvent(Id, createdAt, currency, sections));
     }
 
     #endregion
@@ -107,9 +116,12 @@ public class Menu : AggregateRoot<Guid>
     {
         EnsureIsInactive();
         EnsureUpdatedAtIsValid(updatedAt, nameof(updatedAt));
+        EnsureCorrectCurrency(Currency, sections);
 
         Sections = sections;
         LastChangedAt = updatedAt;
+
+        Apply(new MenuSectionsUpdatedEvent(Id, updatedAt, sections));
     }
 
     #endregion
@@ -129,6 +141,8 @@ public class Menu : AggregateRoot<Guid>
         IsActive = true;
         ActivatedAt = activateAt;
         LastChangedAt = activateAt;
+
+        Apply(new MenuActivatedEvent(Id, activateAt));
     }
 
     /// <summary>
@@ -144,6 +158,8 @@ public class Menu : AggregateRoot<Guid>
         IsActive = false;
         ActivatedAt = null;
         LastChangedAt = deactivateAt;
+
+        Apply(new MenuDeactivatedEvent(Id, deactivateAt));
     }
 
     #endregion
@@ -158,6 +174,17 @@ public class Menu : AggregateRoot<Guid>
     private void EnsureIsInactive()
     {
         if (IsActive) throw new InvalidOperationException("Menu is active. Cannot perform action.");
+    }
+
+    private static void EnsureCorrectCurrency(string currency, IEnumerable<MenuSection> sections)
+    {
+        foreach (var section in sections)
+        {
+            foreach (var item in section.Items)
+            {
+                if (item.Price.Currency != currency) throw new ArgumentException($"The item '{item.Name}' (id: {item.Id}) in section '{section.Name}' has a invalid currency. Expected: '{currency}'.");
+            }
+        }
     }
 
     #endregion

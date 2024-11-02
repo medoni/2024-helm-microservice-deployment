@@ -17,7 +17,7 @@ public class PostgreSqlStartupTests
         // arrange
         var services = new ServiceCollection();
         services.AddSingleton<TestDbContext>();
-        services.AddSingleton<IGenericRepository<TestAggregate1, Guid>, TestRepository1>();
+        services.AddSingleton<IGenericRepository<TestAggregate1>, TestRepository1>();
         services.AddSingleton<ITestRepository2, TestRepository2>();
 
         // act
@@ -29,7 +29,7 @@ public class PostgreSqlStartupTests
 
         var aggregate = new TestAggregate1();
         uow.Add(aggregate);
-        var repo = (TestRepository1)svcp.GetRequiredService<IGenericRepository<TestAggregate1, Guid>>();
+        var repo = (TestRepository1)svcp.GetRequiredService<IGenericRepository<TestAggregate1>>();
 
         Assert.That(repo.AddedAggregates, Is.EqualTo(new[] { aggregate }));
     }
@@ -40,7 +40,7 @@ public class PostgreSqlStartupTests
         // arrange
         var services = new ServiceCollection();
         services.AddSingleton<TestDbContext>();
-        services.AddSingleton<IGenericRepository<TestAggregate1, Guid>, TestRepository1>();
+        services.AddSingleton<IGenericRepository<TestAggregate1>, TestRepository1>();
         services.AddSingleton<ITestRepository2, TestRepository2>();
 
         // act
@@ -68,7 +68,7 @@ public class PostgreSqlStartupTests
 
     #region TestRepository1
 
-    private class TestRepository1 : IGenericRepository<TestAggregate1, Guid>
+    private class TestRepository1 : IGenericRepository<TestAggregate1>
     {
         public List<TestAggregate1> AddedAggregates = new();
 
@@ -94,7 +94,7 @@ public class PostgreSqlStartupTests
         }
     }
 
-    private class TestAggregate1 : AggregateRoot<Guid>
+    private class TestAggregate1 : AggregateRoot
     {
         private Guid _id = Guid.NewGuid();
         public override Guid Id => _id;
@@ -109,7 +109,7 @@ public class PostgreSqlStartupTests
 
     #region TestRepository2
 
-    private interface ITestRepository2 : IGenericRepository<TestAggregate2, Guid>
+    private interface ITestRepository2 : IGenericRepository<TestAggregate2>
     {
 
     }
@@ -140,7 +140,7 @@ public class PostgreSqlStartupTests
         }
     }
 
-    private class TestAggregate2 : AggregateRoot<Guid>
+    private class TestAggregate2 : AggregateRoot
     {
         private Guid _id = Guid.NewGuid();
         public override Guid Id => _id;

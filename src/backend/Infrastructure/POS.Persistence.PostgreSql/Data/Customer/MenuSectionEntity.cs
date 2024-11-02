@@ -1,44 +1,27 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using POS.Persistence.PostgreSql.Abstractions;
 
 namespace POS.Persistence.PostgreSql.Data.Customer;
 
 /// <summary>
 /// Entity that represents a Menu section.
 /// </summary>
-public class MenuSectionEntity
+public class MenuSectionEntity : IEntity<Guid>
 {
-    /// <summary>
-    /// Id of the section.
-    /// </summary>
     public Guid Id { get; set; }
 
-    /// <summary>
-    /// Id of the menu where the section belongs to.
-    /// </summary>
     public Guid MenuId { get; set; }
 
-    /// <summary>
-    /// Name of the section.
-    /// </summary>
     public string Name { get; set; } = null!;
 
-    /// <summary>
-    /// Items of the section.
-    /// </summary>
     public ICollection<MenuItemEntity> Items { get; set; } = null!;
 
-    /// <summary>
-    /// Creates a new <see cref="MenuSectionEntity"/>
-    /// </summary>
     [Obsolete("For deserializing only.")]
     public MenuSectionEntity()
     {
     }
 
-    /// <summary>
-    /// Creates a new <see cref="MenuSectionEntity"/>
-    /// </summary>
     public MenuSectionEntity(
         Guid id,
         Guid menuId,

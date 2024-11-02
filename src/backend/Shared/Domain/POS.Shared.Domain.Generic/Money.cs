@@ -32,6 +32,12 @@ public class Money
     }
 
     /// <summary>
+    /// Creates a new <see cref="Money"/> object with given amount and currency.
+    /// </summary>
+    public static Money Create(decimal amount, string currency)
+    => new Money(amount, currency);
+
+    /// <summary>
     /// Creates a new <see cref="Money"/> object with given amount in EUR.
     /// </summary>
     public static Money CreateFromEUR(decimal amount)
