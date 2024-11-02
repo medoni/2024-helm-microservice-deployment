@@ -1,0 +1,15 @@
+{{ if .Values.services.pgweb.enabled }}
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: pizza-db-pgweb
+spec:
+  type: ClusterIP
+  ports:
+    - port: {{ .Values.services.pgweb.container.port }}
+      targetPort: {{ .Values.services.pgweb.container.port }}
+  selector:
+    app: pizza-db-pgweb
+
+{{ end }}

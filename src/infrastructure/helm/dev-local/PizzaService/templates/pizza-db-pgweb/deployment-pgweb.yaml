@@ -1,0 +1,40 @@
+{{ if .Values.services.pgweb.enabled }}
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: pizza-db-pgweb
+  labels:
+    app: pizza-db-pgweb
+  annotations:
+    link.argocd.argoproj.io/external-link: http://pizza-service.{{ .Values.global.domain }}/_pgweb/
+spec:
+  replicas: 1
+  revisionHistoryLimit: 0
+  selector:
+    matchLabels:
+      app: pizza-db-pgweb
+  template:
+    metadata:
+      labels:
+        app: pizza-db-pgweb
+    spec:
+      containers:
+        - name: pgweb
+          image: "{{ .Values.services.pgweb.image }}:{{ .Values.services.pgweb.tag }}"
+          ports:
+            - containerPort: {{ .Values.services.pgweb.container.port }}
+          env:
+            - name: DATABASE_URL
+              value: "postgres://{{ .Values.services.postgres.container.host }}:{{ .Values.services.postgres.port }}/{{ .Values.services.postgres.database }}?sslmode=disable"
+            - name: PGUSER
+              valueFrom:
+                secretKeyRef:
+                  name: postgres-db-secrets
+                  key: username
+            - name: PGPASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: postgres-db-secrets
+                  key: password
+{{ end }}

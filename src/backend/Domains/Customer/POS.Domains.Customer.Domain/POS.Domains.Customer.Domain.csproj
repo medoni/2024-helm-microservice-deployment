@@ -1,0 +1,14 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\Shared\Domain\POS.Shared.Domain.Generic\POS.Shared.Domain.Generic.csproj" />
+    <ProjectReference Include="..\..\..\Shared\Domain\POS.Shared.Domain\POS.Shared.Domain.csproj" />
+  </ItemGroup>
+
+</Project>
