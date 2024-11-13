@@ -10,6 +10,10 @@ on:
   workflow_dispatch:
 
 jobs:
+  backend-tests:
+    name: Backend unit and integration tests
+    uses: ./.github/workflows/_backend-tests.yaml
+
   helm-unit-tests:
     name: Helm unit tests
     uses: ./.github/workflows/_helm-unit-tests.yaml

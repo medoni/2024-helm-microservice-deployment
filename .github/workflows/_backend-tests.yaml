@@ -1,0 +1,30 @@
+name: Backend unit and integration tests
+
+on:
+  workflow_call:
+
+jobs:
+  helm-unit-tests:
+    name: Backend unit and integration tests
+    runs-on: ubuntu-latest
+    steps:
+    - name: "[SETUP] Checkout code"
+      uses: actions/checkout@v4
+
+    - name: "[SETUP] Dotnet"
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: 8.0.x
+
+    - name: "[Test] Run tests"
+      run: |
+        dotnet test ./src/backend/PizzaOrdering.sln \
+          --configuration Release \
+          --logger "trx;LogFileName=TestResults.trx" \
+          --results-directory ./TestResults
+
+    - name: "[Upload] test results"
+      uses: actions/upload-artifact@v4
+      with:
+        name: backend-test-result
+        path: ./TestResults/*.trx
