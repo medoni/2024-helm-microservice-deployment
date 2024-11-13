@@ -1,8 +1,8 @@
 ﻿using POS.Shared.Domain.Generic.Mapper;
 
-namespace POS.Domains.Customer.Domain.Menus.Dtos.Mapper;
+namespace POS.Domains.Customer.Domain.Menus.Entities.Mapper;
 
-public static class MenuItemEntityMapper
+internal static class MenuItemEntityMapper
 {
     public static IReadOnlyList<MenuItem> ToDomain(this IEnumerable<MenuItemEntity> items)
     => items.Select(ToDomain).ToArray();
@@ -18,6 +18,6 @@ public static class MenuItemEntityMapper
         entity.Name,
         entity.Price.ToDto(),
         entity.Description,
-        entity.Incredients
+        entity.Ingredients
     );
 }

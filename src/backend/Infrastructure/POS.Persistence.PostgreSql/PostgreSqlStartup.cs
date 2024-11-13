@@ -8,8 +8,14 @@ using POS.Shared.Persistence.PostgreSql;
 
 namespace POS.Persistence.PostgreSql;
 
+/// <summary>
+/// Extension methods to add PostgreSql support to an application.
+/// </summary>
 public static class PostgreSqlStartup
 {
+    /// <summary>
+    /// Configures the PostgreSql for the given <see cref="IServiceCollection"/>.
+    /// </summary>
     public static IServiceCollection ConfigurePostgreSql(
         this IServiceCollection services,
         string connectionString
@@ -27,6 +33,9 @@ public static class PostgreSqlStartup
         return services;
     }
 
+    /// <summary>
+    /// Adds Health checks for the PostgreSql database.
+    /// </summary>
     public static IHealthChecksBuilder AddPOSDbHealthCheck(
         this IHealthChecksBuilder builder
     )

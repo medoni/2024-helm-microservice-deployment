@@ -1,6 +1,6 @@
-﻿namespace POS.Domains.Customer.Domain.Menus.Dtos.Mapper;
+﻿namespace POS.Domains.Customer.Domain.Menus.Entities.Mapper;
 
-public static class MenuSectionEntityMapper
+internal static class MenuSectionEntityMapper
 {
     public static IReadOnlyList<MenuSection> ToDomain(this IEnumerable<MenuSectionEntity> items)
     => items.Select(ToDomain).ToArray();

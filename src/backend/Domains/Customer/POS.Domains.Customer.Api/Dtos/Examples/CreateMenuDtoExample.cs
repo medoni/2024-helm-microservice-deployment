@@ -4,8 +4,14 @@ using Swashbuckle.AspNetCore.Filters;
 
 namespace POS.Domains.Customer.Api.Dtos.Examples;
 
+/// <summary>
+/// Responsible for creating example data for <see cref="CreateMenuDto"/>
+/// </summary>
 public class CreateMenuDtoExample : IExamplesProvider<CreateMenuDto>
 {
+    /// <summary>
+    /// Returns example data for <see cref="CreateMenuDto"/>
+    /// </summary>
     public CreateMenuDto GetExamples()
     => new CreateMenuDto(
         Guid.Parse("51e85e5a-bb24-454c-8797-188710b5ed84"),

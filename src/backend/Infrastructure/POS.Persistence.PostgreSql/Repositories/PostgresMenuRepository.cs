@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using POS.Domains.Customer.Domain.Menus;
-using POS.Domains.Customer.Domain.Menus.Dtos;
+using POS.Domains.Customer.Domain.Menus.Entities;
 using POS.Domains.Customer.Persistence.Menus;
 using POS.Persistence.PostgreSql.Data;
 using POS.Shared.Domain.Exceptions;

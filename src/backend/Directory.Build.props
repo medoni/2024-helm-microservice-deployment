@@ -4,4 +4,8 @@
     <Nullable>enable</Nullable>
     <TreatWarningsAsErrors>True</TreatWarningsAsErrors>
   </PropertyGroup>
+
+  <PropertyGroup Condition="!$( MSBuildProjectName.EndsWith('.Tests')) And !$(MSBuildProjectName.EndsWith('.UnitTests'))">
+    <GenerateDocumentationFile>True</GenerateDocumentationFile>
+  </PropertyGroup>
 </Project>

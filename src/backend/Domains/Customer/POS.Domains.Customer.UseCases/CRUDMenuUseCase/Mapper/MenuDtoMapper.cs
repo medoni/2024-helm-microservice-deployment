@@ -2,7 +2,7 @@
 using POS.Domains.Customer.UseCases.CRUDMenuUseCase.Dtos;
 
 namespace POS.Domains.Customer.UseCases.CRUDMenuUseCase.Mapper;
-public static class MenuDtoMapper
+internal static class MenuDtoMapper
 {
     public static MenuDto ToDto(this Menu menu)
     => new MenuDto(

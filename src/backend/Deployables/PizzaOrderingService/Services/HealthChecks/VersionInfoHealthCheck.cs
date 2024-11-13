@@ -3,8 +3,14 @@ using System.Reflection;
 
 namespace PizzaOrderingService.Services.HealthChecks;
 
+/// <summary>
+/// Responsible for returning Health check and the compiled version for ASP.NET
+/// </summary>
 public class VersionInfoHealthCheck : IHealthCheck
 {
+    /// <summary>
+    /// Returns the health check result and additional data
+    /// </summary>
     public Task<HealthCheckResult> CheckHealthAsync(
         HealthCheckContext context,
         CancellationToken cancellationToken = default

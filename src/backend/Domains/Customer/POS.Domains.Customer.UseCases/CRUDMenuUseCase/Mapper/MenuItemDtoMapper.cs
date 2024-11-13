@@ -3,7 +3,7 @@ using POS.Domains.Customer.UseCases.CRUDMenuUseCase.Dtos;
 using POS.Shared.Domain.Generic.Mapper;
 
 namespace POS.Domains.Customer.UseCases.CRUDMenuUseCase.Mapper;
-public static class MenuItemDtoMapper
+internal static class MenuItemDtoMapper
 {
     public static IReadOnlyList<MenuItem> ToEntities(this IEnumerable<MenuItemDto> dtos)
     => dtos.Select(ToEntity).ToArray();
@@ -13,7 +13,7 @@ public static class MenuItemDtoMapper
         dto.Name,
         dto.Price.ToEntity(),
         dto.Description,
-        dto.Incredients
+        dto.Ingredients
     );
 
     public static IReadOnlyList<MenuItemDto> ToDto(this IEnumerable<MenuItem> dtos)
@@ -24,6 +24,6 @@ public static class MenuItemDtoMapper
         menuItem.Name,
         menuItem.Price.ToDto(),
         menuItem.Description,
-        menuItem.Incredients
+        menuItem.Ingredients
     );
 }

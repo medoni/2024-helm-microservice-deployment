@@ -19,6 +19,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\Testing\POS.Shared.Testing\POS.Shared.Testing.csproj" />
     <ProjectReference Include="..\POS.Shared.Persistence.PostgreSql.DbSeeds\POS.Shared.Persistence.PostgreSql.DbSeeds.csproj" />
   </ItemGroup>
 

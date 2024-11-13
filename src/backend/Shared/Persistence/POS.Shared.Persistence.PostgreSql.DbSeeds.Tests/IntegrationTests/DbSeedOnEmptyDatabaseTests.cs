@@ -1,10 +1,12 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using POS.Shared.Testing;
 using Testcontainers.PostgreSql;
 
 namespace POS.Shared.Persistence.PostgreSql.DbSeeds.Tests.IntegrationTests;
 
 [TestFixture]
+[Category(TestCategories.LongRunningIntegration)]
 public class DbSeedOnEmptyDatabaseTests : BaseDatabaseTests<ExampleDbContext>
 {
     private PostgreSqlContainer Container { get; set; }

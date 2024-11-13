@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using POS.Domains.Customer.Domain.Menus.Dtos;
+using POS.Domains.Customer.Domain.Menus.Entities;
 
 namespace POS.Persistence.PostgreSql.Data.Customer;
 internal class MenuEntityConfiguration : IEntityTypeConfiguration<MenuEntity>

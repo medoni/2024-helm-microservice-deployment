@@ -8,8 +8,14 @@ using POS.Shared.Persistence.PostgreSql.DbSeeds;
 
 namespace POS.Persistence.DbSeed;
 
+/// <summary>
+/// Entry point for DbSeed application.
+/// </summary>
 public static class Program
 {
+    /// <summary>
+    /// Starts the DbSeed application.
+    /// </summary>
     public static async Task Main(string[] args)
     {
         var configRoot = new ConfigurationBuilder()

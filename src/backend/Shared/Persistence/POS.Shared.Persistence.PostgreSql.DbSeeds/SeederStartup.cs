@@ -4,8 +4,15 @@ using Microsoft.Extensions.Logging;
 using System.Reflection;
 
 namespace POS.Shared.Persistence.PostgreSql.DbSeeds;
+
+/// <summary>
+/// Extension methods to add <see cref="ISeeder"/> support.
+/// </summary>
 public static class SeederStartup
 {
+    /// <summary>
+    /// Adds all defined <see cref="ISeeder"/> from a given Assembly.
+    /// </summary>
     public static IServiceCollection AddSeederFromAssembly(
         this IServiceCollection services,
         Assembly assembly
@@ -23,6 +30,9 @@ public static class SeederStartup
         return services;
     }
 
+    /// <summary>
+    /// Adds <see cref="ISeeder"/> support to the given <see cref="IServiceCollection"/>.
+    /// </summary>
     public static IServiceCollection AddSeederSupport<TDbContext>(this IServiceCollection services)
     where TDbContext : DbContext
     {

@@ -2,7 +2,7 @@
 using POS.Domains.Customer.UseCases.CRUDMenuUseCase.Dtos;
 
 namespace POS.Domains.Customer.UseCases.CRUDMenuUseCase.Mapper;
-public static class MenuSectionDtoMapper
+internal static class MenuSectionDtoMapper
 {
     public static IReadOnlyList<MenuSection> ToEntities(this IEnumerable<MenuSectionDto> dtos)
     => dtos.Select(ToEntity).ToArray();

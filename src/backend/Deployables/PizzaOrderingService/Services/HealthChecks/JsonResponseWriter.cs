@@ -4,7 +4,7 @@ using System.Text.Json;
 
 namespace PizzaOrderingService.Services.HealthChecks;
 
-public static class JsonResponseWriter
+internal static class JsonResponseWriter
 {
     internal static Task WriteResponse(HttpContext context, HealthReport healthReport)
     {

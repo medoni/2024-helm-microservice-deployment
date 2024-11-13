@@ -3,13 +3,14 @@ using Microsoft.Extensions.DependencyInjection;
 using POS.Shared.Domain;
 using POS.Shared.Persistence.Repositories;
 using POS.Shared.Persistence.UOW;
+using POS.Shared.Testing;
 
 namespace POS.Shared.Persistence.PostgreSql.UnitTests;
 
 [TestFixture]
+[Category(TestCategories.Integration)]
 public class PostgreSqlStartupTests
 {
-
     [Test]
     public void AddUnitOfWorkSupport_Should_Work_With_Registered_Generic_Repo()
     {
