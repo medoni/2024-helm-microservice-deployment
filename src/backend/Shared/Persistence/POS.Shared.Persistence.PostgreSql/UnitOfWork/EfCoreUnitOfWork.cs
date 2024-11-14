@@ -53,7 +53,20 @@ internal class EfCoreUnitOfWork : IUnitOfWork
 
     public async Task CommitAsync()
     {
+        foreach (var trackedItems in _trackedInstances)
+        {
+            var aggregate = (dynamic)trackedItems.Value;
+            await CommitItemAsync(aggregate);
+        }
         await _dbContext.SaveChangesAsync();
+        _trackedInstances.Clear();
+    }
+
+    private async Task CommitItemAsync<TAggregate>(TAggregate item)
+    where TAggregate : AggregateRoot<Guid>
+    {
+        var repo = GetRepository<TAggregate>();
+        await repo.UpdateAsync(item);
     }
 
     private IGenericRepository<TAggregate, Guid> GetRepository<TAggregate>()

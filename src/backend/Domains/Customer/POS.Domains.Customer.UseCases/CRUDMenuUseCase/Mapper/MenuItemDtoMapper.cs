@@ -10,6 +10,7 @@ internal static class MenuItemDtoMapper
 
     public static MenuItem ToEntity(this MenuItemDto dto)
     => new MenuItem(
+        dto.Id,
         dto.Name,
         dto.Price.ToEntity(),
         dto.Description,
@@ -21,6 +22,7 @@ internal static class MenuItemDtoMapper
 
     public static MenuItemDto ToDto(this MenuItem menuItem)
     => new MenuItemDto(
+        menuItem.Id,
         menuItem.Name,
         menuItem.Price.ToDto(),
         menuItem.Description,

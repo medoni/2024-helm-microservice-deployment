@@ -1,5 +1,4 @@
-﻿using POS.Domains.Customer.Domain.Menus.Entities;
-using POS.Domains.Customer.Domain.Menus.Entities.Mapper;
+﻿using POS.Domains.Customer.Domain.Menus.States;
 using POS.Shared.Domain;
 
 namespace POS.Domains.Customer.Domain.Menus;
@@ -9,7 +8,7 @@ namespace POS.Domains.Customer.Domain.Menus;
 /// </summary>
 public class Menu : AggregateRoot<Guid>
 {
-    private readonly MenuEntity _state;
+    private readonly MenuState _state;
 
     /// <inheritdoc/>
     public override TState GetCurrentState<TState>() => (dynamic)_state;
@@ -41,8 +40,8 @@ public class Menu : AggregateRoot<Guid>
     /// </summary>
     public bool IsActive
     {
-        get => _state.IsActive ?? false;
-        private set => _state.IsActive = value ? true : null;
+        get => _state.IsActive;
+        private set => _state.IsActive = value;
     }
 
     /// <summary>
@@ -59,15 +58,8 @@ public class Menu : AggregateRoot<Guid>
     /// </summary>
     public IReadOnlyList<MenuSection> Sections
     {
-        get => _state.Sections.ToDomain();
-        private set
-        {
-            _state.Sections.Clear();
-            foreach (var item in value)
-            {
-                _state.Sections.Add(item.ToEntity());
-            }
-        }
+        get => _state.Sections;
+        private set => _state.Sections = value;
     }
 
     #region ctor
@@ -75,7 +67,7 @@ public class Menu : AggregateRoot<Guid>
     /// <summary>
     /// Creates a new Menu.
     /// </summary>
-    public Menu(MenuEntity state)
+    public Menu(MenuState state)
     {
         _state = state;
     }
@@ -89,11 +81,14 @@ public class Menu : AggregateRoot<Guid>
         IReadOnlyList<MenuSection> sections
     )
     : this(
-        new MenuEntity(
+        new MenuState(
             id,
-            createdAt,
-            sections.ToEntity()
+            createdAt
         )
+        {
+            LastChangedAt = createdAt,
+            Sections = sections
+        }
     )
     {
     }

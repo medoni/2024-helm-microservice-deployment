@@ -9,6 +9,7 @@ internal static class MenuSectionDtoMapper
 
     public static MenuSection ToEntity(this MenuSectionDto dto)
     => new MenuSection(
+        dto.Id,
         dto.Name,
         dto.Items.ToEntities()
     );
@@ -18,6 +19,7 @@ internal static class MenuSectionDtoMapper
 
     public static MenuSectionDto ToDto(this MenuSection menuSection)
     => new MenuSectionDto(
+        menuSection.Id,
         menuSection.Name,
         menuSection.Items.ToDto()
     );

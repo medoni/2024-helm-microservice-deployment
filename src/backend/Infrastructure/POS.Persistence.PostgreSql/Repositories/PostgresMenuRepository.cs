@@ -1,8 +1,10 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using POS.Domains.Customer.Domain.Menus;
-using POS.Domains.Customer.Domain.Menus.Entities;
+using POS.Domains.Customer.Domain.Menus.States;
 using POS.Domains.Customer.Persistence.Menus;
 using POS.Persistence.PostgreSql.Data;
+using POS.Persistence.PostgreSql.Data.Customer;
+using POS.Persistence.PostgreSql.Mapper.Customer;
 using POS.Shared.Domain.Exceptions;
 
 namespace POS.Persistence.PostgreSql.Repositories;
@@ -15,15 +17,22 @@ internal class PostgresMenuRepository : IMenuRespository
         _dbContext = dbContext ?? throw new ArgumentNullException(nameof(dbContext));
     }
 
+    private IQueryable<MenuEntity> CreateQuery()
+    {
+        return _dbContext.Menus
+            .TagWithCallSite()
+            .Include(x => x.Sections).ThenInclude(x => x.Items);
+    }
+
     public async Task AddAsync(Menu aggregate)
     {
-        var entity = aggregate.GetCurrentState<MenuEntity>();
-        await _dbContext.AddAsync(entity);
+        var state = aggregate.GetCurrentState<MenuState>();
+        await _dbContext.Menus.AddAsync(state.ToEntity());
     }
 
     public async Task<Menu?> GetActiveAsync()
     {
-        var result = await _dbContext.Menus
+        var result = await CreateQuery()
             .Where(x => x.IsActive == true)
             .FirstOrDefaultAsync();
 
@@ -35,7 +44,10 @@ internal class PostgresMenuRepository : IMenuRespository
 
     public async Task<Menu> GetByIdAsync(Guid id)
     {
-        var result = await _dbContext.Menus.FindAsync(id);
+        var result = await CreateQuery()
+            .Where(x => x.Id == id)
+            .FirstOrDefaultAsync();
+
         if (result is null) throw new AggregateNotFoundException(typeof(Menu), id);
 
         var aggregate = CreateAggregate(result);
@@ -44,7 +56,7 @@ internal class PostgresMenuRepository : IMenuRespository
 
     public async IAsyncEnumerable<Menu> IterateAsync()
     {
-        var query = _dbContext.Menus
+        var query = CreateQuery()
             .OrderByDescending(x => x.ActivatedAt)
             .ThenByDescending(x => x.CreatedAt)
             .AsAsyncEnumerable();
@@ -58,15 +70,30 @@ internal class PostgresMenuRepository : IMenuRespository
 
     public Task UpdateAsync(Menu aggregate)
     {
-        var entity = aggregate.GetCurrentState<MenuEntity>();
-        _dbContext.Update(entity);
+        var state = aggregate.GetCurrentState<MenuState>();
+        var entity = state.ToEntity();
+
+        var trackedEntry = _dbContext.ChangeTracker.Entries<MenuEntity>()
+            .Where(x => x.Property(y => y.Id).CurrentValue == aggregate.Id)
+            .FirstOrDefault();
+
+        if (trackedEntry == null)
+        {
+            _dbContext.Update(entity);
+        }
+        else
+        {
+            trackedEntry.CurrentValues.SetValues(entity);
+        }
 
         return Task.CompletedTask;
     }
 
     private static Menu CreateAggregate(MenuEntity entity)
     {
-        var aggregate = new Menu(entity);
+        var state = entity.ToState();
+
+        var aggregate = new Menu(state);
         return aggregate;
     }
 }

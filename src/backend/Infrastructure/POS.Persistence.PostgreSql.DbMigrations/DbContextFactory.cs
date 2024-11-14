@@ -2,7 +2,7 @@
 using Microsoft.EntityFrameworkCore.Design;
 using POS.Persistence.PostgreSql.Data;
 
-namespace POS.Persistence.PostgreSql.DbInitialization;
+namespace POS.Persistence.PostgreSql.DbMigrations;
 
 internal class DbContextFactory : IDesignTimeDbContextFactory<POSDbContext>
 {

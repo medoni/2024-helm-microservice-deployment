@@ -1,5 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using POS.Domains.Customer.Domain.Menus.Entities;
+using POS.Persistence.PostgreSql.Data.Customer;
 
 #nullable disable
 
@@ -26,10 +26,6 @@ public class POSDbContext : DbContext
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
-
-        // the following entities are used as Owns... relations.
-        modelBuilder.Ignore<MenuSectionEntity>();
-        modelBuilder.Ignore<MenuItemEntity>();
 
         // configure others entities
         modelBuilder.ApplyConfigurationsFromAssembly(this.GetType().Assembly);
