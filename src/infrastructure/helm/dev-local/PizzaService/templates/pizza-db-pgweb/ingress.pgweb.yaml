@@ -1,0 +1,28 @@
+{{ if .Values.services.pgweb.enabled }}
+
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+metadata:
+  name: ir-pizza-db-pgweb
+spec:
+  entryPoints:
+    - web
+  routes:
+    - match: Host(`pizza-service.{{ .Values.global.domain }}`) && PathPrefix(`/_pgweb/`)
+      kind: Rule
+      services:
+        - name: pizza-db-pgweb
+          port: {{ .Values.services.pgweb.container.port }}
+      middlewares:
+        - name: irm-pizza-db-pgweb
+---
+apiVersion: traefik.io/v1alpha1
+kind: Middleware
+metadata:
+  name: irm-pizza-db-pgweb
+spec:
+  stripPrefix:
+    prefixes:
+      - /_pgweb
+
+{{ end }}

@@ -1,0 +1,65 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/helm-unittest/helm-unittest/main/schema/helm-testsuite.json
+suite: test deployment
+templates:
+  - pizza-service/deployment-pizza-service.yaml
+tests:
+  - it: image tag name should be correct
+    set:
+      image.repository: registry.example.com/
+      image.tag: latest
+    template: pizza-service/deployment-pizza-service.yaml
+    asserts:
+      - equal:
+          path: spec.template.spec.containers[0].image
+          value: registry.example.com/pizza-service:latest
+
+  - it: Port should be correct
+    template: pizza-service/deployment-pizza-service.yaml
+    asserts:
+      - equal:
+          path: spec.template.spec.containers[0].ports[0].containerPort
+          value: 8080
+
+  - it: Environment variables should be correct
+    template: pizza-service/deployment-pizza-service.yaml
+    asserts:
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: ASPNETCORE_ENVIRONMENT
+            value: "Development"
+          any: true
+  
+  - it: Environment variables for PostgreSQL should be correct
+    set:
+      services:
+        postgres:
+          container:
+            host: postgres.example.com
+          database: mypostgresdb
+    template: pizza-service/deployment-pizza-service.yaml
+    asserts:
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: PizzaDbContext__Connection
+            value: "Host=postgres.example.com;Database=mypostgresdb;"
+          any: true
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: PGUSER
+            valueFrom:
+              secretKeyRef:
+                key: username
+                name: postgres-db-secrets
+          any: true
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: PGPASSWORD
+            valueFrom:
+              secretKeyRef:
+                key: password
+                name: postgres-db-secrets
+          any: true

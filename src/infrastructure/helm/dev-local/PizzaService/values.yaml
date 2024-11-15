@@ -7,8 +7,8 @@ image:
   tag: latest
 
 services:
-  pizza_ordering_service:
-    image: pizza-ordering-service # default
+  pizza_service:
+    image: pizza-service # default
     container:
       port: 8080 # default
 
@@ -23,6 +23,13 @@ services:
     image: postgres # default
     tag: 16.4 # default
     container:
-      host: postgres
+      host: pizza-db-postgres
       port: 5432 # default, /postres.port
-    database: pizza_ordering
+    database: pizza_service # default
+
+jobs:
+  pizza_db_migrations:
+    image: pizza-db-migrations # default
+  pizza_db_seed:
+    enabled: true
+    image: pizza-db-seed # default

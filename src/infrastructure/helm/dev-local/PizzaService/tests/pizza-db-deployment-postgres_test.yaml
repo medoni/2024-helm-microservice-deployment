@@ -1,0 +1,50 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/helm-unittest/helm-unittest/main/schema/helm-testsuite.json
+suite: test deployment
+templates:
+  - pizza-db/deployment-postgres.yaml
+tests:
+  - it: Default image name should be correct
+    template: pizza-db/deployment-postgres.yaml
+    asserts:
+      - equal:
+          path: spec.template.spec.containers[0].image
+          value: postgres:16.4
+
+  - it: Environment variables for PostgreSQL should be correct
+    template: pizza-db/deployment-postgres.yaml
+    asserts:
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: POSTGRES_USER
+            valueFrom:
+              secretKeyRef:
+                name: postgres-db-secrets
+                key: username
+          any: true
+      
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: POSTGRES_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: postgres-db-secrets
+                key: password
+          any: true
+      
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: POSTGRES_DB
+            value: pizza_service
+          any: true
+
+  - it: Volume mounts should be correct
+    template: pizza-db/deployment-postgres.yaml
+    asserts:
+      - equal:
+          path: spec.template.spec.containers[0].volumeMounts
+          value:
+            - mountPath: /var/lib/postgresql/data
+              name: postgres-storage

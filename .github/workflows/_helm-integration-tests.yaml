@@ -26,7 +26,7 @@ on:
         default: true
 
 env:
-  POS_NAMESPACE: pizza-ordering-service-dev-local   # Kubernetes namespace of the Pizza-ordering-service application
+  POS_NAMESPACE: pizza-service-dev-local   # Kubernetes namespace of the pizza-service application
 
 jobs:
   helm-integration-tests:
@@ -52,7 +52,7 @@ jobs:
           --from-literal=password="secret-1234" \
           -n $POS_NAMESPACE
     
-    - name: "[SETUP] Helm install `pizza-ordering-service`"
+    - name: "[SETUP] Helm install `pizza-service`"
       run: |
         helm install $POS_NAMESPACE ./src/infrastructure/helm/dev-local/PizzaService \
           --set image.repository=ghcr.io/${{ github.repository }}/ \
@@ -61,22 +61,22 @@ jobs:
           -n $POS_NAMESPACE \
           --debug
 
-    - name: "[TEST] Check ingress /health of `pizza-ordering-service`"
+    - name: "[TEST] Check ingress /health of `pizza-service`"
       run: |
-        curl --fail -v pizza-ordering-service.pos.mycluster.localhost/api/health \
+        curl --fail -v pizza-service.pos.mycluster.localhost/api/health \
           --retry-all-errors \
           --max-time 10 \
           --retry 10 \
           --retry-delay 0 \
           --retry-max-time 60
     
-    - name: "[TEST] Check ingress /swagger/index.html of `pizza-ordering-service`"
+    - name: "[TEST] Check ingress /swagger/index.html of `pizza-service`"
       run: |
-        curl --fail -v pizza-ordering-service.pos.mycluster.localhost/api/swagger/index.html
+        curl --fail -v pizza-service.pos.mycluster.localhost/api/swagger/index.html
 
-    - name: "[TEST] Check ingress /_pgweb of `pizza-ordering-service`"
+    - name: "[TEST] Check ingress /_pgweb of `pizza-service`"
       run: |
-        curl --fail -v pizza-ordering-service.pos.mycluster.localhost/_pgweb/ \
+        curl --fail -v pizza-service.pos.mycluster.localhost/_pgweb/ \
           --retry-all-errors \
           --max-time 10 \
           --retry 10 \
@@ -85,8 +85,13 @@ jobs:
 
     - name: "[TEST] Check example data"
       run: |
-        API_URL="pizza-ordering-service.pos.mycluster.localhost/api/pizza"
+        API_URL="pizza-service.pos.mycluster.localhost/api/v1/Menu"
         RESPONSE=$(curl -s $API_URL)
+        if [ -z "$RESPONSE" ]; then
+          echo "No response from API. Please check the API URL or network."
+          exit 1
+        fi
+
         if [ "$(echo $RESPONSE | jq 'length')" -eq 0 ]; then
           echo "Expected at least one pizza. Got zero."
           exit 1
@@ -102,17 +107,22 @@ jobs:
       run: |
         kubectl describe deployment -n $POS_NAMESPACE
     
+    - name: "[CLEANUP] Kubernetes - Job description"
+      if: always()
+      run: |
+        kubectl describe job -n $POS_NAMESPACE
+    
     - name: "[CLEANUP] Kubernetes - POD description"
       if: always()
       run: |
         kubectl describe pod -n $POS_NAMESPACE
 
-    - name: "[CLEANUP] Kubernetes - Logs pizza-ordering-service"
+    - name: "[CLEANUP] Kubernetes - Logs pizza-service"
       if: always()
       run: |
-        kubectl logs -n $POS_NAMESPACE deployment/pizza-ordering-service --all-containers=true
+        kubectl logs -n $POS_NAMESPACE deployment/pizza-service --all-containers=true
     
     - name: "[CLEANUP] Kubernetes - Logs postgres"
       if: always()
       run: |
-        kubectl logs -n $POS_NAMESPACE deployment/postgres --all-containers=true
+        kubectl logs -n $POS_NAMESPACE deployment/pizza-db-postgres --all-containers=true

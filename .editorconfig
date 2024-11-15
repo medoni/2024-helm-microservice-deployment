@@ -1,0 +1,48 @@
+root = true
+
+[*]
+end_of_line = lf
+indent_style = space
+
+[*.yaml]
+indent_size = 2
+
+[*.{cs}]
+indent_size = 4
+insert_final_newline = true
+charset = utf-8-bom
+
+# VS Solution files
+[*.{sln}]
+indent_size = 2
+
+# XML project files
+[*.{csproj}]
+indent_size = 2
+
+# XML config files
+[*.{props,targets,ruleset,config,nuspec,resx}]
+indent_size = 2
+
+# JSON files
+[*.json]
+indent_size = 2
+
+# Powershell files
+[*.ps1]
+indent_size = 2
+
+# Shell script files
+[*.sh]
+end_of_line = lf
+indent_size = 2
+
+# Dotnet code style settings:
+[*.cs]
+csharp_style_namespace_declarations = file_scoped
+
+dotnet_diagnostic.cs0108.severity = error
+dotnet_diagnostic.IDE0130.severity = error
+
+[*Tests.cs]
+dotnet_diagnostic.CS8618.severity = none

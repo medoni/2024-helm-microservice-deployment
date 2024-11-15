@@ -1,0 +1,18 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Asp.Versioning.Http" Version="8.1.0" />
+    <PackageReference Include="Swashbuckle.AspNetCore.Filters" Version="8.0.2" />
+    <PackageReference Include="System.Linq.Async" Version="6.0.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\Shared\Infrastructure\POS.Shared.Infrastructure.Api\POS.Shared.Infrastructure.Api.csproj" />
+    <ProjectReference Include="..\POS.Domains.Customer.Domain\POS.Domains.Customer.Domain.csproj" />
+    <ProjectReference Include="..\POS.Domains.Customer.UseCases\POS.Domains.Customer.UseCases.csproj" />
+  </ItemGroup>
+
+</Project>

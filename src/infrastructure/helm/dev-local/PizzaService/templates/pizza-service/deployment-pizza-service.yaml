@@ -1,0 +1,67 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: pizza-service
+  labels:
+    app: pizza-service
+  annotations:
+    link.argocd.argoproj.io/external-link: http://pizza-service.{{ .Values.global.domain }}/api/swagger
+spec:
+  replicas: 1
+  revisionHistoryLimit: 0
+  selector:
+    matchLabels:
+      app: pizza-service
+  template:
+    metadata:
+      labels:
+        app: pizza-service
+    spec:
+      containers:
+        - name: pizza-service
+          image: "{{ .Values.image.repository }}{{ .Values.services.pizza_service.image }}:{{ .Values.image.tag }}"
+          ports:
+            - containerPort: {{ .Values.services.pizza_service.container.port }}
+
+          env:
+            - name: ASPNETCORE_ENVIRONMENT
+              value: "Development"
+            - name: ConnectionStrings__PizzaDb
+            - name: PizzaDbContext__Connection
+              value: "Host={{ .Values.services.postgres.container.host }};Database={{ .Values.services.postgres.database }};"
+            - name: Logging__LogLevel__Default
+              value: Information
+            - name: Swagger__Enabled
+              value: "true"
+            
+            - name: PGUSER
+              valueFrom:
+                secretKeyRef:
+                  name: postgres-db-secrets
+                  key: username
+            - name: PGPASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: postgres-db-secrets
+                  key: password
+
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: {{ .Values.services.pizza_service.container.port }}
+            initialDelaySeconds: 5
+            periodSeconds: 5
+
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: {{ .Values.services.pizza_service.container.port }}
+            initialDelaySeconds: 5
+            periodSeconds: 5
+  
+          startupProbe:
+            httpGet:
+              path: /health
+              port: {{ .Values.services.pizza_service.container.port }}
+            failureThreshold: 10
+            periodSeconds: 10

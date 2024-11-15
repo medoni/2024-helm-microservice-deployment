@@ -14,9 +14,11 @@ $scriptDirectory = $PSScriptRoot
 
 
 function Invoke-Main() {
-    BuildAndPush-DockerImage "$scriptDirectory/backend/PizzaOrderingService" pizza-ordering-service
+    BuildAndPush-DockerImage "$scriptDirectory" "$scriptDirectory/backend/Deployables/PizzaOrderingService/Dockerfile" pizza-service
+    BuildAndPush-DockerImage "$scriptDirectory" "$scriptDirectory/backend/Infrastructure/POS.Persistence.PostgreSql.DbMigrations/Dockerfile" pizza-db-migrations
+    BuildAndPush-DockerImage "$scriptDirectory" "$scriptDirectory/backend/Infrastructure/POS.Persistence.DbSeed/Dockerfile" pizza-db-seed
     
-    Apply-Helm-Chart ./src/infrastructure/helm/dev-local/PizzaService/
+    Apply-Helm-Chart ./infrastructure/helm/dev-local/PizzaService/
 
     Force-Redeployment
 }
@@ -24,12 +26,13 @@ function Invoke-Main() {
 function BuildAndPush-DockerImage {
     param (
         [string]$buildContext,
+        [string]$dockerfile,
         [string]$imageName
     )
 
     $fullImageName = "$containerRegistry/$($imageName):$imageTagName"
 
-    docker build -t $fullImageName $buildContext
+    docker build -t $fullImageName -f $dockerfile $buildContext
     if ($LASTEXITCODE -ne 0) { Handle-Error "Failed to build docker image '$fullImageName'" }
 
     docker push $fullImageName
