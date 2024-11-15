@@ -19,21 +19,18 @@ public record MenuItemDto(
 )
 {
     /// <summary>
-    /// Creates a new <see cref="MenuItemDto"/>.
+    /// Creates a new menu item.
     /// </summary>
-    public MenuItemDto(
+    public static MenuItemDto Create(
         string name,
         MoneyDto price,
         string description,
         IReadOnlyList<string> ingredients
     )
-    : this(
-        Guid.NewGuid(),
+    => new MenuItemDto(Guid.NewGuid(),
         name,
         price,
         description,
         ingredients
-    )
-    {
-    }
+    );
 }

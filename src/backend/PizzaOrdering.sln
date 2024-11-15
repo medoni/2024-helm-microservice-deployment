@@ -61,6 +61,10 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Testing", "Testing", "{80A1
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "POS.Shared.Testing", "Shared\Testing\POS.Shared.Testing\POS.Shared.Testing.csproj", "{1ECA6DF7-898C-426C-B8B4-F779CE94EB77}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Infrastructure", "Infrastructure", "{7BA5BE10-C931-4E06-887E-8CB57181EB4F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "POS.Shared.Infrastructure.Api", "Shared\Infrastructure\POS.Shared.Infrastructure.Api\POS.Shared.Infrastructure.Api.csproj", "{2C4221F9-EE78-4F2A-8769-A340959E18CC}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -131,6 +135,10 @@ Global
 		{1ECA6DF7-898C-426C-B8B4-F779CE94EB77}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1ECA6DF7-898C-426C-B8B4-F779CE94EB77}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1ECA6DF7-898C-426C-B8B4-F779CE94EB77}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2C4221F9-EE78-4F2A-8769-A340959E18CC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2C4221F9-EE78-4F2A-8769-A340959E18CC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2C4221F9-EE78-4F2A-8769-A340959E18CC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2C4221F9-EE78-4F2A-8769-A340959E18CC}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -159,6 +167,8 @@ Global
 		{DB2365CB-3836-4462-8D4A-1279A024F800} = {29995282-2F1E-4A4C-890E-69EC86803F3C}
 		{80A141AC-F0C3-4DF1-A696-F419BBD0C7C2} = {93BE109E-F614-458D-B1DD-5C01A4C2DFFF}
 		{1ECA6DF7-898C-426C-B8B4-F779CE94EB77} = {80A141AC-F0C3-4DF1-A696-F419BBD0C7C2}
+		{7BA5BE10-C931-4E06-887E-8CB57181EB4F} = {93BE109E-F614-458D-B1DD-5C01A4C2DFFF}
+		{2C4221F9-EE78-4F2A-8769-A340959E18CC} = {7BA5BE10-C931-4E06-887E-8CB57181EB4F}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {3EE9B52E-1327-4A63-86E1-BB354A241BA7}

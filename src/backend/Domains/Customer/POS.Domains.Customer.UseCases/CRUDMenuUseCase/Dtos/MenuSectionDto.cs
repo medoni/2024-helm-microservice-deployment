@@ -13,17 +13,11 @@ public record MenuSectionDto(
 )
 {
     /// <summary>
-    /// Creates a new <see cref="MenuSectionDto"/>.
+    /// Creates a new menu section.
     /// </summary>
-    public MenuSectionDto(
+    public static MenuSectionDto Create(
         string name,
         IReadOnlyList<MenuItemDto> items
     )
-    : this(
-        Guid.NewGuid(),
-        name,
-        items
-    )
-    {
-    }
+    => new MenuSectionDto(Guid.NewGuid(), name, items);
 }

@@ -1,15 +1,19 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Asp.Versioning;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using POS.Domains.Customer.UseCases.CRUDMenuUseCase;
 using POS.Domains.Customer.UseCases.CRUDMenuUseCase.Dtos;
 using POS.Domains.Customer.UseCases.PublishMenuUseCase;
+using POS.Shared.Infrastructure.Api.Dtos;
 
 namespace POS.Domains.Customer.Api.Controller;
 
 /// <summary>
 /// Responsible for handling REST-Apis regarding Menus for Customer
 /// </summary>
+[ApiVersion(1)]
 [ApiController]
-[Route("[controller]")]
+[Route("v1/[controller]")]
 public class MenuController : ControllerBase
 {
     private readonly ICRUDMenuUseCase _crudMenuUseCase;
@@ -25,11 +29,13 @@ public class MenuController : ControllerBase
     }
 
     /// <summary>
-    /// Returns a MenuDto by a given Menu-Id
+    /// Retrieve a specific menu by its unique identifier.
     /// </summary>
-    /// <param name="id">The id of the menu</param>
+    /// <param name="id">The unique identifier (UUID) of the menu.</param>
+    /// <response code="404">The menu was not found.</response>
     [HttpGet("{id}")]
-    [ProducesResponseType<MenuDto>(200)]
+    [ProducesResponseType<MenuDto>(StatusCodes.Status200OK, "application/json")]
+    [ProducesResponseType<ProblemDetails>(StatusCodes.Status404NotFound, "application/json")]
     public async Task<IActionResult> GetMenuByIdAsync(Guid id)
     {
         var menu = await _crudMenuUseCase.GetByIdAsync(id);
@@ -38,35 +44,27 @@ public class MenuController : ControllerBase
     }
 
     /// <summary>
-    /// Creates a new Menu
+    /// Create a new menu with sections and items.
     /// </summary>
-    /// <param name="dto">The menu to create</param>
+    /// <response code="201">The menu was successfully created.</response>
+    /// <response code="400">The menu or it's content was incorrect.</response>
     [HttpPost]
-    [ProducesResponseType(200)]
+    [ProducesResponseType(StatusCodes.Status201Created)]
+    [ProducesResponseType<ProblemDetails>(StatusCodes.Status400BadRequest, "application/json")]
     public async Task<IActionResult> CreateMenuAsync(CreateMenuDto dto)
     {
         await _crudMenuUseCase.CreateMenuAsync(dto);
-        return Ok();
+        return Created();
     }
 
     /// <summary>
-    /// Updates an existing Menu
-    /// </summary>
-    /// <param name="dto">The menu to update</param>
-    [HttpPatch]
-    [ProducesResponseType(200)]
-    public async Task<IActionResult> UpdateMenuAsync(UpdateMenuDto dto)
-    {
-        await _crudMenuUseCase.UpdateMenuAsync(dto);
-        return Ok();
-    }
-
-    /// <summary>
-    /// Returns all Menus
+    /// Retrieve all menus available in the system.
     /// </summary>
     [HttpGet]
-    [ProducesResponseType<List<MenuDto>>(200)]
-    public async Task<IActionResult> GetMenusAsync()
+    [ProducesResponseType<ResultSetDto<MenuDto>>(StatusCodes.Status200OK)]
+    public async Task<IActionResult> GetMenusAsync(
+        string? token = null
+    )
     {
         var result = await _crudMenuUseCase.GetAllAsync().ToArrayAsync();
 
@@ -74,22 +72,42 @@ public class MenuController : ControllerBase
     }
 
     /// <summary>
-    /// Publishes an existing menu.
+    /// Update an existing menu.
     /// </summary>
-    [HttpPatch("{id}/publish")]
-    [ProducesResponseType(200)]
-    public async Task<IActionResult> PublishMenuAsync(Guid id)
+    /// <response code="204">The menu was successfully updated.</response>
+    /// <response code="400">The menu or it's content was incorrect.</response>
+    [HttpPatch]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType<ProblemDetails>(StatusCodes.Status400BadRequest, "application/json")]
+    public async Task<IActionResult> UpdateMenuAsync(UpdateMenuDto dto)
     {
-        await _publishMenuUseCase.PublishAsync(id);
-        return Ok();
+        await _crudMenuUseCase.UpdateMenuAsync(dto);
+        return NoContent();
     }
 
     /// <summary>
-    /// Returns the active menu
+    /// Publish an existing menu to make it visible to customers.
+    /// </summary>
+    /// <param name="id">The unique identifier (UUID) of the menu to publish.</param>
+    /// <response code="204">The menu was successfully published.</response>
+    /// <response code="400">The menu or the state is incorrect.</response>
+    /// <response code="404">The menu was not found.</response>
+    [HttpPatch("{id}/publish")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType<ProblemDetails>(StatusCodes.Status400BadRequest, "application/json")]
+    [ProducesResponseType<ProblemDetails>(StatusCodes.Status404NotFound, "application/json")]
+    public async Task<IActionResult> PublishMenuAsync(Guid id)
+    {
+        await _publishMenuUseCase.PublishAsync(id);
+        return NoContent();
+    }
+
+    /// <summary>
+    /// Retrieve the currently active menu.
     /// </summary>
     [HttpGet("active")]
-    [ProducesResponseType(200)]
-    [ProducesResponseType(204)]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status200OK)]
     public async Task<IActionResult> GetActiveMenuAsync()
     {
         var menu = await _publishMenuUseCase.GetActiveAsync();

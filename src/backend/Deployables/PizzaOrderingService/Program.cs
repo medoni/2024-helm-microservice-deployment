@@ -15,6 +15,7 @@ internal static class Program
         builder.Services.AddControllers()
             .AddCustomerApi()
         ;
+        builder.Services.AddApiVersioning();
         builder.Services.AddHealthChecks()
             .AddCheck<VersionInfoHealthCheck>("VersionInfo")
             .AddPOSDbHealthCheck();
