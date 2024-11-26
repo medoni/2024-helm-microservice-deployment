@@ -97,7 +97,7 @@ public class Money
         if (this.Amount != other.Amount) return false;
         if (this.Currency != other.Currency) return false;
 
-        return false;
+        return true;
     }
 
     /// <inheritdoc/>

@@ -1,6 +1,9 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
+
   <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
 
     <IsPackable>false</IsPackable>
     <IsTestProject>true</IsTestProject>
@@ -16,7 +19,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\Testing\POS.Shared.Testing\POS.Shared.Testing.csproj" />
-    <ProjectReference Include="..\POS.Shared.Persistence.PostgreSql\POS.Shared.Persistence.PostgreSql.csproj" />
+    <ProjectReference Include="..\POS.Shared.Domain\POS.Shared.Domain.csproj" />
   </ItemGroup>
 
   <ItemGroup>

@@ -76,8 +76,8 @@ public record GrossNetPrice
     {
         return new GrossNetPrice(
             a.Gross * factor,
-            a.Gross * factor,
-            a.Gross * factor,
+            a.Net * factor,
+            a.Vat * factor,
             a.Currency
         );
     }
