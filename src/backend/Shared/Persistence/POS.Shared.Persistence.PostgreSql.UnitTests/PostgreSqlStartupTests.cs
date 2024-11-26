@@ -12,12 +12,12 @@ namespace POS.Shared.Persistence.PostgreSql.UnitTests;
 public class PostgreSqlStartupTests
 {
     [Test]
-    public void AddUnitOfWorkSupport_Should_Work_With_Registered_Generic_Repo()
+    public async Task AddUnitOfWorkSupport_Should_Work_With_Registered_Generic_Repo()
     {
         // arrange
         var services = new ServiceCollection();
         services.AddSingleton<TestDbContext>();
-        services.AddSingleton<IGenericRepository<TestAggregate1, Guid>, TestRepository1>();
+        services.AddSingleton<IGenericRepository<TestAggregate1>, TestRepository1>();
         services.AddSingleton<ITestRepository2, TestRepository2>();
 
         // act
@@ -29,18 +29,19 @@ public class PostgreSqlStartupTests
 
         var aggregate = new TestAggregate1();
         uow.Add(aggregate);
-        var repo = (TestRepository1)svcp.GetRequiredService<IGenericRepository<TestAggregate1, Guid>>();
+        await uow.CommitAsync();
+        var repo = (TestRepository1)svcp.GetRequiredService<IGenericRepository<TestAggregate1>>();
 
         Assert.That(repo.AddedAggregates, Is.EqualTo(new[] { aggregate }));
     }
 
     [Test]
-    public void AddUnitOfWorkSupport_Should_Work_With_Registered_Specific_Repo()
+    public async Task AddUnitOfWorkSupport_Should_Work_With_Registered_Specific_Repo()
     {
         // arrange
         var services = new ServiceCollection();
         services.AddSingleton<TestDbContext>();
-        services.AddSingleton<IGenericRepository<TestAggregate1, Guid>, TestRepository1>();
+        services.AddSingleton<IGenericRepository<TestAggregate1>, TestRepository1>();
         services.AddSingleton<ITestRepository2, TestRepository2>();
 
         // act
@@ -52,6 +53,7 @@ public class PostgreSqlStartupTests
 
         var aggregate = new TestAggregate2();
         uow.Add(aggregate);
+        await uow.CommitAsync();
         var repo = (TestRepository2)svcp.GetRequiredService<ITestRepository2>();
 
         Assert.That(repo.AddedAggregates, Is.EqualTo(new[] { aggregate }));
@@ -61,14 +63,17 @@ public class PostgreSqlStartupTests
 
     private class TestDbContext : DbContext
     {
-
+        public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
+        {
+            return Task.FromResult(0);
+        }
     }
 
     #endregion
 
     #region TestRepository1
 
-    private class TestRepository1 : IGenericRepository<TestAggregate1, Guid>
+    private class TestRepository1 : IGenericRepository<TestAggregate1>
     {
         public List<TestAggregate1> AddedAggregates = new();
 
@@ -94,7 +99,7 @@ public class PostgreSqlStartupTests
         }
     }
 
-    private class TestAggregate1 : AggregateRoot<Guid>
+    private class TestAggregate1 : AggregateRoot
     {
         private Guid _id = Guid.NewGuid();
         public override Guid Id => _id;
@@ -109,7 +114,7 @@ public class PostgreSqlStartupTests
 
     #region TestRepository2
 
-    private interface ITestRepository2 : IGenericRepository<TestAggregate2, Guid>
+    private interface ITestRepository2 : IGenericRepository<TestAggregate2>
     {
 
     }
@@ -140,7 +145,7 @@ public class PostgreSqlStartupTests
         }
     }
 
-    private class TestAggregate2 : AggregateRoot<Guid>
+    private class TestAggregate2 : AggregateRoot
     {
         private Guid _id = Guid.NewGuid();
         public override Guid Id => _id;

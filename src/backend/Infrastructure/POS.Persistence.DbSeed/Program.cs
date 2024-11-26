@@ -33,7 +33,11 @@ public static class Program
         services
             .AddLogging(options =>
             {
+#if DEBUG
+                options.AddConsole();
+#else
                 options.AddJsonConsole();
+#endif
             });
 
         var svcp = services.BuildServiceProvider();

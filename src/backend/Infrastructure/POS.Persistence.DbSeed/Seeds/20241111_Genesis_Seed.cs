@@ -1,6 +1,6 @@
 ﻿using POS.Domains.Customer.Api.Dtos.Examples;
-using POS.Domains.Customer.UseCases.CRUDMenuUseCase;
-using POS.Domains.Customer.UseCases.PublishMenuUseCase;
+using POS.Domains.Customer.UseCases.Menus.CRUDMenuUseCase;
+using POS.Domains.Customer.UseCases.Menus.PublishMenuUseCase;
 using POS.Shared.Persistence.PostgreSql.DbSeeds;
 
 namespace POS.Persistence.DbSeed.Seeds;

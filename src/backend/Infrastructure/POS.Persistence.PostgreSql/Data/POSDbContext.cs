@@ -10,16 +10,24 @@ namespace POS.Persistence.PostgreSql.Data;
 /// </summary>
 public class POSDbContext : DbContext
 {
-    /// <summary>
-    /// Menu entities.
-    /// </summary>
     public DbSet<MenuEntity> Menus { get; set; }
 
-    /// <summary>
-    /// Creates a new <see cref="POSDbContext"/>.
-    /// </summary>
+    public DbSet<CartEntity> Carts { get; set; }
+
+    public DbSet<OrderEntity> Orders { get; set; }
+
     public POSDbContext(DbContextOptions options) : base(options)
     {
+    }
+
+    /// <inheritdoc/>
+    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+    {
+        base.OnConfiguring(optionsBuilder);
+
+#if DEBUG
+        optionsBuilder.EnableSensitiveDataLogging();
+#endif
     }
 
     /// <inheritdoc/>

@@ -13,13 +13,13 @@ public interface IUnitOfWork
     /// Otherwise, it loads the instance from the underlying repository.
     /// </summary>
     Task<TAggregate> GetAsync<TAggregate>(Guid id)
-        where TAggregate : AggregateRoot<Guid>;
+        where TAggregate : AggregateRoot;
 
     /// <summary>
     /// Adds a new Aggregate to the unit of work.
     /// </summary>
     void Add<TAggregate>(TAggregate aggregate)
-        where TAggregate : AggregateRoot<Guid>;
+        where TAggregate : AggregateRoot;
 
     /// <summary>
     /// Saves all changes made in the unit of work.

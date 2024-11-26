@@ -12,6 +12,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\..\Shared\Domain\POS.Shared.Domain.Generic\POS.Shared.Domain.Generic.csproj" />
+    <ProjectReference Include="..\..\..\Shared\Infrastructure\POS.Shared.Infrastructure.Api\POS.Shared.Infrastructure.Api.csproj" />
     <ProjectReference Include="..\..\..\Shared\Persistence\POS.Shared.Persistence\POS.Shared.Persistence.csproj" />
     <ProjectReference Include="..\POS.Domains.Customer.Domain\POS.Domains.Customer.Domain.csproj" />
     <ProjectReference Include="..\POS.Domains.Customer.Persistence\POS.Domains.Customer.Persistence.csproj" />

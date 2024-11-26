@@ -1,0 +1,10 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\Shared\Domain\POS.Shared.Domain.Generic\POS.Shared.Domain.Generic.csproj" />
+    <ProjectReference Include="..\..\..\Shared\Domain\POS.Shared.Domain\POS.Shared.Domain.csproj" />
+  </ItemGroup>
+
+</Project>

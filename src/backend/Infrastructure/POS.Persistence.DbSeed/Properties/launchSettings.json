@@ -3,7 +3,7 @@
     "POS.Persistence.DbSeed": {
       "commandName": "Project",
       "environmentVariables": {
-        "CONNECTION_STRING": "Host=localhost;Database=pizza_ordering;Username=postgres;Password=postgres",
+        "CONNECTION_STRING": "Host=localhost;Database=pizza_ordering;Username=postgres;Password=postgres;Include Error Detail=true",
         "Logging__LogLevel__Default": "Debug"
       }
     }

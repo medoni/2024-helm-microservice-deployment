@@ -1,6 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using POS.Domains.Customer.Persistence.Carts;
 using POS.Domains.Customer.Persistence.Menus;
+using POS.Domains.Customer.Persistence.Orders;
 using POS.Persistence.PostgreSql.Data;
 using POS.Persistence.PostgreSql.HealthChecks;
 using POS.Persistence.PostgreSql.Repositories;
@@ -26,7 +28,11 @@ public static class PostgreSqlStartup
             options.UseNpgsql(connectionString);
         });
 
-        services.AddTransient<IMenuRespository, PostgresMenuRepository>();
+        services
+            .AddTransient<IMenuRespository, PostgresMenuRepository>()
+            .AddTransient<ICartRepository, PostgresCartRepository>()
+            .AddTransient<IOrderRepository, PostgresOrderRepository>()
+        ;
 
         services.AddUnitOfWorkSupport<POSDbContext>();
 

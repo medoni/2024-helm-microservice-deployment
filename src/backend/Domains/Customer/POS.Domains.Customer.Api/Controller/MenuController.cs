@@ -1,9 +1,9 @@
 ﻿using Asp.Versioning;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using POS.Domains.Customer.UseCases.CRUDMenuUseCase;
-using POS.Domains.Customer.UseCases.CRUDMenuUseCase.Dtos;
-using POS.Domains.Customer.UseCases.PublishMenuUseCase;
+using POS.Domains.Customer.UseCases.Menus.CRUDMenuUseCase;
+using POS.Domains.Customer.UseCases.Menus.CRUDMenuUseCase.Dtos;
+using POS.Domains.Customer.UseCases.Menus.PublishMenuUseCase;
 using POS.Shared.Infrastructure.Api.Dtos;
 
 namespace POS.Domains.Customer.Api.Controller;

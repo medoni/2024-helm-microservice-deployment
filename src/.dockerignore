@@ -1,36 +1,36 @@
 # Ignore build directories
-bin/
-obj/
-publish/
+**/bin/
+**/obj/
+**/publish/
 
 # Ignore user-specific configuration files
-.vs/
-.idea/
-.vscode/
+**/.vs/
+**/.idea/
+**/.vscode/
 
 # Ignore Docker-related files
-Dockerfile
-docker-compose.yml
-docker-compose.override.yml
-docker-compose.*
+**/Dockerfile
+**/docker-compose.yml
+**/docker-compose.override.yml
+**/docker-compose.*
 
 # Ignore Git files
-.git/
-.gitignore
-.gitattributes
+**/.git/
+**/.gitignore
+**/.gitattributes
 
 # Ignore logs and temporary files
-*.log
-*.tlog
-*.out
-*.tmp
-*.swp
-*.sln.ide
+**/*.log
+**/*.tlog
+**/*.out
+**/*.tmp
+**/*.swp
+**/*.sln.ide
 
 # Ignore sensitive config files
-appsettings.Development.json
-appsettings.Local.json
+**/appsettings.Development.json
+**/appsettings.Local.json
 
 # Ignore OS-specific files
-*.DS_Store
-Thumbs.db
+**/*.DS_Store
+**/Thumbs.db

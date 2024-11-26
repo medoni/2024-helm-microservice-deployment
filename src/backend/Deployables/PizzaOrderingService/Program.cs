@@ -3,6 +3,7 @@ using PizzaOrderingService.Services.HealthChecks;
 using PizzaOrderingService.Services.Swagger;
 using POS.Domains.Customer.Api;
 using POS.Persistence.PostgreSql;
+using System.Text.Json.Serialization;
 
 internal static class Program
 {
@@ -14,6 +15,9 @@ internal static class Program
         builder.Services.AddSwaggerServices();
         builder.Services.AddControllers()
             .AddCustomerApi()
+            .AddJsonOptions(options =>
+                options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter())
+            );
         ;
         builder.Services.AddApiVersioning();
         builder.Services.AddHealthChecks()

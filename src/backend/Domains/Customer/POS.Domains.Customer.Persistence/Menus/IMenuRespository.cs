@@ -4,9 +4,9 @@ using POS.Shared.Persistence.Repositories;
 namespace POS.Domains.Customer.Persistence.Menus;
 
 /// <summary>
-/// Definition of an Repository to operate with Menus
+/// Definition of a Repository to operate with Menus
 /// </summary>
-public interface IMenuRespository : IGenericRepository<Menu, Guid>
+public interface IMenuRespository : IGenericRepository<Menu>
 {
     /// <summary>
     /// Returns the active, published, Menu

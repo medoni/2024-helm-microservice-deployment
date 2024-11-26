@@ -41,7 +41,7 @@ public static class PostgreSqlStartup
         IServiceCollection services
     )
     {
-        var genericRepoType = typeof(IGenericRepository<,>);
+        var genericRepoType = typeof(IGenericRepository<>);
 
         var concreteRepoTypes = services
             .SelectMany(x =>
