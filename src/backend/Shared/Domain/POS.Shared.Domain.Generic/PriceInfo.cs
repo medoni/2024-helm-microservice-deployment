@@ -5,18 +5,43 @@ namespace POS.Shared.Domain.Generic;
 /// <summary>
 /// Price information.
 /// </summary>
-/// <param name="Price">Price in gross and net</param>
-/// <param name="RegularyVatInPercent">Vat in percent.</param>
-public record PriceInfo
-(
-    GrossNetPrice Price,
-    decimal RegularyVatInPercent
-)
+public class PriceInfo : ValueObject
 {
+    /// <summary>
+    /// Price in gross and net.
+    /// </summary>
+    public GrossNetPrice Price { get; }
+
+    /// <summary>
+    /// Vat in percent.
+    /// </summary>
+    public decimal RegularyVatInPercent { get; }
+
     /// <summary>
     /// Currency
     /// </summary>
     public string Currency => Price.Currency;
+
+    /// <inheritdoc/>
+    protected override IEnumerable<object> GetEqualityComponents()
+    {
+        yield return Price;
+        yield return RegularyVatInPercent;
+    }
+
+    /// <summary>
+    /// Creates a new <see cref="PriceInfoDto"/>;
+    /// </summary>
+    public PriceInfo(
+        GrossNetPrice price,
+        decimal regularyVatInPercent
+    )
+    {
+        if (regularyVatInPercent < 0) throw new ArgumentOutOfRangeException(nameof(regularyVatInPercent), "Vat in percent cannot be less than zero.");
+
+        Price = price;
+        RegularyVatInPercent = regularyVatInPercent;
+    }
 
     /// <summary>
     /// Creates a new <see cref="PriceInfoDto"/>;
@@ -26,8 +51,6 @@ public record PriceInfo
         decimal regularyVatInPercent
     )
     {
-        if (regularyVatInPercent < 0) throw new ArgumentOutOfRangeException(nameof(regularyVatInPercent), "Vat in percent cannot be less than zero.");
-
         return new(price, regularyVatInPercent);
     }
 

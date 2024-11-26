@@ -3,14 +3,50 @@
 /// <summary>
 /// Value object that contains gross, net and vat values.
 /// </summary>
-public record GrossNetPrice
-(
-    decimal Gross,
-    decimal Net,
-    decimal Vat,
-    string Currency
-)
+public class GrossNetPrice : ValueObject
 {
+    /// <summary>
+    /// Gross amount.
+    /// </summary>
+    public decimal Gross { get; }
+
+    /// <summary>
+    /// Net amount.
+    /// </summary>
+    public decimal Net { get; }
+
+    /// <summary>
+    /// Vat amount.
+    /// </summary>
+    public decimal Vat { get; }
+
+    /// <summary>
+    /// Currency.
+    /// </summary>
+    public string Currency { get; }
+
+    /// <inheritdoc/>
+    protected override IEnumerable<object> GetEqualityComponents()
+    {
+        yield return Gross;
+        yield return Net;
+        yield return Vat;
+        yield return Currency;
+    }
+
+    /// <summary>
+    /// Creates a new <see cref="GrossNetPrice"/>.
+    /// </summary>
+    public GrossNetPrice(decimal gross, decimal net, decimal vat, string currency)
+    {
+        if (string.IsNullOrWhiteSpace(currency)) throw new ArgumentException($"'{nameof(currency)}' cannot be null or empty.", nameof(currency));
+
+        Gross = gross;
+        Net = net;
+        Vat = vat;
+        Currency = currency;
+    }
+
     /// <summary>
     /// Creates a new <see cref="GrossNetPrice"/> by net value.
     /// </summary>

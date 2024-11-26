@@ -33,6 +33,15 @@ public class PriceInfoTests
     }
 
     [Test]
+    public void Ctor_Should_Throw_Exception_When_Fat_In_Percent_Is_Negative()
+    {
+        Assert.That(
+            () => new PriceInfo(GrossWith7Percent, -1m),
+            Throws.TypeOf<ArgumentOutOfRangeException>().With.Message.StartsWith("Vat in percent cannot be less than zero.")
+        );
+    }
+
+    [Test]
     public void Multiply_Should_Return_Correct_Result()
     {
         // arrange
