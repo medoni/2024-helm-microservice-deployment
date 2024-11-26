@@ -10,7 +10,7 @@ public static class MoneyMapper
     /// <summary>
     /// Maps an <see cref="MoneyDto"/> to <see cref="Money"/>.
     /// </summary>
-    public static Money ToEntity(this MoneyDto dto)
+    public static Money ToDomain(this MoneyDto dto)
     => new Money(dto.Amount, dto.Currency);
 
     /// <summary>

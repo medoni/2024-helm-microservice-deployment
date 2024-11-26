@@ -40,7 +40,7 @@ public record GrossNetPriceDto
         MoneyDto net,
         decimal vatInPercent
     )
-    => GrossNetPrice.CreateByNet(net.ToEntity(), vatInPercent).ToDto();
+    => GrossNetPrice.CreateByNet(net.ToDomain(), vatInPercent).ToDto();
 
     /// <summary>
     /// Creates a new <see cref="GrossNetPriceDto"/> by gross value.
@@ -49,5 +49,5 @@ public record GrossNetPriceDto
         MoneyDto gross,
         decimal vatInpercent
     )
-    => GrossNetPrice.CreateByGross(gross.ToEntity(), vatInpercent).ToDto();
+    => GrossNetPrice.CreateByGross(gross.ToDomain(), vatInpercent).ToDto();
 }
