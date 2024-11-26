@@ -12,7 +12,7 @@ namespace POS.Shared.Persistence.PostgreSql.UnitTests;
 public class PostgreSqlStartupTests
 {
     [Test]
-    public void AddUnitOfWorkSupport_Should_Work_With_Registered_Generic_Repo()
+    public async Task AddUnitOfWorkSupport_Should_Work_With_Registered_Generic_Repo()
     {
         // arrange
         var services = new ServiceCollection();
@@ -29,13 +29,14 @@ public class PostgreSqlStartupTests
 
         var aggregate = new TestAggregate1();
         uow.Add(aggregate);
+        await uow.CommitAsync();
         var repo = (TestRepository1)svcp.GetRequiredService<IGenericRepository<TestAggregate1>>();
 
         Assert.That(repo.AddedAggregates, Is.EqualTo(new[] { aggregate }));
     }
 
     [Test]
-    public void AddUnitOfWorkSupport_Should_Work_With_Registered_Specific_Repo()
+    public async Task AddUnitOfWorkSupport_Should_Work_With_Registered_Specific_Repo()
     {
         // arrange
         var services = new ServiceCollection();
@@ -52,6 +53,7 @@ public class PostgreSqlStartupTests
 
         var aggregate = new TestAggregate2();
         uow.Add(aggregate);
+        await uow.CommitAsync();
         var repo = (TestRepository2)svcp.GetRequiredService<ITestRepository2>();
 
         Assert.That(repo.AddedAggregates, Is.EqualTo(new[] { aggregate }));
@@ -61,7 +63,10 @@ public class PostgreSqlStartupTests
 
     private class TestDbContext : DbContext
     {
-
+        public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
+        {
+            return Task.FromResult(0);
+        }
     }
 
     #endregion
