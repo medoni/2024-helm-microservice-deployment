@@ -1,11 +1,15 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using POS.Domains.Customer.Persistence.Carts;
+using POS.Domains.Customer.Persistence.Carts.Decorators;
 using POS.Domains.Customer.Persistence.Menus;
+using POS.Domains.Customer.Persistence.Menus.Decorators;
 using POS.Domains.Customer.Persistence.Orders;
+using POS.Domains.Customer.Persistence.Orders.Decorators;
 using POS.Persistence.PostgreSql.Data;
 using POS.Persistence.PostgreSql.HealthChecks;
 using POS.Persistence.PostgreSql.Repositories;
+using POS.Shared.Infrastructure.DependencyInjection;
 using POS.Shared.Persistence.PostgreSql;
 
 namespace POS.Persistence.PostgreSql;
@@ -29,9 +33,9 @@ public static class PostgreSqlStartup
         });
 
         services
-            .AddTransient<IMenuRespository, PostgresMenuRepository>()
-            .AddTransient<ICartRepository, PostgresCartRepository>()
-            .AddTransient<IOrderRepository, PostgresOrderRepository>()
+            .AddTransient<IMenuRespository, PostgresMenuRepository, LoggingMenuRepositoryDecorator>()
+            .AddTransient<ICartRepository, PostgresCartRepository, LoggingCartRepositoryDecorator>()
+            .AddTransient<IOrderRepository, PostgresOrderRepository, LoggingOrderRepositoryDecorator>()
         ;
 
         services.AddUnitOfWorkSupport<POSDbContext>();
