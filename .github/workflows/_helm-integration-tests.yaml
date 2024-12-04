@@ -89,9 +89,18 @@ jobs:
       uses: grafana/run-k6-action@v1
       with:
         path: ./src/tests/k6/smoke-create-cart-and-checkout.js
+        fail-fast: true
       env:
         BASE_URL: http://pizza-service.pos.mycluster.localhost/api
         SLOWMO: "0"
+    
+    - name: "[TEST] Run K6 load tests"
+      uses: grafana/run-k6-action@v1
+      with:
+        path: ./src/tests/k6/load-high-order-rate-with-spikes.js
+      env:
+        BASE_URL: http://pizza-service.pos.mycluster.localhost/api
+        SLOWMO: "0.2"
     
     - name: "[CLEANUP] Kubernetes - Overview"
       if: always()
