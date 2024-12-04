@@ -82,11 +82,13 @@ jobs:
           --retry 10 \
           --retry-delay 0 \
           --retry-max-time 60
-    
-    - name: Run k6 smoke tests
-      uses: grafana/k6-action@v0.3.1
+
+    - name: "[SETUP] K6"
+      uses: grafana/setup-k6-action@v1    
+    - name: "[TEST] Run K6 smoke tests"
+      uses: grafana/run-k6-action@v1
       with:
-        filename: ./src/tests/k6/smoke-create-cart-and-checkout.js
+        path: ./src/tests/k6/smoke-create-cart-and-checkout.js
       env:
         BASE_URL: http://pizza-service.pos.mycluster.localhost/api
         SLOWMO: "0"
