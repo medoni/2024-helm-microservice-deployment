@@ -58,7 +58,7 @@ jobs:
           -f ./src/docker-compose.yaml \
           up -d
  
-    - name: "[TEST] Check /health of `pizza-ordering-service`"
+    - name: "[TEST] Check /health of `pizza-service`"
       run: |
         curl --fail -v localhost:5000/health \
           --retry-all-errors \
@@ -67,7 +67,7 @@ jobs:
           --retry-delay 0 \
           --retry-max-time 60 \
     
-    - name: "[TEST] Check version of /health of `pizza-ordering-service`"
+    - name: "[TEST] Check version of /health of `pizza-service`"
       run: |
         response=$(curl -s localhost:5000/health)
         if [[ $? -ne 0 ]]; then
@@ -81,3 +81,14 @@ jobs:
           echo "Version of the /health endpoint is incorrect. Expected: '$EXPECTED_VERSION' Got: '$version'"                                                              
           exit 1
         fi
+    
+    - name: "[SETUP] K6"
+      uses: grafana/setup-k6-action@v1    
+    - name: "[TEST] Run K6 smoke tests"
+      uses: grafana/run-k6-action@v1
+      with:
+        path: ./src/tests/k6/smoke-create-cart-and-checkout.js
+        fail-fast: true
+      env:
+        BASE_URL: http://localhost:5000
+        SLOWMO: "0"

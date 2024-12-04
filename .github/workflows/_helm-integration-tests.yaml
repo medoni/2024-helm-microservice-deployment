@@ -83,19 +83,16 @@ jobs:
           --retry-delay 0 \
           --retry-max-time 60
 
-    - name: "[TEST] Check example data"
-      run: |
-        API_URL="pizza-service.pos.mycluster.localhost/api/v1/Menu"
-        RESPONSE=$(curl -s $API_URL)
-        if [ -z "$RESPONSE" ]; then
-          echo "No response from API. Please check the API URL or network."
-          exit 1
-        fi
-
-        if [ "$(echo $RESPONSE | jq 'length')" -eq 0 ]; then
-          echo "Expected at least one pizza. Got zero."
-          exit 1
-        fi
+    - name: "[SETUP] K6"
+      uses: grafana/setup-k6-action@v1    
+    - name: "[TEST] Run K6 smoke tests"
+      uses: grafana/run-k6-action@v1
+      with:
+        path: ./src/tests/k6/smoke-create-cart-and-checkout.js
+        fail-fast: true
+      env:
+        BASE_URL: http://pizza-service.pos.mycluster.localhost/api
+        SLOWMO: "0"
     
     - name: "[CLEANUP] Kubernetes - Overview"
       if: always()
