@@ -7,7 +7,7 @@ spec:
   project: 2024-helm-microservice-deployment
   source:
     repoURL: https://github.com/medoni/2024-helm-microservice-deployment.git
-    targetRevision: stories/howto-deploy-with-argocd-article
+    targetRevision: master
     path: src/infrastructure/helm/dev-local/PizzaService
   destination:
     server: https://kubernetes.default.svc
