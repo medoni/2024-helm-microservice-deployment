@@ -3,6 +3,7 @@ using POS.Domains.Customer.UseCases.Carts.CartUseCase;
 using POS.Domains.Customer.UseCases.Menus.CRUDMenuUseCase;
 using POS.Domains.Customer.UseCases.Menus.PublishMenuUseCase;
 using POS.Domains.Customer.UseCases.Orders.OrderUseCase;
+using POS.Shared.Infrastructure.DependencyInjection;
 
 namespace POS.Domains.Customer.UseCases;
 
@@ -17,10 +18,10 @@ public static class CustomerStartup
     public static IServiceCollection AddCustomerUseCases(this IServiceCollection services)
     {
         return services
-            .AddTransient<ICRUDMenuUseCase, DefaultCRUDMenuUseCase>()
-            .AddTransient<IPublishMenuUseCase, DefaultPublishMenuUseCase>()
-            .AddTransient<IOrderUseCase, DefaultOrderUseCase>()
-            .AddTransient<ICartUseCase, DefaultCartUseCase>()
+            .AddTransient<ICRUDMenuUseCase, DefaultCRUDMenuUseCase, LoggingCRUDMenuUseCaseDecorator>()
+            .AddTransient<IPublishMenuUseCase, DefaultPublishMenuUseCase, LoggingPublishMenuUseCaseDecorator>()
+            .AddTransient<IOrderUseCase, DefaultOrderUseCase, LoggingOrderUseCaseDecorator>()
+            .AddTransient<ICartUseCase, DefaultCartUseCase, LoggingCartUseCaseDecorator>()
         ;
     }
 }
