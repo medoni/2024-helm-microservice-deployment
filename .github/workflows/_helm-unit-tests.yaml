@@ -21,4 +21,4 @@ jobs:
     - name: "[Test] Run tests"
       run: |
         helm plugin install https://github.com/helm-unittest/helm-unittest.git --version 0.3.3 &> /dev/null
-        helm unittest ./src/infrastructure/helm/dev-local/PizzaService
+        helm unittest ./src/infrastructure/Kubernetes/helm/dev-local/PizzaService
