@@ -54,7 +54,7 @@ jobs:
     
     - name: "[SETUP] Helm install `pizza-service`"
       run: |
-        helm install $POS_NAMESPACE ./src/infrastructure/kubernetes/helm/dev-local/PizzaService \
+        helm install $POS_NAMESPACE ./src/infrastructure/Kubernetes/helm/dev-local/PizzaService \
           --set image.repository=ghcr.io/${{ github.repository }}/ \
           --set image.tag=${{ inputs.image-tag }} \
           --set global.domain=pos.mycluster.localhost \

@@ -16,7 +16,7 @@ jobs:
     
     - name: "[TEST] Lint Helm chart"
       run: |
-        helm lint ./src/infrastructure/kubernetes/helm/dev-local/PizzaService
+        helm lint ./src/infrastructure/Kubernetes/helm/dev-local/PizzaService
     
     - name: "[Test] Run tests"
       run: |
