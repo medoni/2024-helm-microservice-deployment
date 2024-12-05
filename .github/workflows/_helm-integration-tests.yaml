@@ -91,6 +91,7 @@ jobs:
       with:
         path: ./src/tests/k6/smoke-create-cart-and-checkout.js
         fail-fast: true
+        debug: true
       env:
         BASE_URL: http://pizza-service.pos.mycluster.localhost/api
         SLOWMO: "0"
