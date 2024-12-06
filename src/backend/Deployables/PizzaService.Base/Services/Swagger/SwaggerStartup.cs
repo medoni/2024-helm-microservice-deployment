@@ -1,12 +1,21 @@
-﻿using Microsoft.OpenApi.Models;
+﻿using Microsoft.AspNetCore.Builder;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.Filters;
 using Swashbuckle.AspNetCore.SwaggerGen;
 
-namespace PizzaOrderingService.Services.Swagger;
+namespace PizzaService.Base.Services.Swagger;
 
-internal static class SwaggerStartup
+/// <summary>
+/// Extensions to configure Swagger for Startup.
+/// </summary>
+public static class SwaggerStartup
 {
-    internal static IServiceCollection AddSwaggerServices(this IServiceCollection services)
+    /// <summary>
+    /// Adds Swagger support to the service collection
+    /// </summary>
+    public static IServiceCollection AddSwaggerServices(this IServiceCollection services)
     {
         services.AddEndpointsApiExplorer();
         services.AddSwaggerGen(options =>
@@ -51,7 +60,10 @@ internal static class SwaggerStartup
         }
     }
 
-    internal static WebApplication ConfigureSwagger(
+    /// <summary>
+    /// Configures Swagger
+    /// </summary>
+    public static WebApplication ConfigureSwagger(
         this WebApplication app,
         IConfiguration configuration
     )
@@ -64,7 +76,10 @@ internal static class SwaggerStartup
         return app;
     }
 
-    internal static WebApplication ConfigureSwaggerApp(this WebApplication app)
+    /// <summary>
+    /// Configures Swagger
+    /// </summary>
+    public static WebApplication ConfigureSwaggerApp(this WebApplication app)
     {
         app.UseSwagger(c =>
         {

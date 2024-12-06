@@ -1,9 +1,16 @@
 ﻿using Asp.Versioning;
+using Microsoft.Extensions.DependencyInjection;
 
-namespace PizzaOrderingService.Services.Apis;
+namespace PizzaService.Base.Services.Apis;
 
-internal static class ApisStartup
+/// <summary>
+/// Extension methods to add api versioning to the <see cref="IServiceCollection"/>.
+/// </summary>
+public static class ApisStartup
 {
+    /// <summary>
+    /// Adds api versioning to the <see cref="IServiceCollection"/>.
+    /// </summary>
     public static IServiceCollection AddApiVersioning(IServiceCollection services)
     {
         services.AddApiVersioning(options =>

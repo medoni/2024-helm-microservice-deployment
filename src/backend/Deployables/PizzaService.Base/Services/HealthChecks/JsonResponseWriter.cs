@@ -1,12 +1,18 @@
-﻿using Microsoft.Extensions.Diagnostics.HealthChecks;
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Diagnostics.HealthChecks;
 using System.Text;
 using System.Text.Json;
 
-namespace PizzaOrderingService.Services.HealthChecks;
+namespace PizzaService.Base.Services.HealthChecks;
 
-internal static class JsonResponseWriter
+/// <summary>
+/// Json Response Writer for Asp.NET Core Health checks
+/// </summary>
+public static class JsonResponseWriter
 {
-    internal static Task WriteResponse(HttpContext context, HealthReport healthReport)
+    /// <summary>
+    /// </summary>
+    public static Task WriteResponse(HttpContext context, HealthReport healthReport)
     {
         context.Response.ContentType = "application/json; charset=utf-8";
 

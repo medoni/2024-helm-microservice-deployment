@@ -1,9 +1,8 @@
 ﻿using Microsoft.AspNetCore.Diagnostics.HealthChecks;
-using PizzaOrderingService.Services.HealthChecks;
-using PizzaOrderingService.Services.Swagger;
-using POS.Domains.Customer.Api;
+using PizzaService.Base;
+using PizzaService.Base.Services.HealthChecks;
+using PizzaService.Base.Services.Swagger;
 using POS.Persistence.PostgreSql;
-using System.Text.Json.Serialization;
 
 internal static class Program
 {
@@ -13,15 +12,10 @@ internal static class Program
 
         builder.Services.AddEndpointsApiExplorer();
         builder.Services.AddSwaggerServices();
-        builder.Services.AddControllers()
-            .AddCustomerApi()
-            .AddJsonOptions(options =>
-                options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter())
-            );
-        ;
-        builder.Services.AddApiVersioning();
+
+        builder.Services.AddPizzaServiceSupport();
+
         builder.Services.AddHealthChecks()
-            .AddCheck<VersionInfoHealthCheck>("VersionInfo")
             .AddPOSDbHealthCheck();
 
         builder.Services.AddPOSDb(builder.Configuration);
