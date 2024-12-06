@@ -61,7 +61,7 @@ public static class PostgreSqlStartup
         var cache = new RepositoryCache();
         foreach (var repoType in concreteRepoTypes)
         {
-            cache.Add(repoType.AggregateType, svcp => svcp.GetRequiredService(repoType.ServiceType));
+            cache[repoType.AggregateType] = svcp => svcp.GetRequiredService(repoType.ServiceType);
         }
 
         return cache;

@@ -1,0 +1,13 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+  <PropertyGroup>
+    <ImplicitUsings>enable</ImplicitUsings>
+
+    <MinVerTagPrefix>v</MinVerTagPrefix>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\Infrastructure\POS.Persistence.PostgreSql\POS.Persistence.PostgreSql.csproj" />
+    <ProjectReference Include="..\PizzaService.Base\PizzaService.Base.csproj" />
+  </ItemGroup>
+
+</Project>

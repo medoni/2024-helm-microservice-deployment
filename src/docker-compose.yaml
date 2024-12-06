@@ -3,7 +3,7 @@ services:
     image: "${CONTAINER_REGISTRY:-}pizza-service:${IMAGE_TAG:-latest}"
     build:
       context: .
-      dockerfile: backend/Deployables/PizzaOrderingService/Dockerfile
+      dockerfile: backend/Deployables/PizzaService.AspNetCore/Dockerfile
       args:
         - BUILD_VERSION=${BUILD_VERSION:-0.1.0-alpha-1}
         - BUILD_DATE=${BUILD_DATE:-1970-01-01T00:00:00Z}

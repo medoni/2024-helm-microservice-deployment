@@ -1,7 +1,7 @@
 ﻿using Microsoft.Extensions.Diagnostics.HealthChecks;
 using System.Reflection;
 
-namespace PizzaOrderingService.Services.HealthChecks;
+namespace PizzaService.Base.Services.HealthChecks;
 
 /// <summary>
 /// Responsible for returning Health check and the compiled version for ASP.NET
