@@ -92,6 +92,27 @@ public class MenuRepositoryIntegrationTests : BaseDynamoDbRepositoryIntegrationT
         Assert.That(activeMenuResult?.Id, Is.EqualTo(menu2.Id));
     }
 
+    [Test]
+    public async Task IterateAsync_Should_Return_Stored_Menus()
+    {
+        // arrange
+        var menu1 = CreateMenu();
+        await Sut.AddAsync(menu1);
+
+        var menu2 = CreateMenu();
+        await Sut.AddAsync(menu2);
+
+        // act
+        var result = await Sut.IterateAsync()
+            .Select(x => x.Id)
+            .ToListAsync();
+
+        // assert
+        Assert.That(result, Is.SupersetOf(new[] { menu1.Id, menu2.Id }));
+    }
+
+    #region Helpers
+
     private static Menu CreateMenu(
         Guid? id = null,
         DateTimeOffset? createdAt = null,
@@ -155,4 +176,6 @@ public class MenuRepositoryIntegrationTests : BaseDynamoDbRepositoryIntegrationT
         };
         await DynamoDbClient.CreateTableAsync(createTableRequest);
     }
+
+    #endregion
 }

@@ -23,7 +23,7 @@ internal class OrderRepository : BaseDynamoDbRepository<Order, OrderEntity>, IOr
 
     protected override OrderEntity CreateDynamoDbEntity(Order aggregate)
     {
-        var state = aggregate.GetCurrentState<Order>();
+        var state = aggregate.GetCurrentState<OrderState>();
 
         var entity = new OrderEntity
         {

@@ -6,13 +6,27 @@ namespace POS.Domains.Customer.Domain.Orders;
 /// State for an Order
 /// </summary>
 public record OrderState
-(
-    Guid Id,
-    DateTimeOffset CreatedAt,
-    IReadOnlyList<OrderItem> Items,
-    OrderPriceSummary PriceSummary
-)
 {
+    /// <summary>
+    /// Id of the order.
+    /// </summary>
+    public required Guid Id { get; init; }
+
+    /// <summary>
+    /// Date and time when the order was created.
+    /// </summary>
+    public required DateTimeOffset CreatedAt { get; init; }
+
+    /// <summary>
+    /// Items of the order.
+    /// </summary>
+    public required IReadOnlyList<OrderItem> Items { get; init; }
+
+    /// <summary>
+    /// Price summary of the order.
+    /// </summary>
+    public required OrderPriceSummary PriceSummary { get; init; }
+
     /// <summary>
     /// State of the order.
     /// </summary>

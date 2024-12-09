@@ -47,11 +47,10 @@ where TAggregate : AggregateRoot
 
     public async IAsyncEnumerable<TAggregate> IterateAsync()
     {
-        var query = new QueryOperationConfig
+        var scanQuery = new ScanOperationConfig
         {
-
         };
-        var search = DynamoDbCtx.FromQueryAsync<TEntity>(query, DynamoDbOperationConfig);
+        var search = DynamoDbCtx.FromScanAsync<TEntity>(scanQuery, DynamoDbOperationConfig);
         while (!search.IsDone)
         {
             foreach (var item in await search.GetNextSetAsync())

@@ -28,7 +28,10 @@ resource "aws_iam_policy" "pos_pizza_service_dynamodb_carts_table_access_policy"
           "dynamodb:Scan",
           "dynamodb:Query"
         ]
-        Resource = aws_dynamodb_table.pos_pizza_service_carts_table.arn
+        Resource = [
+          aws_dynamodb_table.pos_pizza_service_carts_table.arn,
+          "${aws_dynamodb_table.pos_pizza_service_carts_table.arn}/index/*"
+        ]
       }
     ]
   })
