@@ -18,6 +18,8 @@ FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
     COPY . .
     RUN dotnet publish backend/Deployables/PizzaService.Aws/*.csproj \
         -c Release \
+        --self-contained false \
+        -r linux-x64 \
         -o /app/publish \
         /p:MINVERVERSIONOVERRIDE=$BUILD_VERSION \
         /p:SourceRevisionId=$GIT_SHA

@@ -2,13 +2,23 @@
 resource "aws_lambda_function" "pos-pizza-service" {
   function_name = "pos-dev-pizza-service"
   role          = aws_iam_role.pos-pizza-service-lambda-exec-role.arn
-  // handler       = "MyApp::Example.Hello::MyHandler"
+  handler       = "PizzaService.Aws"
   runtime       = "dotnet8"
-  filename      = local.pos-pizza-service-zip-file #data.local_file.pos-pizza-service-lambda-zip.filename
-
-  //source_code_hash = filebase64sha256(local.pos-pizza-service-zip-file)
+  filename      = local.pos-pizza-service-zip-file
+  timeout       = 25
 
   depends_on = [null_resource.pos-pizza-service-container-image-operations]
+
+  environment {
+    variables = {
+      "Logging__LogLevel__Default" = "Trace"
+      "Swagger__Enabled" = "True"
+    }
+  }
+
+  layers = [
+    "arn:aws:lambda:eu-central-1:580247275435:layer:LambdaInsightsExtension:53"
+  ]
 }
 
 resource "aws_iam_role" "pos-pizza-service-lambda-exec-role" {

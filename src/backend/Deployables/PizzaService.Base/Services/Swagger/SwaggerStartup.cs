@@ -61,7 +61,7 @@ public static class SwaggerStartup
     }
 
     /// <summary>
-    /// Configures Swagger
+    /// Configures Swaggers
     /// </summary>
     public static WebApplication ConfigureSwagger(
         this WebApplication app,
