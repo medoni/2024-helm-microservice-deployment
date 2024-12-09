@@ -17,7 +17,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\Infrastructure\POS.Persistence.PostgreSql\POS.Persistence.PostgreSql.csproj" />
+    <ProjectReference Include="..\..\Domains\Customer\POS.Domains.Customer.Persistence.DynamoDb\POS.Domains.Customer.Persistence.DynamoDb.csproj" />
     <ProjectReference Include="..\PizzaService.Base\PizzaService.Base.csproj" />
   </ItemGroup>
 

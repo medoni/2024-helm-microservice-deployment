@@ -4,7 +4,8 @@ using PizzaService.Aws.Services.AspNet;
 using PizzaService.Base;
 using PizzaService.Base.Services.HealthChecks;
 using PizzaService.Base.Services.Swagger;
-using POS.Persistence.PostgreSql;
+using POS.Domains.Customer.Persistence.DynamoDb;
+using POS.Domains.Customer.Persistence.DynamoDb.Configurations;
 
 internal class Program
 {
@@ -29,10 +30,9 @@ internal class Program
 
         builder.Services.AddPizzaServiceSupport();
 
-        builder.Services.AddHealthChecks()
-            .AddPOSDbHealthCheck();
+        builder.Services.AddHealthChecks();
 
-        builder.Services.AddPOSDb(builder.Configuration);
+        builder.Services.AddPizzaServiceDynamoDbSupport(builder.Configuration);
 
         var app = builder.Build();
 
@@ -51,14 +51,17 @@ internal class Program
 
 internal static class ProgramExtension
 {
-    internal static IServiceCollection AddPOSDb(
+    internal static IServiceCollection AddPizzaServiceDynamoDbSupport(
         this IServiceCollection services,
         IConfiguration configuration
     )
     {
-        var connectionString = configuration.GetValue<string>("PizzaDbContext:Connection")!;
+        services.Configure<CustomerDynamoDbOptions>(options =>
+        {
+            configuration.Bind("Aws:DynamoDb", options);
+        });
 
-        services.ConfigurePostgreSql(connectionString);
+        services.AddCustomerDynamoDbSupport();
         return services;
     }
 

@@ -13,6 +13,10 @@ resource "aws_lambda_function" "pos-pizza-service" {
     variables = {
       "Logging__LogLevel__Default" = "Trace"
       "Swagger__Enabled" = "True"
+      "Aws__DynamoDb__Region" = data.aws_region.current.name
+      "Aws__DynamoDb__MenusTableName" = aws_dynamodb_table.pos_pizza_service_menus_table.name
+      "Aws__DynamoDb__CartsTableName" = aws_dynamodb_table.pos_pizza_service_carts_table.name
+      "Aws__DynamoDb__OrdersTableName" = aws_dynamodb_table.pos_pizza_service_orders_table.name
     }
   }
 

@@ -1,19 +1,14 @@
-﻿using Microsoft.EntityFrameworkCore;
-using POS.Shared.Persistence.Repositories;
+﻿using POS.Shared.Persistence.Repositories;
 using POS.Shared.Persistence.UOW;
 
-namespace POS.Shared.Persistence.PostgreSql.UnitOfWork;
-internal class EfCoreUnitOfWork : BaseUnitOfWork
+namespace POS.Domains.Customer.Persistence.DynamoDb.UnitOfWork;
+internal class DynamoDbUnitOfWork : BaseUnitOfWork
 {
-    private readonly DbContext _dbContext;
-
-    public EfCoreUnitOfWork(
+    public DynamoDbUnitOfWork(
         IServiceProvider serviceProvider,
-        DbContext dbContext,
         BaseRepositoryFactory repositoryFactory
     ) : base(serviceProvider, repositoryFactory)
     {
-        _dbContext = dbContext ?? throw new ArgumentNullException(nameof(dbContext));
     }
 
     protected override TrackedRecord CreateAddRecord<TAggregate>(TAggregate aggregate, Func<IGenericRepository<TAggregate>> getRepo)
@@ -44,8 +39,8 @@ internal class EfCoreUnitOfWork : BaseUnitOfWork
         );
     }
 
-    protected override async Task FlushCommitsAsync()
+    protected override Task FlushCommitsAsync()
     {
-        await _dbContext.SaveChangesAsync();
+        return Task.CompletedTask;
     }
 }
