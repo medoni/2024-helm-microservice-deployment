@@ -36,7 +36,6 @@ internal class Program
 
         var app = builder.Build();
 
-        app.UsePathBase("/api");
         app.UseXRay("PizzaService");
         app.ConfigureSwagger(builder.Configuration);
         app.MapControllers();
@@ -44,7 +43,6 @@ internal class Program
         {
             ResponseWriter = JsonResponseWriter.WriteResponse
         });
-        //app.UseMiddleware<StripPathMiddleware>();
         app.UseMiddleware<RequestLoggingMiddleware>();
 
         await app.RunAsync();

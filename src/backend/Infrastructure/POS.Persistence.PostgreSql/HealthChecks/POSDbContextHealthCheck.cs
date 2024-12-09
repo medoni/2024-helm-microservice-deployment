@@ -10,11 +10,16 @@ internal class POSDbContextHealthCheck(POSDbContext dbContext) : IHealthCheck
         CancellationToken cancellationToken = default
     )
     {
-        var cts = new CancellationTokenSource(TimeSpan.FromSeconds(3));
-
         try
         {
-            await dbContext.Menus.FirstOrDefaultAsync(cts.Token);
+            await Task.WhenAny(
+                dbContext.Menus.FirstOrDefaultAsync(),
+                Task.Factory.StartNew(async () =>
+                {
+                    await Task.Delay(TimeSpan.FromSeconds(3));
+                    throw new TimeoutException();
+                })
+            );
 
             return HealthCheckResult.Healthy("POS Database is healthy.");
         }
