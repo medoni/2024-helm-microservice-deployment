@@ -1,6 +1,6 @@
 variable service-version {
   type        = string
-  default     = "0.1.0-alpha-95"
+  default     = "0.1.0-alpha-97"
   description = "description"
 }
 

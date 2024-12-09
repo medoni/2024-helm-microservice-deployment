@@ -87,7 +87,7 @@ public class Menu : AggregateRoot
         IReadOnlyList<MenuSection> sections
     )
     : this(
-        new MenuState { MenuId = id, Currency = currency, CreatedAt = createdAt }
+        new MenuState() { MenuId = id, CreatedAt = createdAt, Currency = currency }
     )
     {
         LastChangedAt = createdAt;

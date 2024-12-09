@@ -20,7 +20,7 @@ public record MenuState
     /// <summary>
     /// Date and time when the menu was created.
     /// </summary>
-    public DateTimeOffset CreatedAt { get; init; }
+    public required DateTimeOffset CreatedAt { get; init; }
 
     /// <summary>
     /// Date and time when the Menu was last changed at.
@@ -47,6 +47,7 @@ public record MenuState
     /// </summary>
     public MenuState()
     {
+
     }
 
     /// <summary>

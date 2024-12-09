@@ -77,6 +77,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PizzaService.AspNetCore", "
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "POS.Domains.Customer.Persistence.DynamoDb", "Domains\Customer\POS.Domains.Customer.Persistence.DynamoDb\POS.Domains.Customer.Persistence.DynamoDb.csproj", "{D1F5182C-3F4A-423A-AC68-FC22B8BB867F}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "POS.Domains.Customer.Persistence.DynamoDb.Tests", "Domains\Customer\POS.Domains.Customer.Persistence.DynamoDb.Tests\POS.Domains.Customer.Persistence.DynamoDb.Tests.csproj", "{38B2F586-DF35-4656-9C06-1CF96F629D76}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -179,6 +181,10 @@ Global
 		{D1F5182C-3F4A-423A-AC68-FC22B8BB867F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D1F5182C-3F4A-423A-AC68-FC22B8BB867F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D1F5182C-3F4A-423A-AC68-FC22B8BB867F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{38B2F586-DF35-4656-9C06-1CF96F629D76}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{38B2F586-DF35-4656-9C06-1CF96F629D76}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{38B2F586-DF35-4656-9C06-1CF96F629D76}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{38B2F586-DF35-4656-9C06-1CF96F629D76}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -215,6 +221,7 @@ Global
 		{8CC2C428-89B7-4C4C-A56A-7C98E6EDB488} = {C2748FB2-AC6E-42CD-A53D-4EA329E24FF4}
 		{D5CF3483-4C85-480A-B8A0-764862D9004D} = {C2748FB2-AC6E-42CD-A53D-4EA329E24FF4}
 		{D1F5182C-3F4A-423A-AC68-FC22B8BB867F} = {CFA687FB-6CD6-4A14-BE84-465F271F99FD}
+		{38B2F586-DF35-4656-9C06-1CF96F629D76} = {CFA687FB-6CD6-4A14-BE84-465F271F99FD}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {3EE9B52E-1327-4A63-86E1-BB354A241BA7}

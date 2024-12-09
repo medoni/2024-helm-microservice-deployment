@@ -4,7 +4,7 @@ using POS.Shared.Domain;
 using POS.Shared.Persistence.Repositories;
 
 namespace POS.Domains.Customer.Persistence.DynamoDb.Repositories;
-internal abstract class BaseDynamoDbRepository<TAggregate, TAggregateState> : IGenericRepository<TAggregate>
+internal abstract class BaseDynamoDbRepository<TAggregate, TEntity> : IGenericRepository<TAggregate>
 where TAggregate : AggregateRoot
 {
     protected IDynamoDBContext DynamoDbCtx { get; }
@@ -26,8 +26,8 @@ where TAggregate : AggregateRoot
 
     public async Task<TAggregate> GetByIdAsync(Guid id)
     {
-        var batch = DynamoDbCtx.CreateBatchGet<TAggregateState>(DynamoDbOperationConfig);
-        batch.AddKey(id);
+        var batch = DynamoDbCtx.CreateBatchGet<TEntity>(DynamoDbOperationConfig);
+        batch.AddKey(id.ToString());
         await batch.ExecuteAsync();
 
         var aggregate = CreateAggregate(batch.Results.First());
@@ -36,13 +36,14 @@ where TAggregate : AggregateRoot
 
     public async Task UpdateAsync(TAggregate aggregate)
     {
-        var aggregateState = aggregate.GetCurrentState<TAggregateState>();
-
-        var batch = DynamoDbCtx.CreateBatchWrite<TAggregateState>(DynamoDbOperationConfig);
-        batch.AddPutItem(aggregateState);
+        var entity = CreateDynamoDbEntity(aggregate);
+        var batch = DynamoDbCtx.CreateBatchWrite<TEntity>(DynamoDbOperationConfig);
+        batch.AddPutItem(entity);
 
         await batch.ExecuteAsync();
     }
+
+    protected abstract TEntity CreateDynamoDbEntity(TAggregate aggregate);
 
     public async IAsyncEnumerable<TAggregate> IterateAsync()
     {
@@ -50,7 +51,7 @@ where TAggregate : AggregateRoot
         {
 
         };
-        var search = DynamoDbCtx.FromQueryAsync<TAggregateState>(query, DynamoDbOperationConfig);
+        var search = DynamoDbCtx.FromQueryAsync<TEntity>(query, DynamoDbOperationConfig);
         while (!search.IsDone)
         {
             foreach (var item in await search.GetNextSetAsync())
@@ -61,5 +62,5 @@ where TAggregate : AggregateRoot
         }
     }
 
-    protected abstract TAggregate CreateAggregate(TAggregateState state);
+    protected abstract TAggregate CreateAggregate(TEntity state);
 }

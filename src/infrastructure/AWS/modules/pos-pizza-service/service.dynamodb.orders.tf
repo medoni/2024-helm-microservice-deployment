@@ -19,6 +19,8 @@ resource "aws_iam_policy" "pos_pizza_service_dynamodb_orders_table_access_policy
         Effect   = "Allow"
         Action   = [
           "dynamodb:DescribeTable",
+          "dynamodb:BatchWriteItem",
+          "dynamodb:BatchGetItem",
           "dynamodb:PutItem",
           "dynamodb:GetItem",
           "dynamodb:UpdateItem",

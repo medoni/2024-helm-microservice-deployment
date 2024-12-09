@@ -7,6 +7,20 @@ resource "aws_dynamodb_table" "pos_pizza_service_menus_table" {
     name = "id"
     type = "S"
   }
+
+  attribute {
+    name = "active"
+    type = "N"
+  }
+
+  global_secondary_index {
+    name               = "active"
+    hash_key           = "active"
+    write_capacity     = 10
+    read_capacity      = 10
+    projection_type    = "INCLUDE"
+    non_key_attributes = ["active", "payload"]
+  }
 }
 
 resource "aws_iam_policy" "pos_pizza_service_dynamodb_menus_table_access_policy" {
@@ -19,6 +33,8 @@ resource "aws_iam_policy" "pos_pizza_service_dynamodb_menus_table_access_policy"
         Effect   = "Allow"
         Action   = [
           "dynamodb:DescribeTable",
+          "dynamodb:BatchWriteItem",
+          "dynamodb:BatchGetItem",
           "dynamodb:PutItem",
           "dynamodb:GetItem",
           "dynamodb:UpdateItem",

@@ -15,4 +15,8 @@
     <ProjectReference Include="..\POS.Domains.Customer.Domain\POS.Domains.Customer.Domain.csproj" />
     <ProjectReference Include="..\POS.Domains.Customer.Persistence\POS.Domains.Customer.Persistence.csproj" />
   </ItemGroup>
+
+  <ItemGroup>
+    <InternalsVisibleTo Include="POS.Domains.Customer.Persistence.DynamoDb.Tests" />
+  </ItemGroup>
 </Project>

@@ -11,7 +11,7 @@ resource "aws_lambda_function" "pos-pizza-service" {
 
   environment {
     variables = {
-      "Logging__LogLevel__Default" = "Trace"
+      "Logging__LogLevel__Default" = "Information"
       "Swagger__Enabled" = "True"
       "Aws__DynamoDb__Region" = data.aws_region.current.name
       "Aws__DynamoDb__MenusTableName" = aws_dynamodb_table.pos_pizza_service_menus_table.name
