@@ -46,3 +46,8 @@ dotnet_diagnostic.IDE0130.severity = error
 
 [*Tests.cs]
 dotnet_diagnostic.CS8618.severity = none
+
+[*.tf]
+end_of_line = lf
+indent_size = 2
+insert_final_newline = true

@@ -89,6 +89,7 @@ jobs:
       with:
         path: ./src/tests/k6/smoke-create-cart-and-checkout.js
         fail-fast: true
+        debug: true
       env:
         BASE_URL: http://localhost:5000
         SLOWMO: "0"

@@ -1,26 +1,43 @@
 ﻿using POS.Shared.Domain.Generic;
+using System.Diagnostics.CodeAnalysis;
 
-namespace POS.Domains.Customer.Domain.Carts;
+namespace POS.Domains.Customer.Abstractions.Carts;
 
 /// <summary>
 /// Cart item.
 /// </summary>
-/// <param name="Id">Id of the cart.</param>
-/// <param name="MenuItemId">Menu item id.</param>
-/// <param name="CreatedAt">Date and time when the cart item was created.</param>
-/// <param name="Name">Name of the item.</param>
-/// <param name="Description">Description of the item.</param>
-/// <param name="UnitPrice">Unit price of the item.</param>
 public record CartItem
-(
-    Guid Id,
-    DateTimeOffset CreatedAt,
-    Guid MenuItemId,
-    string Name,
-    string Description,
-    PriceInfo UnitPrice
-)
 {
+    /// <summary>
+    /// Menu item id.
+    /// </summary>
+    public required Guid Id { get; init; }
+
+    /// <summary>
+    /// Date and time when the cart item was created.
+    /// </summary>
+    public required DateTimeOffset CreatedAt { get; init; }
+
+    /// <summary>
+    /// Menu item id.
+    /// </summary>
+    public required Guid MenuItemId { get; init; }
+
+    /// <summary>
+    /// Name of the item.
+    /// </summary>
+    public required string Name { get; init; }
+
+    /// <summary>
+    /// Description of the item.
+    /// </summary>
+    public required string Description { get; init; }
+
+    /// <summary>
+    /// Unit price of the item.
+    /// </summary>
+    public required PriceInfo UnitPrice { get; init; }
+
     /// <summary>
     /// Date and time when the item was last changed at.
     /// </summary>
@@ -34,6 +51,12 @@ public record CartItem
     /// <summary>
     /// Creates a new <see cref="CartItem"/>.
     /// </summary>
+    public CartItem() { }
+
+    /// <summary>
+    /// Creates a new <see cref="CartItem"/>.
+    /// </summary>
+    [SetsRequiredMembers]
     public CartItem(
         Guid id,
         DateTimeOffset createdAt,
@@ -43,8 +66,14 @@ public record CartItem
         string description,
         PriceInfo price,
         int quantity
-    ) : this(id, createdAt, menuItemId, name, description, price)
+    )
     {
+        Id = id;
+        CreatedAt = createdAt;
+        MenuItemId = menuItemId;
+        Name = name;
+        Description = description;
+        UnitPrice = price;
         LastChangedAt = lastChangedAt;
         Quantity = quantity;
     }

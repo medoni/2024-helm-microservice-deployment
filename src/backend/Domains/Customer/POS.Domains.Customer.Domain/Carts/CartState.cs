@@ -1,22 +1,33 @@
 ﻿using POS.Domains.Customer.Abstractions.Carts;
+using System.Diagnostics.CodeAnalysis;
 
 namespace POS.Domains.Customer.Domain.Carts;
 
 /// <summary>
 /// State to represent a cart
 /// </summary>
-/// <param name="Id">Id of the cart.</param>
-/// <param name="CreatedAt">Date and time when the cart was created.</param>
-/// <param name="MenuId">Active menu id when the cart was created.</param>
-/// <param name="Currency">Currency of the cart.</param>
 public record CartState
-(
-    Guid Id,
-    DateTimeOffset CreatedAt,
-    Guid MenuId,
-    string Currency
-)
 {
+    /// <summary>
+    /// Id of the cart.
+    /// </summary>
+    public required Guid Id { get; init; }
+
+    /// <summary>
+    /// Date and time when the cart was created.
+    /// </summary>
+    public required DateTimeOffset CreatedAt { get; init; }
+
+    /// <summary>
+    /// Active menu id when the cart was created.
+    /// </summary>
+    public required Guid MenuId { get; init; }
+
+    /// <summary>
+    /// Currency of the cart.
+    /// </summary>
+    public required string Currency { get; init; }
+
     /// <summary>
     /// State of the cart.
     /// </summary>
@@ -40,14 +51,24 @@ public record CartState
     /// <summary>
     /// Creates a new <see cref="CartState"/>.
     /// </summary>
+    public CartState() { }
+
+    /// <summary>
+    /// Creates a new <see cref="CartState"/>.
+    /// </summary>
+    [SetsRequiredMembers]
     public CartState(
         Guid id,
         DateTimeOffset createdAt,
         Guid menuId,
         string currency,
         IList<CartItem> items
-    ) : this(id, createdAt, menuId, currency)
+    )
     {
+        Id = id;
+        CreatedAt = createdAt;
+        MenuId = menuId;
+        Currency = currency;
         Items = items ?? throw new ArgumentNullException(nameof(items));
     }
 }

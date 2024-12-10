@@ -42,8 +42,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "POS.Shared.Persistence.Post
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "POS.Persistence.PostgreSql.DbMigrations", "Infrastructure\POS.Persistence.PostgreSql.DbMigrations\POS.Persistence.PostgreSql.DbMigrations.csproj", "{2E6DB639-3273-4564-91AE-BC28A2613A21}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PizzaOrderingService", "Deployables\PizzaOrderingService\PizzaOrderingService.csproj", "{933F8AAD-CF84-4346-B924-E4D78504FB5D}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "POS.Persistence.DbSeed", "Infrastructure\POS.Persistence.DbSeed\POS.Persistence.DbSeed.csproj", "{F7F1E134-E00F-4162-B974-8AAFC325F0B8}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "POS.Shared.Persistence.PostgreSql.DbSeeds", "Shared\Persistence\POS.Shared.Persistence.PostgreSql.DbSeeds\POS.Shared.Persistence.PostgreSql.DbSeeds.csproj", "{6B5A2FEB-DD8A-452C-833D-B3E7D901E103}"
@@ -70,6 +68,16 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "POS.Shared.Domain.Generic.UnitTests", "Shared\Domain\POS.Shared.Domain.Generic.UnitTests\POS.Shared.Domain.Generic.UnitTests.csproj", "{155ED73C-0553-D5D8-957B-3DAB6638DD00}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "POS.Shared.Infrastructure.DependencyInjection", "Shared\Infrastructure\POS.Shared.Infrastructure.DependencyInjection\POS.Shared.Infrastructure.DependencyInjection.csproj", "{56A603B7-467A-442F-81B3-36E0B20DC3E8}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PizzaService.Aws", "Deployables\PizzaService.Aws\PizzaService.Aws.csproj", "{36EECB40-D1C3-4FA2-B0C5-99BF883140C4}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PizzaService.Base", "Deployables\PizzaService.Base\PizzaService.Base.csproj", "{8CC2C428-89B7-4C4C-A56A-7C98E6EDB488}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PizzaService.AspNetCore", "Deployables\PizzaService.AspNetCore\PizzaService.AspNetCore.csproj", "{D5CF3483-4C85-480A-B8A0-764862D9004D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "POS.Domains.Customer.Persistence.DynamoDb", "Domains\Customer\POS.Domains.Customer.Persistence.DynamoDb\POS.Domains.Customer.Persistence.DynamoDb.csproj", "{D1F5182C-3F4A-423A-AC68-FC22B8BB867F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "POS.Domains.Customer.Persistence.DynamoDb.Tests", "Domains\Customer\POS.Domains.Customer.Persistence.DynamoDb.Tests\POS.Domains.Customer.Persistence.DynamoDb.Tests.csproj", "{38B2F586-DF35-4656-9C06-1CF96F629D76}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -121,10 +129,6 @@ Global
 		{2E6DB639-3273-4564-91AE-BC28A2613A21}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2E6DB639-3273-4564-91AE-BC28A2613A21}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2E6DB639-3273-4564-91AE-BC28A2613A21}.Release|Any CPU.Build.0 = Release|Any CPU
-		{933F8AAD-CF84-4346-B924-E4D78504FB5D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{933F8AAD-CF84-4346-B924-E4D78504FB5D}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{933F8AAD-CF84-4346-B924-E4D78504FB5D}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{933F8AAD-CF84-4346-B924-E4D78504FB5D}.Release|Any CPU.Build.0 = Release|Any CPU
 		{F7F1E134-E00F-4162-B974-8AAFC325F0B8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{F7F1E134-E00F-4162-B974-8AAFC325F0B8}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F7F1E134-E00F-4162-B974-8AAFC325F0B8}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -161,6 +165,26 @@ Global
 		{56A603B7-467A-442F-81B3-36E0B20DC3E8}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{56A603B7-467A-442F-81B3-36E0B20DC3E8}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{56A603B7-467A-442F-81B3-36E0B20DC3E8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{36EECB40-D1C3-4FA2-B0C5-99BF883140C4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{36EECB40-D1C3-4FA2-B0C5-99BF883140C4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{36EECB40-D1C3-4FA2-B0C5-99BF883140C4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{36EECB40-D1C3-4FA2-B0C5-99BF883140C4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8CC2C428-89B7-4C4C-A56A-7C98E6EDB488}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8CC2C428-89B7-4C4C-A56A-7C98E6EDB488}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8CC2C428-89B7-4C4C-A56A-7C98E6EDB488}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8CC2C428-89B7-4C4C-A56A-7C98E6EDB488}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D5CF3483-4C85-480A-B8A0-764862D9004D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D5CF3483-4C85-480A-B8A0-764862D9004D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D5CF3483-4C85-480A-B8A0-764862D9004D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D5CF3483-4C85-480A-B8A0-764862D9004D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D1F5182C-3F4A-423A-AC68-FC22B8BB867F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D1F5182C-3F4A-423A-AC68-FC22B8BB867F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D1F5182C-3F4A-423A-AC68-FC22B8BB867F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D1F5182C-3F4A-423A-AC68-FC22B8BB867F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{38B2F586-DF35-4656-9C06-1CF96F629D76}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{38B2F586-DF35-4656-9C06-1CF96F629D76}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{38B2F586-DF35-4656-9C06-1CF96F629D76}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{38B2F586-DF35-4656-9C06-1CF96F629D76}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -182,7 +206,6 @@ Global
 		{4E1EAB7C-94EC-4A2D-BB95-1E0B6AD5812B} = {29995282-2F1E-4A4C-890E-69EC86803F3C}
 		{02A01D0A-7F5E-486A-BA05-747C4A74C488} = {29995282-2F1E-4A4C-890E-69EC86803F3C}
 		{2E6DB639-3273-4564-91AE-BC28A2613A21} = {5FD8AA1D-33AA-4C0D-9D17-A2A7EF4C8C0D}
-		{933F8AAD-CF84-4346-B924-E4D78504FB5D} = {C2748FB2-AC6E-42CD-A53D-4EA329E24FF4}
 		{F7F1E134-E00F-4162-B974-8AAFC325F0B8} = {5FD8AA1D-33AA-4C0D-9D17-A2A7EF4C8C0D}
 		{6B5A2FEB-DD8A-452C-833D-B3E7D901E103} = {29995282-2F1E-4A4C-890E-69EC86803F3C}
 		{DB2365CB-3836-4462-8D4A-1279A024F800} = {29995282-2F1E-4A4C-890E-69EC86803F3C}
@@ -194,6 +217,11 @@ Global
 		{13FECE4C-78E7-4AE1-9909-B13A9ABC4276} = {56AA34D6-5B31-442A-AF0A-939CF38747DF}
 		{155ED73C-0553-D5D8-957B-3DAB6638DD00} = {56AA34D6-5B31-442A-AF0A-939CF38747DF}
 		{56A603B7-467A-442F-81B3-36E0B20DC3E8} = {7BA5BE10-C931-4E06-887E-8CB57181EB4F}
+		{36EECB40-D1C3-4FA2-B0C5-99BF883140C4} = {C2748FB2-AC6E-42CD-A53D-4EA329E24FF4}
+		{8CC2C428-89B7-4C4C-A56A-7C98E6EDB488} = {C2748FB2-AC6E-42CD-A53D-4EA329E24FF4}
+		{D5CF3483-4C85-480A-B8A0-764862D9004D} = {C2748FB2-AC6E-42CD-A53D-4EA329E24FF4}
+		{D1F5182C-3F4A-423A-AC68-FC22B8BB867F} = {CFA687FB-6CD6-4A14-BE84-465F271F99FD}
+		{38B2F586-DF35-4656-9C06-1CF96F629D76} = {CFA687FB-6CD6-4A14-BE84-465F271F99FD}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {3EE9B52E-1327-4A63-86E1-BB354A241BA7}

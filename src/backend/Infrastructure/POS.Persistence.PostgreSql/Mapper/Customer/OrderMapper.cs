@@ -6,15 +6,14 @@ internal static class OrderMapper
 {
     public static OrderState ToState(this OrderEntity entity)
     {
-        return new OrderState(
-            entity.Id,
-            entity.CreatedAt,
-            entity.Items.ToDomain(),
-            entity.PriceSummary.ToDomain()
-        )
+        return new OrderState
         {
+            Id = entity.Id,
+            CreatedAt = entity.CreatedAt,
+            LastChangedAt = entity.LastChangedAt,
             State = entity.State,
-            LastChangedAt = entity.LastChangedAt
+            Items = entity.Items.ToDomain(),
+            PriceSummary = entity.PriceSummary.ToDomain()
         };
     }
 }

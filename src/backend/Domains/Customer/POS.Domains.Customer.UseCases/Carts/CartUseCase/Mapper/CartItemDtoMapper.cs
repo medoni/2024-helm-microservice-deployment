@@ -1,4 +1,4 @@
-﻿using POS.Domains.Customer.Domain.Carts;
+﻿using POS.Domains.Customer.Abstractions.Carts;
 using POS.Domains.Customer.UseCases.Carts.CartUseCase.Dtos;
 using POS.Shared.Domain.Generic.Mapper;
 

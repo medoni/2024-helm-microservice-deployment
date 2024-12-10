@@ -39,7 +39,8 @@ jobs:
     - name: "[SETUP] Start a local k3s cluster"
       uses: jupyterhub/action-k3s-helm@v4
       with:
-        k3s-channel: latest
+        k3s-version: v1.31.2+k3s1
+        helm-version: v3.16.3
     
     - name: "[SETUP] Create Kubernetes namespaces"
       run: |
@@ -54,7 +55,7 @@ jobs:
     
     - name: "[SETUP] Helm install `pizza-service`"
       run: |
-        helm install $POS_NAMESPACE ./src/infrastructure/helm/dev-local/PizzaService \
+        helm install $POS_NAMESPACE ./src/infrastructure/Kubernetes/helm/dev-local/PizzaService \
           --set image.repository=ghcr.io/${{ github.repository }}/ \
           --set image.tag=${{ inputs.image-tag }} \
           --set global.domain=pos.mycluster.localhost \
@@ -90,6 +91,7 @@ jobs:
       with:
         path: ./src/tests/k6/smoke-create-cart-and-checkout.js
         fail-fast: true
+        debug: true
       env:
         BASE_URL: http://pizza-service.pos.mycluster.localhost/api
         SLOWMO: "0"

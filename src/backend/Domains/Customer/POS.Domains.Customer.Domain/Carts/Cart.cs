@@ -83,10 +83,14 @@ public class Cart : AggregateRoot
         DateTimeOffset createdAt,
         Menu menu
     )
-    : this(new CartState(id, createdAt, menu.Id, menu.Currency)
+    : this(new CartState()
     {
+        Id = id,
         State = CartStates.Created,
-        LastChangedAt = createdAt
+        CreatedAt = createdAt,
+        LastChangedAt = createdAt,
+        Currency = menu.Currency,
+        MenuId = menu.Id,
     })
     {
         if (!menu.IsActive) throw new ArgumentException("Cannot create cart of inactive menu.");
@@ -135,14 +139,16 @@ public class Cart : AggregateRoot
         IDomainEvent domainEvent;
         if (item is null)
         {
-            item = new CartItem(
-                Guid.NewGuid(),
-                changedAt,
-                menuItemId,
-                menuItem.Name,
-                menuItem.Description,
-                menuItem.Price
-            );
+            item = new CartItem
+            {
+                Id = Guid.NewGuid(),
+                CreatedAt = changedAt,
+                LastChangedAt = changedAt,
+                MenuItemId = menuItemId,
+                Name = menuItem.Name,
+                Description = menuItem.Description,
+                UnitPrice = menuItem.Price
+            };
             _state.Items.Add(item);
             domainEvent = new CartItemAddedEvent(Id, item.Id, menuItemId, changedAt, menuItem.Name, menuItem.Description, menuItem.Price.ToDto(), newQuantity);
         }
