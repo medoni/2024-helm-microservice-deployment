@@ -7,11 +7,14 @@ using POS.Domains.Customer.Domain.Carts;
 using POS.Domains.Customer.Domain.Menus;
 using POS.Domains.Customer.Domain.Orders;
 using POS.Domains.Customer.Persistence.Carts;
+using POS.Domains.Customer.Persistence.Carts.Decorators;
 using POS.Domains.Customer.Persistence.DynamoDb.Configurations;
 using POS.Domains.Customer.Persistence.DynamoDb.Repositories;
 using POS.Domains.Customer.Persistence.DynamoDb.UnitOfWork;
 using POS.Domains.Customer.Persistence.Menus;
+using POS.Domains.Customer.Persistence.Menus.Decorators;
 using POS.Domains.Customer.Persistence.Orders;
+using POS.Domains.Customer.Persistence.Orders.Decorators;
 using POS.Shared.Domain;
 using POS.Shared.Persistence.Repositories;
 using POS.Shared.Persistence.UOW;
@@ -31,12 +34,17 @@ public static class CustomerDynamoDbStartup
         services.AddDynamoDbRepository<IMenuRespository, MenuRepository, Menu>((svcp, ddbCtx, options) =>
             new MenuRepository(ddbCtx, svcp.BuildOperationConfig(options.MenusTableName))
         );
+        services.Decorate<IMenuRespository, LoggingMenuRepositoryDecorator>();
+
         services.AddDynamoDbRepository<ICartRepository, CartRepository, Cart>((svcp, ddbCtx, options) =>
             new CartRepository(ddbCtx, svcp.BuildOperationConfig(options.CartsTableName))
         );
+        services.Decorate<ICartRepository, LoggingCartRepositoryDecorator>();
+
         services.AddDynamoDbRepository<IOrderRepository, OrderRepository, Order>((svcp, ddbCtx, options) =>
             new OrderRepository(ddbCtx, svcp.BuildOperationConfig(options.OrdersTableName))
         );
+        services.Decorate<IOrderRepository, LoggingOrderRepositoryDecorator>();
 
         services.AddUnitOfWork<DynamoDbUnitOfWork>();
 

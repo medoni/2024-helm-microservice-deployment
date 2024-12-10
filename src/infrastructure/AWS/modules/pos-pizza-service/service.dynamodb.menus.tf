@@ -16,8 +16,6 @@ resource "aws_dynamodb_table" "pos_pizza_service_menus_table" {
   global_secondary_index {
     name               = "active"
     hash_key           = "active"
-    write_capacity     = 10
-    read_capacity      = 10
     projection_type    = "INCLUDE"
     non_key_attributes = ["active", "payload"]
   }
