@@ -5,7 +5,6 @@ internal class RequestLoggingMiddleware(
     ILogger<RequestLoggingMiddleware> logger
 )
 {
-
     public async Task InvokeAsync(HttpContext context)
     {
         var logScope = logger.BeginScope("Processing request ...");

@@ -5,7 +5,7 @@ let errorCounter = new Counter('errors');
 const scenarios = {
   functional_check: {
     executor: 'constant-vus',
-    vus: 5,
+    vus: 3,
     duration: "1m",
     exec: 'run_create_cart_and_checkout_scenario',
   },

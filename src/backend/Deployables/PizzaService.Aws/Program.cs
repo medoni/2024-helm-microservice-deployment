@@ -56,7 +56,7 @@ internal static class ProgramExtension
         IConfiguration configuration
     )
     {
-        services.Configure<CustomerDynamoDbOptions>(options =>
+        services.Configure<CustomerDynamoDbSettings>(options =>
         {
             configuration.Bind("Aws:DynamoDb", options);
         });

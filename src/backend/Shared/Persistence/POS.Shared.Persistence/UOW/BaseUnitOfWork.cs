@@ -5,7 +5,7 @@ using System.Collections.Concurrent;
 namespace POS.Shared.Persistence.UOW;
 
 /// <summary>
-///
+/// Base implementation of Unit-Of-Work pattern with specific Repositories per Aggregate type.
 /// </summary>
 public abstract class BaseUnitOfWork : IUnitOfWork
 {
@@ -14,7 +14,7 @@ public abstract class BaseUnitOfWork : IUnitOfWork
     private readonly ConcurrentDictionary<(Type, Guid), TrackedRecord> _trackedInstances;
 
     /// <summary>
-    ///
+    /// Creates a new <see cref="BaseUnitOfWork"/>
     /// </summary>
     public BaseUnitOfWork(
         IServiceProvider serviceProvider,
@@ -37,7 +37,7 @@ public abstract class BaseUnitOfWork : IUnitOfWork
     }
 
     /// <summary>
-    ///
+    /// Creates a tracked record for adding the aggregate when committing the changes.
     /// </summary>
     protected abstract TrackedRecord CreateAddRecord<TAggregate>(
         TAggregate aggregate,
@@ -66,7 +66,7 @@ public abstract class BaseUnitOfWork : IUnitOfWork
     }
 
     /// <summary>
-    ///
+    /// Creates a tracked record for updating the aggregate when committing the changes.
     /// </summary>
     protected abstract TrackedRecord CreateUpdateRecord<TAggregate>(
         TAggregate aggregate,
@@ -87,7 +87,7 @@ public abstract class BaseUnitOfWork : IUnitOfWork
     }
 
     /// <summary>
-    ///
+    /// Flushes (saves) the outstanding changes to the underlaying database system.
     /// </summary>
     protected abstract Task FlushCommitsAsync();
 

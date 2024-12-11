@@ -5,12 +5,12 @@ using System.Text.Json;
 namespace NUnit.Framework;
 
 /// <summary>
-///
+/// Extension methods for <see cref="Constraint"/>.
 /// </summary>
 public static class ContstrainExtensions
 {
     /// <summary>
-    ///
+    /// Compares two values using Json-Serializer
     /// </summary>
     public static EqualConstraint UsingJson(this EqualConstraint constraint)
     {

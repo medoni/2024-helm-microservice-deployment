@@ -4,12 +4,12 @@ using POS.Shared.Persistence.Repositories;
 namespace POS.Shared.Persistence.UOW;
 
 /// <summary>
-///
-/// </summary>
+/// Extension methods for <see cref="IServiceCollection"/> regarding Unit-Of-Work implementation.
+/// /// </summary>
 public static class UnitOfWorkStartup
 {
     /// <summary>
-    ///
+    /// Adds Unit-Of-Work support to the <see cref="IServiceCollection"/>
     /// </summary>
     public static IServiceCollection AddUnitOfWork<TUnitOfWork>(
         this IServiceCollection services

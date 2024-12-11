@@ -47,7 +47,6 @@ public record MenuState
     /// </summary>
     public MenuState()
     {
-
     }
 
     /// <summary>

@@ -22,12 +22,12 @@ using POS.Shared.Persistence.UOW;
 namespace POS.Domains.Customer.Persistence.DynamoDb;
 
 /// <summary>
-///
+/// Extension methods for configuring DynamoDb for Customer
 /// </summary>
 public static class CustomerDynamoDbStartup
 {
     /// <summary>
-    ///
+    /// Adds Customer support for DynamoDb to DI-Container.
     /// </summary>
     public static IServiceCollection AddCustomerDynamoDbSupport(this IServiceCollection services)
     {
@@ -53,7 +53,7 @@ public static class CustomerDynamoDbStartup
 
     private static IServiceCollection AddDynamoDbRepository<TRepositoryService, TRepositoryImpl, TAggregate>(
         this IServiceCollection services,
-        Func<IServiceProvider, DynamoDBContext, CustomerDynamoDbOptions, TRepositoryImpl> factory
+        Func<IServiceProvider, DynamoDBContext, CustomerDynamoDbSettings, TRepositoryImpl> factory
     )
     where TRepositoryService : class, IGenericRepository<TAggregate>
     where TRepositoryImpl : class, TRepositoryService
@@ -62,7 +62,7 @@ public static class CustomerDynamoDbStartup
 
         services.AddScoped<TRepositoryService, TRepositoryImpl>(svcp =>
         {
-            var customerDbOptions = svcp.GetRequiredService<IOptions<CustomerDynamoDbOptions>>().Value;
+            var customerDbOptions = svcp.GetRequiredService<IOptions<CustomerDynamoDbSettings>>().Value;
             var clientConfig = new AmazonDynamoDBConfig();
             clientConfig.RegionEndpoint = RegionEndpoint.GetBySystemName(customerDbOptions.Region);
             var client = new AmazonDynamoDBClient(clientConfig);
