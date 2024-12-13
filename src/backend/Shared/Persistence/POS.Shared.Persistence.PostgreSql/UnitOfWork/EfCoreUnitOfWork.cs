@@ -3,13 +3,14 @@ using POS.Shared.Persistence.Repositories;
 using POS.Shared.Persistence.UOW;
 
 namespace POS.Shared.Persistence.PostgreSql.UnitOfWork;
-internal class EfCoreUnitOfWork : BaseUnitOfWork
+internal class EfCoreUnitOfWork<TDbContext> : BaseUnitOfWork
+where TDbContext : DbContext
 {
     private readonly DbContext _dbContext;
 
     public EfCoreUnitOfWork(
         IServiceProvider serviceProvider,
-        DbContext dbContext,
+        TDbContext dbContext,
         BaseRepositoryFactory repositoryFactory
     ) : base(serviceProvider, repositoryFactory)
     {

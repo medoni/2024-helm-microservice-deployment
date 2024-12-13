@@ -18,7 +18,7 @@ public static class PostgreSqlStartup
     )
     where TDbContext : DbContext
     {
-        services.AddUnitOfWork<EfCoreUnitOfWork>();
+        services.AddUnitOfWork<EfCoreUnitOfWork<TDbContext>>();
 
         return services;
     }
