@@ -20,6 +20,11 @@ public abstract class BaseDynamoDbRepositoryIntegrationTests
           .Build();
         await DynamoDbContainer.StartAsync();
 
+        var logs = await DynamoDbContainer.GetLogsAsync();
+        Console.WriteLine("Container.ServiceUrl: " + DynamoDbContainer.GetConnectionString());
+        Console.WriteLine("Container logs stdout: " + logs.Stdout);
+        Console.WriteLine("Container logs stderr: " + logs.Stderr);
+
         DynamoDbClient = new AmazonDynamoDBClient(new AmazonDynamoDBConfig
         {
             ServiceURL = DynamoDbContainer.GetConnectionString(),
