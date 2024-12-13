@@ -6,6 +6,13 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="MinVer" Version="6.0.0">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\..\Infrastructure\POS.Persistence.PostgreSql\POS.Persistence.PostgreSql.csproj" />
     <ProjectReference Include="..\PizzaService.Base\PizzaService.Base.csproj" />
   </ItemGroup>

@@ -1,5 +1,6 @@
 ﻿using Amazon.DynamoDBv2;
 using Amazon.DynamoDBv2.DataModel;
+using Amazon.Runtime;
 using Testcontainers.DynamoDb;
 
 namespace POS.Domains.Customer.Persistence.DynamoDb.Tests.Repositories;
@@ -20,10 +21,12 @@ public abstract class BaseDynamoDbRepositoryIntegrationTests
           .Build();
         await DynamoDbContainer.StartAsync();
 
-        DynamoDbClient = new AmazonDynamoDBClient(new AmazonDynamoDBConfig
-        {
-            ServiceURL = DynamoDbContainer.GetConnectionString(),
-        });
+        DynamoDbClient = new AmazonDynamoDBClient(
+            new BasicAWSCredentials("test", "test"),
+            new AmazonDynamoDBConfig
+            {
+                ServiceURL = DynamoDbContainer.GetConnectionString(),
+            });
         DynamoDbContext = new DynamoDBContext(DynamoDbClient);
 
         DynamoDbOperationConfig = new DynamoDBOperationConfig()
