@@ -64,7 +64,7 @@ if (__ENV.SCENARIO) {
   options.scenarios = scenarios;
 }
 
-const BASE_URL = __ENV.BASE_URL || 'https://cczvf5kg92.execute-api.eu-central-1.amazonaws.com/api';
+const BASE_URL = __ENV.BASE_URL || 'https://m9s12tlge2.execute-api.eu-central-1.amazonaws.com/api';
 const SLOWMO = parseFloat(__ENV.SLOWMO || '0.1');
 
 export function run_warmup() {

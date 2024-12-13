@@ -1,5 +1,5 @@
 resource "aws_dynamodb_table" "pos_pizza_service_menus_table" {
-  name           = "pos-dev-pizza-service-menus"
+  name           = "${var.project.short}-${var.env.short}-pizza-service-menus"
   billing_mode   = "PAY_PER_REQUEST"
   hash_key       = "id"
 
@@ -22,7 +22,7 @@ resource "aws_dynamodb_table" "pos_pizza_service_menus_table" {
 }
 
 resource "aws_iam_policy" "pos_pizza_service_dynamodb_menus_table_access_policy" {
-  name = "pos-dev-pizza-service-dynamodb-menus-access-policy"
+  name = "${var.project.short}-${var.env.short}-pizza-service-dynamodb-menus-access-policy"
 
   policy = jsonencode({
     Version = "2012-10-17"

@@ -1,5 +1,5 @@
 variable "function_name" {
-  type = string
+  type        = string
   description = "Name of the AWS Lambda function, used for naming related resources like IAM roles and policies."
 }
 

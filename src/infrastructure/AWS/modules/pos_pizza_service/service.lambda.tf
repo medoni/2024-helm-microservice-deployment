@@ -1,14 +1,8 @@
 
-variable service-version {
-  type        = string
-  default     = "0.1.0-alpha-107"
-  description = "description"
-}
-
 module "pos_pizza_service" {
-  source = "../aws-lambda-zip-based-on-dockerfile"
+  source = "../aws_lambda_zip_based_on_dockerfile"
 
-  function_name = "pos-dev-pizza-service"
+  function_name = "${var.project.short}-${var.env.short}-pizza-service"
 
   lambda = {
     handler       = "PizzaService.Aws"
@@ -18,14 +12,14 @@ module "pos_pizza_service" {
   }
 
   docker = {
-    image_name = "pos-pizza-service"
+    image_name = var.docker_image.image_name
     build = {
       dockerfile = "backend/Deployables/PizzaService.Aws/Dockerfile"
       context = "${path.cwd}/../../../../"
       build_arg = {
-        BUILD_VERSION = var.service-version
-        BUILD_DATE = "1970-01-01T00:00:00Z"
-        GIT_SHA = "A100000000000000000000000000000000000000"
+        BUILD_VERSION = var.service_version
+        BUILD_DATE    = var.docker_build_date
+        GIT_SHA       = var.docker_build_git_sha
       }
     }
     image_app_dir = "/app"
