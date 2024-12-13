@@ -122,20 +122,40 @@ public class CartRepositoryIntegrationTests : BaseDynamoDbRepositoryIntegrationT
 
     protected override async Task CreateTableAsync(DynamoDBOperationConfig operationConfig)
     {
-        var createTableRequest = new CreateTableRequest
+        try
         {
-            TableName = operationConfig.OverrideTableName,
-            BillingMode = BillingMode.PAY_PER_REQUEST,
-            KeySchema = new()
+            var createTableRequest = new CreateTableRequest
+            {
+                TableName = operationConfig.OverrideTableName,
+                BillingMode = BillingMode.PAY_PER_REQUEST,
+                KeySchema = new()
             {
                 new KeySchemaElement("id", KeyType.HASH)
             },
-            AttributeDefinitions = new()
+                AttributeDefinitions = new()
             {
                 new AttributeDefinition() { AttributeName = "id", AttributeType = "S" }
             }
-        };
-        await DynamoDbClient.CreateTableAsync(createTableRequest);
+            };
+            await DynamoDbClient.CreateTableAsync(createTableRequest);
+        }
+        catch (Exception ex)
+        {
+            var logs = await DynamoDbContainer.GetLogsAsync();
+
+            throw new InvalidOperationException(
+                $"""
+                DynamoDbClient.GetConnectionString(): '{DynamoDbContainer.GetConnectionString()}'
+                -------------------------------------------
+                Stdout:
+                {logs.Stdout}
+                -------------------------------------------
+                Stderr:
+                {logs.Stderr}
+                -------------------------------------------
+                """, ex
+            );
+        }
     }
 
     #endregion

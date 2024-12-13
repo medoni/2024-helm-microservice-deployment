@@ -16,14 +16,9 @@ public abstract class BaseDynamoDbRepositoryIntegrationTests
     public virtual async Task OneTimeSetupAsync()
     {
         DynamoDbContainer = new DynamoDbBuilder()
-          .WithImage("amazon/dynamodb-local:1.21.0")
+          .WithImage("amazon/dynamodb-local:2.5.3")
           .Build();
         await DynamoDbContainer.StartAsync();
-
-        var logs = await DynamoDbContainer.GetLogsAsync();
-        Console.WriteLine("Container.ServiceUrl: " + DynamoDbContainer.GetConnectionString());
-        Console.WriteLine("Container logs stdout: " + logs.Stdout);
-        Console.WriteLine("Container logs stderr: " + logs.Stderr);
 
         DynamoDbClient = new AmazonDynamoDBClient(new AmazonDynamoDBConfig
         {
