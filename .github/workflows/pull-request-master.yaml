@@ -75,3 +75,10 @@ jobs:
     with:
       image-tag: pr-${{ github.sha }}
     secrets: inherit
+
+  aws-integration-tests:
+    name: Aws integration tests
+    uses: ./.github/workflows/_aws-integration-tests.yaml
+    with:
+      env: dev
+    secrets: inherit

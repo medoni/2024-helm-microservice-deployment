@@ -1,0 +1,35 @@
+name: Aws integration tests
+
+on:
+  workflow_call:
+    inputs:
+      env:
+        required: true
+        type: string
+  
+  # todo: remove. 
+  workflow_dispatch:
+    inputs:
+      env:
+        description: The environment to test
+        required: true
+        type: string
+        default: 'dev'
+
+jobs:
+  aws-integration-tests:
+    name: "Aws integration tests using Terraform"
+    runs-on: ubuntu-latest
+    steps:
+    - name: "[SETUP] Checkout code"
+      uses: actions/checkout@v4
+    
+    - name: "[SETUP] Terraform"
+      uses: hashicorp/setup-terraform@v3
+      with:
+        terraform_version: "1.10.2"
+
+    - name: "[Test] Terraform plan"
+      run: terraform plan -no-color
+      working-directory: ./src/infrastructure/AWS/envs/${{ inputs.env }}
+      
