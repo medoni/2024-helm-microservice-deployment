@@ -27,7 +27,7 @@ resource "aws_api_gateway_integration" "pos_pizza_service_lambda_integration" {
   http_method             = aws_api_gateway_method.pos_pizza_service_proxy_service.http_method
   integration_http_method = "POST"
   type                    = "AWS_PROXY"
-  uri                     = aws_lambda_function.pos-pizza-service.invoke_arn
+  uri                     = module.pos_pizza_service.lambda_invoke_arn
 }
 
 resource "aws_api_gateway_deployment" "pos_pizza_service_deployment" {
@@ -46,9 +46,9 @@ resource "aws_api_gateway_stage" "pos_pizza_service_prod_stage" {
 }
 
 resource "aws_lambda_permission" "api_gateway_invoke" {
-  statement_id  = "AllowAPIGatewayInvoke"
+  statement_id  = "AllowExecutionFromAPIGateway"
   action        = "lambda:InvokeFunction"
-  function_name = aws_lambda_function.pos-pizza-service.function_name
+  function_name = module.pos_pizza_service.lambda_function_name
   principal     = "apigateway.amazonaws.com"
 
   source_arn = "${aws_api_gateway_rest_api.pos_pizza_service_rest_api.execution_arn}/*"

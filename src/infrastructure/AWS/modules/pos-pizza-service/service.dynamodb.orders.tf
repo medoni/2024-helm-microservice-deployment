@@ -38,6 +38,6 @@ resource "aws_iam_policy" "pos_pizza_service_dynamodb_orders_table_access_policy
 }
 
 resource "aws_iam_role_policy_attachment" "pos_pizza_service_orders_table_policy_attachment" {
-  role       = aws_iam_role.pos-pizza-service-lambda-exec-role.name
+  role       = module.pos_pizza_service.iam_role_exec_role
   policy_arn = aws_iam_policy.pos_pizza_service_dynamodb_orders_table_access_policy.arn
 }

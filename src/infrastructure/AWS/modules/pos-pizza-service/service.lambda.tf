@@ -1,15 +1,37 @@
 
-resource "aws_lambda_function" "pos-pizza-service" {
+variable service-version {
+  type        = string
+  default     = "0.1.0-alpha-107"
+  description = "description"
+}
+
+module "pos_pizza_service" {
+  source = "../aws-lambda-zip-based-on-dockerfile"
+
   function_name = "pos-dev-pizza-service"
-  role          = aws_iam_role.pos-pizza-service-lambda-exec-role.arn
-  handler       = "PizzaService.Aws"
-  runtime       = "dotnet8"
-  filename      = local.pos-pizza-service-zip-file
-  timeout       = 25
 
-  depends_on = [null_resource.pos-pizza-service-container-image-operations]
+  lambda = {
+    handler       = "PizzaService.Aws"
+    runtime       = "dotnet8"
+    timeout       = 25
+    memory_size   = 256
+  }
 
-  environment {
+  docker = {
+    image_name = "pos-pizza-service"
+    build = {
+      dockerfile = "backend/Deployables/PizzaService.Aws/Dockerfile"
+      context = "${path.cwd}/../../../../"
+      build_arg = {
+        BUILD_VERSION = var.service-version
+        BUILD_DATE = "1970-01-01T00:00:00Z"
+        GIT_SHA = "A100000000000000000000000000000000000000"
+      }
+    }
+    image_app_dir = "/app"
+  }
+
+  environment = {
     variables = {
       "Logging__LogLevel__Default" = "Information"
       "Swagger__Enabled" = "True"
@@ -23,45 +45,8 @@ resource "aws_lambda_function" "pos-pizza-service" {
   layers = [
     "arn:aws:lambda:eu-central-1:580247275435:layer:LambdaInsightsExtension:53"
   ]
-}
 
-resource "aws_iam_role" "pos-pizza-service-lambda-exec-role" {
-  name = "pos-dev-pizza-service-lambda-exec-role"
-
-  assume_role_policy = jsonencode({
-    Version = "2012-10-17"
-    Statement = [
-      {
-        Action    = "sts:AssumeRole"
-        Effect    = "Allow"
-        Principal = {
-          Service = "lambda.amazonaws.com"
-        }
-      }
-    ]
-  })
-}
-
-resource "aws_iam_role_policy" "pos-pizza-service-lambda-role-policy" {
-  name   = "pos-dev-pizza-service-lambda-role-policy"
-  role   = aws_iam_role.pos-pizza-service-lambda-exec-role.id
-  policy = jsonencode({
-    Version = "2012-10-17"
-    Statement = [
-      {
-        Action   = [
-          "logs:CreateLogGroup",
-          "logs:CreateLogStream",
-          "logs:PutLogEvents"
-        ]
-        Effect   = "Allow"
-        Resource = "arn:aws:logs:*:*:*"
-      }
-    ]
-  })
-}
-
-resource "aws_cloudwatch_log_group" "pos-pizza-service-hello-world-lamda-" {
-  name              = "/aws/lambda/${aws_lambda_function.pos-pizza-service.function_name}"
-  retention_in_days = 7
+  cloudwatch = {
+    retention_in_days = 7
+  }
 }

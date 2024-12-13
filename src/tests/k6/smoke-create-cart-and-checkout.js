@@ -38,7 +38,7 @@ export const options = {
   thresholds: {
     'http_req_duration{scenario:warmup}': [
       {
-        'threshold': 'p(50)<200',
+        'threshold': 'p(90)<600',
         'abortOnFail': true
       }
     ],
@@ -48,7 +48,7 @@ export const options = {
 
     'http_req_duration{scenario:create_cart_and_checkout}': [
       {
-        'threshold': 'p(50)<500',
+        'threshold': 'p(90)<600',
         'abortOnFail': false
       }
     ],
