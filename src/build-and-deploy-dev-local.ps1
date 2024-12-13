@@ -14,11 +14,11 @@ $scriptDirectory = $PSScriptRoot
 
 
 function Invoke-Main() {
-    BuildAndPush-DockerImage "$scriptDirectory" "$scriptDirectory/backend/Deployables/PizzaOrderingService/Dockerfile" pizza-service
+    BuildAndPush-DockerImage "$scriptDirectory" "$scriptDirectory/backend/Deployables/PizzaService.AspNetCore/Dockerfile" pizza-service
     BuildAndPush-DockerImage "$scriptDirectory" "$scriptDirectory/backend/Infrastructure/POS.Persistence.PostgreSql.DbMigrations/Dockerfile" pizza-db-migrations
     BuildAndPush-DockerImage "$scriptDirectory" "$scriptDirectory/backend/Infrastructure/POS.Persistence.DbSeed/Dockerfile" pizza-db-seed
     
-    Apply-Helm-Chart ./infrastructure/helm/dev-local/PizzaService/
+    Apply-Helm-Chart ./infrastructure/Kubernetes/helm/dev-local/PizzaService/
 
     Force-Redeployment
 }
