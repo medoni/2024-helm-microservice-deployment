@@ -28,7 +28,7 @@ data "aws_iam_policy_document" "github_oidc" {
 
     condition {
       test     = "StringLike"
-      values   = ["repo:medoni/2024-helm-microservice-deployment"]
+      values   = ["repo:medoni/2024-helm-microservice-deployment:*"]
       variable = "token.actions.githubusercontent.com:sub"
     }
   }
@@ -40,17 +40,32 @@ resource "aws_iam_role" "github_deploy_role" {
 }
 
 data "aws_iam_policy_document" "github_deploy_policy" {
+
   statement {
-    effect  = "Allow"
+    effect = "Allow"
     actions = [
-      "*",
+      "apigateway:*",
+      "cloudwatch:*",
+      "dynamodb:*",
+      "events:*",
+      "iam:*",
+      "lambda:*",
+      "logs:*",
+      "s3:*",
     ]
     resources = ["*"]
   }
 }
 
-resource "aws_iam_policy" "deploy" {
+resource "aws_iam_role_policy" "deploy" {
   name        = "github-oidc-deploy-policy"
-  description = "Policy used for deployments on CI from Github"
+  # description = "Policy used for deployments on CI from Github"
+  role   = aws_iam_role.github_deploy_role.id
   policy      = data.aws_iam_policy_document.github_deploy_policy.json
 }
+
+# resource "aws_iam_role_policy" "cloudwatch" {
+#   name   = "default"
+#   role   = aws_iam_role.cloudwatch.id
+#   policy = data.aws_iam_policy_document.cloudwatch.json
+# }
