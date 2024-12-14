@@ -8,7 +8,7 @@ on:
         type: string
       AWS_ROLE_TO_ASSUME:
         type: string
-        default: github-oidc-deploy-role
+        default: arn:aws:iam::715841335307:role/github-oidc-deploy-role
       AWS_REGION:
         type: string
         default: "us-east-1"
@@ -24,7 +24,7 @@ on:
       AWS_ROLE_TO_ASSUME:
         description: The aws role to assume for deploying
         type: string
-        default: github-oidc-deploy-role
+        default: arn:aws:iam::715841335307:role/github-oidc-deploy-role
       AWS_REGION:
         description: The aws region for getting credentials
         type: string
