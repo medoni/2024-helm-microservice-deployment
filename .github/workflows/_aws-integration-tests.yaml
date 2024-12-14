@@ -6,6 +6,9 @@ on:
       env:
         required: true
         type: string
+      AWS_ROLE_TO_ASSUME:
+        type: string
+        default: github-oidc-deploy-role
   
   # todo: remove. 
   workflow_dispatch:
@@ -20,9 +23,17 @@ jobs:
   aws-integration-tests:
     name: "Aws integration tests using Terraform"
     runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
     steps:
     - name: "[SETUP] Checkout code"
       uses: actions/checkout@v4
+    
+    - name: Configure AWS Credentials
+      uses: aws-actions/configure-aws-credentials@v4
+      with:
+        role-to-assume: ${{ vars.AWS_ROLE_TO_ASSUME }}
     
     - name: "[SETUP] Terraform"
       uses: hashicorp/setup-terraform@v3
