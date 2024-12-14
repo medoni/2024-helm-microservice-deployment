@@ -9,9 +9,11 @@ provider "aws" {
  }
 }
 
-provider "docker" {
-  # host = "unix:///var/run/docker.sock"
-}
+# provider "docker" {
+#   registry_auth {
+#     address  = "715841335307.dkr.ecr.eu-central-1.amazonaws.com"
+#   }
+# }
 
 terraform {
   required_providers {

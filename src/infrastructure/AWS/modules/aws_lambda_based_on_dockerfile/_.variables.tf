@@ -5,8 +5,6 @@ variable "function_name" {
 
 variable "lambda" {
   type = object({
-    handler     = string
-    runtime     = string
     timeout     = number
     memory_size = number
   })
@@ -34,6 +32,7 @@ EOF
 variable "docker" {
   type = object({
     image_name    = string
+    image_tag     = string
     build = object({
       dockerfile  = string
       context     = string
@@ -44,6 +43,7 @@ variable "docker" {
   description = <<EOF
     docker = {
       image_name    = "The name of the Docker image to use for the Lambda function."
+      image_tag     = "The name of Docker image tag."
       build         = {
         dockerfile  = "Path to the Dockerfile used for building the image."
         context     = "The build context directory for the Docker image."
@@ -52,12 +52,6 @@ variable "docker" {
       image_app_dir = "The directory in the Docker image where the application resides."
     }
 EOF
-}
-
-variable "layers" {
-  type = list(string)
-  description = "List of ARNs for AWS Lambda layers to attach to the function. Leave empty if no layers are needed."
-  default = []
 }
 
 variable "cloudwatch" {

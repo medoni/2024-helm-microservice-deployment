@@ -26,6 +26,15 @@ resource "aws_api_gateway_integration" "pos_pizza_service_lambda_integration" {
 
 resource "aws_api_gateway_deployment" "pos_pizza_service_deployment" {
   rest_api_id = aws_api_gateway_rest_api.pos_pizza_service_rest_api.id
+
+  triggers = {
+    redeployment = sha1(jsonencode(aws_api_gateway_rest_api.pos_pizza_service_rest_api.body))
+  }
+
+  lifecycle {
+    create_before_destroy = true
+  }
+
   depends_on = [
     aws_api_gateway_integration.pos_pizza_service_lambda_integration
   ]
@@ -45,5 +54,5 @@ resource "aws_lambda_permission" "api_gateway_invoke" {
   function_name = module.pos_pizza_service.lambda_function_name
   principal     = "apigateway.amazonaws.com"
 
-  source_arn = "${aws_api_gateway_rest_api.pos_pizza_service_rest_api.execution_arn}/*"
+  source_arn = "${aws_api_gateway_rest_api.pos_pizza_service_rest_api.execution_arn}/*/*/*"
 }

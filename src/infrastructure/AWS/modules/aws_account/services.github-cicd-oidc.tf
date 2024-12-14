@@ -46,6 +46,7 @@ data "aws_iam_policy_document" "github_deploy_policy" {
     actions = [
       "apigateway:*",
       "cloudwatch:*",
+      "ecr:*",
       "dynamodb:*",
       "events:*",
       "iam:*",

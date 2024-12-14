@@ -1,4 +1,5 @@
 ﻿using Amazon.XRay.Recorder.Core;
+using Amazon.XRay.Recorder.Handlers.AwsSdk;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using PizzaService.Aws.Services.AspNet;
 using PizzaService.Base;
@@ -11,6 +12,8 @@ internal class Program
 {
     private static async Task Main(string[] args)
     {
+        AWSSDKHandler.RegisterXRayForAllServices();
+
         var builder = WebApplication.CreateBuilder(args);
 
         builder.Services.AddAWSLambdaHosting(LambdaEventSource.RestApi);
@@ -34,7 +37,8 @@ internal class Program
 
         builder.Services.AddPizzaServiceDynamoDbSupport(builder.Configuration);
 
-        var app = builder.Build();
+        var app = builder
+            .Build();
 
         app.UseXRay("PizzaService");
         app.ConfigureSwagger(builder.Configuration);
