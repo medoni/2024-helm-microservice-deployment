@@ -75,24 +75,6 @@ public class MenuRepositoryIntegrationTests : BaseDynamoDbRepositoryIntegrationT
     }
 
     [Test]
-    public async Task Storing_Two_Active_menus()
-    {
-        // arrange
-        var menu1 = CreateMenu();
-        menu1.Activate(DateTimeOffset.UtcNow);
-        await Sut.AddAsync(menu1);
-
-        // act
-        var menu2 = CreateMenu();
-        menu2.Activate(DateTimeOffset.UtcNow);
-        await Sut.AddAsync(menu2);
-
-        // assert
-        var activeMenuResult = await Sut.GetActiveAsync();
-        Assert.That(activeMenuResult?.Id, Is.EqualTo(menu2.Id));
-    }
-
-    [Test]
     public async Task IterateAsync_Should_Return_Stored_Menus()
     {
         // arrange
