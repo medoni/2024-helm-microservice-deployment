@@ -1,4 +1,4 @@
-name: Helm integration tests
+name: Helm unit tests
 
 on:
   workflow_call:
