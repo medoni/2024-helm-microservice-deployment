@@ -22,9 +22,18 @@ jobs:
     name: Build PizzaService
     uses: ./.github/workflows/_build-and-publish-dockerfile.yaml
     with:
-      dockerfile:           ./src/backend/Deployables/PizzaOrderingService/Dockerfile
+      dockerfile:           ./src/backend/Deployables/PizzaService.AspNetCore/Dockerfile
       docker_build_context: ./src
       target_image_tag:     pizza-service:pr-${{ github.sha }}
+    secrets: inherit
+  
+  build-pizza-service-aws-image:
+    name: Build PizzaService
+    uses: ./.github/workflows/_build-and-publish-dockerfile.yaml
+    with:
+      dockerfile:           ./src/backend/Deployables/PizzaService.Aws/Dockerfile
+      docker_build_context: ./src
+      target_image_tag:     pizza-service-aws:pr-${{ github.sha }}
     secrets: inherit
   
   build-pizza-db-migrations-image:
@@ -65,4 +74,11 @@ jobs:
     uses: ./.github/workflows/_helm-integration-tests.yaml
     with:
       image-tag: pr-${{ github.sha }}
+    secrets: inherit
+
+  aws-integration-tests:
+    name: Aws integration tests
+    uses: ./.github/workflows/_aws-integration-tests.yaml
+    with:
+      env: dev
     secrets: inherit

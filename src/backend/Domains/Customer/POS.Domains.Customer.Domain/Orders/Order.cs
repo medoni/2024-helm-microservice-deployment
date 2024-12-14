@@ -1,4 +1,5 @@
-﻿using POS.Domains.Customer.Abstractions.Orders;
+﻿using POS.Domains.Customer.Abstractions.Carts;
+using POS.Domains.Customer.Abstractions.Orders;
 using POS.Domains.Customer.Abstractions.Orders.Events;
 using POS.Domains.Customer.Domain.Carts;
 using POS.Shared.Domain;
@@ -65,15 +66,14 @@ public class Order : AggregateRoot
             .Select(x => CreateOrderItem(x))
             .ToList();
 
-        var order = new Order(new OrderState(
-            Guid.NewGuid(),
-            createdAt,
-            orderItems,
-            CalculateOrderPriceSummary(cart.Currency, orderItems)
-        )
+        var order = new Order(new OrderState
         {
+            Id = Guid.NewGuid(),
+            CreatedAt = createdAt,
             LastChangedAt = createdAt,
-            State = OrderStates.Created
+            State = OrderStates.Created,
+            Items = orderItems,
+            PriceSummary = CalculateOrderPriceSummary(cart.Currency, orderItems)
         });
 
         order.Apply(new OrderCreatedByCheckoutEvent(

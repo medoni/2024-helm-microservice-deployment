@@ -10,7 +10,10 @@ internal class POSDbContextHealthCheck(POSDbContext dbContext) : IHealthCheck
         CancellationToken cancellationToken = default
     )
     {
-        var cts = new CancellationTokenSource(TimeSpan.FromSeconds(3));
+        var timeoutInMS = 3000;
+        var cts = new CancellationTokenSource();
+        cts.CancelAfter(timeoutInMS);
+        cancellationToken.Register(() => cts.Cancel());
 
         try
         {

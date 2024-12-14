@@ -1,0 +1,61 @@
+name: Aws integration tests
+
+on:
+  workflow_call:
+    inputs:
+      env:
+        required: true
+        type: string
+      AWS_ROLE_TO_ASSUME:
+        type: string
+        default: arn:aws:iam::715841335307:role/github-oidc-deploy-role
+      AWS_REGION:
+        type: string
+        default: "us-east-1"
+  
+  # todo: remove. 
+  workflow_dispatch:
+    inputs:
+      env:
+        description: The environment to test
+        required: true
+        type: string
+        default: 'dev'
+      AWS_ROLE_TO_ASSUME:
+        description: The aws role to assume for deploying
+        type: string
+        default: arn:aws:iam::715841335307:role/github-oidc-deploy-role
+      AWS_REGION:
+        description: The aws region for getting credentials
+        type: string
+        default: "us-east-1"
+
+jobs:
+  aws-integration-tests:
+    name: "Aws integration tests using Terraform"
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
+    steps:
+    - name: "[SETUP] Checkout code"
+      uses: actions/checkout@v4
+    
+    - name: "[SETUP] Configure AWS Credentials"
+      uses: aws-actions/configure-aws-credentials@v4
+      with:
+        aws-region: ${{ inputs.AWS_REGION }}
+        role-to-assume: ${{ inputs.AWS_ROLE_TO_ASSUME }}
+    
+    - name: "[SETUP] Terraform"
+      uses: hashicorp/setup-terraform@v3
+      with:
+        terraform_version: "1.10.2"
+    
+    - name: "[SETUP] Terraform init"
+      run: terraform init -no-color
+      working-directory: ./src/infrastructure/AWS/envs/${{ inputs.env }}
+
+    - name: "[Test] Terraform plan"
+      run: terraform plan -no-color
+      working-directory: ./src/infrastructure/AWS/envs/${{ inputs.env }}
