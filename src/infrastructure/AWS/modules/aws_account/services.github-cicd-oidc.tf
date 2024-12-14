@@ -63,9 +63,3 @@ resource "aws_iam_role_policy" "deploy" {
   role   = aws_iam_role.github_deploy_role.id
   policy      = data.aws_iam_policy_document.github_deploy_policy.json
 }
-
-# resource "aws_iam_role_policy" "cloudwatch" {
-#   name   = "default"
-#   role   = aws_iam_role.cloudwatch.id
-#   policy = data.aws_iam_policy_document.cloudwatch.json
-# }
