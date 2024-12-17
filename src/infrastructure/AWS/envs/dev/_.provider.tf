@@ -9,10 +9,6 @@ provider "aws" {
  }
 }
 
-provider "docker" {
-  # host = "unix:///var/run/docker.sock"
-}
-
 terraform {
   required_providers {
     aws = "~> 5.80.0"

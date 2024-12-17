@@ -11,7 +11,7 @@ on:
         default: arn:aws:iam::715841335307:role/github-oidc-deploy-role
       AWS_REGION:
         type: string
-        default: "us-east-1"
+        default: "eu-central-1"
   
   # todo: remove. 
   workflow_dispatch:
@@ -28,7 +28,7 @@ on:
       AWS_REGION:
         description: The aws region for getting credentials
         type: string
-        default: "us-east-1"
+        default: "eu-central-1"
 
 jobs:
   aws-integration-tests:
@@ -40,6 +40,8 @@ jobs:
     steps:
     - name: "[SETUP] Checkout code"
       uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
     
     - name: "[SETUP] Configure AWS Credentials"
       uses: aws-actions/configure-aws-credentials@v4
@@ -47,15 +49,31 @@ jobs:
         aws-region: ${{ inputs.AWS_REGION }}
         role-to-assume: ${{ inputs.AWS_ROLE_TO_ASSUME }}
     
+    - name: "[SETUP] Login to Amazon ECR"
+      uses: aws-actions/amazon-ecr-login@v2
+    
     - name: "[SETUP] Terraform"
       uses: hashicorp/setup-terraform@v3
       with:
         terraform_version: "1.10.2"
     
+    - name: "[Setup] Install minver CLI"
+      run: dotnet tool install --tool-path ./minver minver-cli --version 4.3.0
+    - name: "[SETUP] Calculate build date and version"
+      id: version
+      run: |
+          echo "version=$(./minver/minver --default-pre-release-identifiers alpha --tag-prefix v)" >> "$GITHUB_ENV"
+          echo "git_date=$(git log -1 --format=%cd --date=iso-strict)" >> "$GITHUB_ENV"
+
     - name: "[SETUP] Terraform init"
       run: terraform init -no-color
       working-directory: ./src/infrastructure/AWS/envs/${{ inputs.env }}
 
     - name: "[Test] Terraform plan"
-      run: terraform plan -no-color
+      run: |
+        terraform \
+          plan -no-color \
+          -var 'service_version=${{ env.version }}' \
+          -var 'build_date=${{ env.git_date }}' \
+          -var 'build_git_sha=${{ github.sha }}'
       working-directory: ./src/infrastructure/AWS/envs/${{ inputs.env }}

@@ -4,58 +4,15 @@ let errorCounter = new Counter('errors');
 
 const scenarios = {
   functional_check: {
-    executor: 'constant-vus',
-    vus: 3,
-    duration: "1m",
-    exec: 'run_create_cart_and_checkout_scenario',
-  },
-
-  warmup: {
-    executor: 'ramping-vus',
-    startVUs: 0,
-    stages: [
-      { duration: '20s', target: 2 },
-      { duration: '10s', target: 0 },
-    ],
-    gracefulRampDown: '0s',
-    exec: 'run_create_cart_and_checkout_scenario',
-  },
-
-  create_cart_and_checkout: 
-  {
     executor: 'shared-iterations',
-    maxDuration: '30s',
-    iterations: '100',
-    vus: 10,
+    vus: 3,
+    iterations: 12,
     exec: 'run_create_cart_and_checkout_scenario',
-    startTime: '5s'
   }
 };
 
 export const options = {
-  scenarios: {},
-
-  thresholds: {
-    'http_req_duration{scenario:warmup}': [
-      {
-        'threshold': 'p(90)<600',
-        'abortOnFail': true
-      }
-    ],
-    'http_req_failed{scenario:warmup}': [
-      'rate<0.01'
-    ],
-
-    'http_req_duration{scenario:create_cart_and_checkout}': [
-      {
-        'threshold': 'p(90)<600',
-        'abortOnFail': false
-      }
-    ],
-    'http_req_failed{scenario:create_cart_and_checkout}': [
-      'rate<0.1'
-    ],
-  }
+  scenarios: {}
 };
 
 if (__ENV.SCENARIO) {

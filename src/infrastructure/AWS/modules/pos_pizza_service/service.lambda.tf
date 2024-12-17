@@ -1,18 +1,17 @@
 
 module "pos_pizza_service" {
-  source = "../aws_lambda_zip_based_on_dockerfile"
-
+  source = "../aws_lambda_based_on_dockerfile"
+  
   function_name = "${var.project.short}-${var.env.short}-pizza-service"
 
   lambda = {
-    handler       = "PizzaService.Aws"
-    runtime       = "dotnet8"
     timeout       = 25
     memory_size   = 256
   }
 
   docker = {
     image_name = var.docker_image.image_name
+    image_tag  = var.service_version
     build = {
       dockerfile = "backend/Deployables/PizzaService.Aws/Dockerfile"
       context = "${path.cwd}/../../../../"
@@ -35,10 +34,6 @@ module "pos_pizza_service" {
       "Aws__DynamoDb__OrdersTableName" = aws_dynamodb_table.pos_pizza_service_orders_table.name
     }
   }
-
-  layers = [
-    "arn:aws:lambda:eu-central-1:580247275435:layer:LambdaInsightsExtension:53"
-  ]
 
   cloudwatch = {
     retention_in_days = 7

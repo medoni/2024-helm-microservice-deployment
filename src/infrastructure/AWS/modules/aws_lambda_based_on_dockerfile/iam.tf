@@ -25,7 +25,12 @@ resource "aws_iam_role_policy" "lambda_role_cloudwatch_policy" {
         Action   = [
           "logs:CreateLogGroup",
           "logs:CreateLogStream",
-          "logs:PutLogEvents"
+          "logs:PutLogEvents",
+          "xray:PutTraceSegments",
+          "xray:PutTelemetryRecords",
+          "xray:GetSamplingRules",
+          "xray:GetSamplingTargets",
+          "xray:GetSamplingStatisticSummaries"
         ]
         Effect   = "Allow"
         Resource = "arn:aws:logs:*:*:*" # aws_cloudwatch_log_group.lambda_log_group.arn
