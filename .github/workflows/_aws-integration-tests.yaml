@@ -5,7 +5,7 @@ on:
     inputs:
       env:
         required: true
-        type: string        
+        type: string
       AWS_ROLE_TO_ASSUME:
         type: string
         default: arn:aws:iam::715841335307:role/github-oidc-deploy-role
