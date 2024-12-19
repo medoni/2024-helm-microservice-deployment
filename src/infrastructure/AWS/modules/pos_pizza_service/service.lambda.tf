@@ -32,6 +32,8 @@ module "pos_pizza_service" {
       "Aws__DynamoDb__MenusTableName" = aws_dynamodb_table.pos_pizza_service_menus_table.name
       "Aws__DynamoDb__CartsTableName" = aws_dynamodb_table.pos_pizza_service_carts_table.name
       "Aws__DynamoDb__OrdersTableName" = aws_dynamodb_table.pos_pizza_service_orders_table.name
+      "Aws__Sns__Region" = data.aws_region.current.name
+      "Aws__Sns__Topic" = aws_sns_topic.pizza_service_topic.arn
     }
   }
 

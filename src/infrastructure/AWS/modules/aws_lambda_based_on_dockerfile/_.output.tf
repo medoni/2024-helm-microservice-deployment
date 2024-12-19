@@ -17,3 +17,8 @@ output "iam_role_exec_role" {
   value       = aws_iam_role.lambda_exec_role.name
   description = "The name of the IAM execution role associated with the Lambda function."
 }
+
+output "lambda_log_group_name" {
+  value       = aws_cloudwatch_log_group.lambda_log_group.name
+  description = "The name of the log group where the lambda logs to."
+}

@@ -7,6 +7,7 @@ using PizzaService.Base.Services.HealthChecks;
 using PizzaService.Base.Services.Swagger;
 using POS.Domains.Customer.Persistence.DynamoDb;
 using POS.Domains.Customer.Persistence.DynamoDb.Configurations;
+using POS.Infrastructure.PubSub.Sns;
 
 internal class Program
 {
@@ -36,6 +37,7 @@ internal class Program
         builder.Services.AddHealthChecks();
 
         builder.Services.AddPizzaServiceDynamoDbSupport(builder.Configuration);
+        builder.Services.AddSnsEventPublisher(options => builder.Configuration.Bind("Aws:Sns", options));
 
         var app = builder
             .Build();
