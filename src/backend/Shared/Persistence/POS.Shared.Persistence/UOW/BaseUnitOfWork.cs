@@ -1,4 +1,7 @@
-﻿using POS.Shared.Domain;
+﻿using Microsoft.Extensions.DependencyInjection;
+using POS.Shared.Domain;
+using POS.Shared.Domain.Events;
+using POS.Shared.Infrastructure.PubSub.Abstractions;
 using POS.Shared.Persistence.Repositories;
 using System.Collections.Concurrent;
 
@@ -12,6 +15,7 @@ public abstract class BaseUnitOfWork : IUnitOfWork
     private readonly IServiceProvider _serviceProvider;
     private readonly BaseRepositoryFactory _repositoryFactory;
     private readonly ConcurrentDictionary<(Type, Guid), TrackedRecord> _trackedInstances;
+    private readonly IEventPublisher? _eventPublisher;
 
     /// <summary>
     /// Creates a new <see cref="BaseUnitOfWork"/>
@@ -25,6 +29,7 @@ public abstract class BaseUnitOfWork : IUnitOfWork
         _repositoryFactory = repositoryFactory ?? throw new ArgumentNullException(nameof(repositoryFactory));
 
         _trackedInstances = new();
+        _eventPublisher = serviceProvider.GetService<IEventPublisher>();
     }
 
     /// <inheritdoc/>
@@ -77,12 +82,18 @@ public abstract class BaseUnitOfWork : IUnitOfWork
     /// <inheritdoc/>
     public async Task CommitAsync()
     {
+        var uncommittedEvents = _eventPublisher is null ? null : new List<IDomainEvent>();
+
         foreach (var trackedItems in _trackedInstances)
         {
             var trackedItem = trackedItems.Value;
+            if (uncommittedEvents != null) uncommittedEvents.AddRange(trackedItem.Aggregate.GetUncommittedChanges());
+
             await trackedItem.CommitAction();
         }
         await FlushCommitsAsync();
+
+        if (uncommittedEvents != null) await _eventPublisher!.PublishAsync(uncommittedEvents);
         _trackedInstances.Clear();
     }
 
@@ -106,7 +117,7 @@ public abstract class BaseUnitOfWork : IUnitOfWork
     ///
     /// </summary>
     protected record TrackedRecord(
-        object Aggregate,
+        AggregateRoot Aggregate,
         Func<Task> CommitAction
     )
     {

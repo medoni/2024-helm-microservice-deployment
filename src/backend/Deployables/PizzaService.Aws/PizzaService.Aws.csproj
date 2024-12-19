@@ -23,6 +23,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\Domains\Customer\POS.Domains.Customer.Persistence.DynamoDb\POS.Domains.Customer.Persistence.DynamoDb.csproj" />
+    <ProjectReference Include="..\..\Infrastructure\POS.Infrastructure.PubSub.Sns\POS.Infrastructure.PubSub.Sns.csproj" />
     <ProjectReference Include="..\PizzaService.Base\PizzaService.Base.csproj" />
   </ItemGroup>
 

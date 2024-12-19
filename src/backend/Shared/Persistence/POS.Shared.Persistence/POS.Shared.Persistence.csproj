@@ -8,6 +8,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\Domain\POS.Shared.Domain\POS.Shared.Domain.csproj" />
+    <ProjectReference Include="..\..\Infrastructure\POS.Shared.Infrastructure.PubSub.Abstractions\POS.Shared.Infrastructure.PubSub.Abstractions.csproj" />
   </ItemGroup>
 
 </Project>
