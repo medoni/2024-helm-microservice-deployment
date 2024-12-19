@@ -53,6 +53,7 @@ data "aws_iam_policy_document" "github_deploy_policy" {
       "lambda:*",
       "logs:*",
       "s3:*",
+      "sns:*"
     ]
     resources = ["*"]
   }
