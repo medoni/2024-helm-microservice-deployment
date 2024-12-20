@@ -1,4 +1,4 @@
-resource "aws_cloudwatch_log_metric_filter" "lorem" {
+resource "aws_cloudwatch_log_metric_filter" "domain_events" {
   name           = "DomainEventsCount"
   log_group_name = module.pos_pizza_service.lambda_log_group_name
   pattern        = "{ $.Message = \"Successful published message of type '*'.\" }"

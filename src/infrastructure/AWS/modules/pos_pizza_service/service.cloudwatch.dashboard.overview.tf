@@ -12,7 +12,7 @@ resource "aws_cloudwatch_dashboard" "overview" {
         "properties": {
             "markdown": <<-EOF
 # Pizza-Ordering-Service
-[Api-Gateway-Stage](https://eu-central-1.console.aws.amazon.com/apigateway/main/apis/m9s12tlge2/stages?api=m9s12tlge2&region=eu-central-1) | [Lambda](https://eu-central-1.console.aws.amazon.com/lambda/home?region=eu-central-1#/functions/pos-d-pizza-service?tab=image) | [DynamoDb-Tables](https://eu-central-1.console.aws.amazon.com/dynamodbv2/home?region=eu-central-1#item-explorer) | [Documentation](https://github.com/medoni/2024-helm-microservice-deployment/tree/master/src/backend/Deployables/PizzaService.Aws) | [Edit Source]()
+[Api-Gateway-Stage](https://${data.aws_region.current.name}.console.aws.amazon.com/apigateway/main/apis/${aws_api_gateway_rest_api.pos_pizza_service_rest_api.id}/stages?api=${aws_api_gateway_rest_api.pos_pizza_service_rest_api.id}&region=${data.aws_region.current.name}) | [Lambda](https://${data.aws_region.current.name}.console.aws.amazon.com/lambda/home?region=${data.aws_region.current.name}#/functions/${module.pos_pizza_service.lambda_function_name}?tab=image) | [DynamoDb-Tables](https://${data.aws_region.current.name}.console.aws.amazon.com/dynamodbv2/home?region=${data.aws_region.current.name}#item-explorer) | [Documentation](https://github.com/medoni/2024-helm-microservice-deployment/tree/master/src/backend/Deployables/PizzaService.Aws) | [Edit Source]()
 EOF
             "background": "solid"
         }
@@ -25,13 +25,13 @@ EOF
         "type": "metric",
         "properties": {
             "metrics": [
-                [ "AWS/ApiGateway", "Count", "ApiName", "pos-d-pizza-service", "Stage", "api", { "label": "Total requests", "region": "eu-central-1" } ],
-                [ ".", "5XXError", ".", ".", ".", ".", { "region": "eu-central-1", "yAxis": "left" } ],
-                [ ".", "4XXError", ".", ".", ".", ".", { "region": "eu-central-1", "color": "#dfb52c" } ]
+                [ "AWS/ApiGateway", "Count", "ApiName", aws_api_gateway_rest_api.pos_pizza_service_rest_api.name, "Stage", "api", { "label": "Total requests", "region": data.aws_region.current.name } ],
+                [ ".", "5XXError", ".", ".", ".", ".", { "region": data.aws_region.current.name, "yAxis": "left" } ],
+                [ ".", "4XXError", ".", ".", ".", ".", { "region": data.aws_region.current.name, "color": "#dfb52c" } ]
             ],
             "sparkline": false,
             "view": "singleValue",
-            "region": "eu-central-1",
+            "region": data.aws_region.current.name,
             "title": "API requests",
             "period": 300,
             "stat": "Sum",
@@ -66,14 +66,14 @@ EOF
         "type": "metric",
         "properties": {
             "metrics": [
-                [ "pos-d-pizza-service", "DomainEventsCount", "DomainEventName", "POS.Domains.Customer.Abstractions.Carts.Events.CartCreatedEvent", { "region": "eu-central-1", "label": "Carts created" } ],
+                [ aws_cloudwatch_log_metric_filter.domain_events.metric_transformation[0].namespace, "DomainEventsCount", "DomainEventName", "POS.Domains.Customer.Abstractions.Carts.Events.CartCreatedEvent", { "region": data.aws_region.current.name, "label": "Carts created" } ],
                 [ "...", "POS.Domains.Customer.Abstractions.Orders.Events.OrderCreatedByCheckoutEvent", { "label": "Orders created (by cart checkout)", "color": "#08aad2" } ],
                 [ "...", "POS.Domains.Customer.Abstractions.Carts.Events.CartCheckedOutEvent", { "stat": "Average", "label": "Orders payed (Not implemented)" } ],
                 [ "...", { "stat": "Average", "label": "Orders delivered (Not implemented)", "color": "#69ae34" } ]
             ],
             "sparkline": true,
             "view": "singleValue",
-            "region": "eu-central-1",
+            "region": data.aws_region.current.name,
             "stat": "Sum",
             "period": 300,
             "liveData": true,
@@ -87,10 +87,10 @@ EOF
         "x": 0,
         "type": "log",
         "properties": {
-            "query": "SOURCE '/aws/lambda/pos-d-pizza-service' | fields @timestamp, Message, Category, @xrayTraceId\n| filter LogLevel like /(Error|Critical)/\n| sort @timestamp desc\n| limit 10000",
-            "region": "eu-central-1",
+            "query": "SOURCE '/aws/lambda/${module.pos_pizza_service.lambda_function_name}' | fields @timestamp, Message, Category, @xrayTraceId\n| filter LogLevel like /(Error|Critical)/\n| sort @timestamp desc\n| limit 10000",
+            "region": data.aws_region.current.name,
             "stacked": false,
-            "title": "Pizza-Service Error messages",
+            "title": "Error messages",
             "view": "table"
         }
       },
@@ -102,7 +102,7 @@ EOF
         "type": "metric",
         "properties": {
             "metrics": [
-                [ "AWS/Lambda", "Invocations", "FunctionName", "pos-d-pizza-service", { "yAxis": "left", "label": "Invocations" } ],
+                [ "AWS/Lambda", "Invocations", "FunctionName", "${module.pos_pizza_service.lambda_function_name}", { "yAxis": "left", "label": "Invocations" } ],
                 [ ".", "ConcurrentExecutions", ".", ".", { "label": "ConcurrentExecutions (P95)", "stat": "p95" } ],
                 [ "...", { "stat": "Maximum", "label": "ConcurrentExecutions(Max)" } ],
                 [ ".", "Throttles", ".", ".", { "label": "Throttles" } ],
@@ -110,7 +110,7 @@ EOF
             ],
             "sparkline": false,
             "view": "singleValue",
-            "region": "eu-central-1",
+            "region": data.aws_region.current.name,
             "stat": "Sum",
             "period": 300,
             "liveData": true,
@@ -127,7 +127,7 @@ EOF
         "type": "metric",
         "properties": {
             "metrics": [
-                [ "AWS/ApiGateway", "Latency", "ApiName", "pos-d-pizza-service", { "stat": "p95", "label": "Latency (P95)" } ],
+                [ "AWS/ApiGateway", "Latency", "ApiName", "${aws_api_gateway_rest_api.pos_pizza_service_rest_api.name}", { "stat": "p95", "label": "Latency (P95)" } ],
                 [ "...", { "label": "Latency (Max)" } ],
                 [ ".", "Count", ".", ".", { "stat": "Sum", "label": "Request Count" } ],
                 [ ".", "5XXError", ".", "." ],
@@ -135,7 +135,7 @@ EOF
             ],
             "sparkline": false,
             "view": "singleValue",
-            "region": "eu-central-1",
+            "region": data.aws_region.current.name,
             "setPeriodToTimeRange": true,
             "trend": false,
             "stat": "Maximum",
