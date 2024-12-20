@@ -15,7 +15,7 @@ export function create_cart_and_checkout_scenario(
   
     fillCart(testContext, activeMenu, cart.id);
     sleep(1 * testContext.slowMo);
-  
+    
     checkoutCart(testContext, cart.id, {
       checkoutAt: new Date()
     });

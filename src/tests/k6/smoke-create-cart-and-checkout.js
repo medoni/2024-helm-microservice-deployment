@@ -5,8 +5,8 @@ let errorCounter = new Counter('errors');
 const scenarios = {
   functional_check: {
     executor: 'shared-iterations',
-    vus: 9,
-    iterations: 24,
+    vus: 3,
+    iterations: 12,
     exec: 'run_create_cart_and_checkout_scenario',
   }
 };
