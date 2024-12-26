@@ -2,6 +2,8 @@
 using PizzaService.Base;
 using PizzaService.Base.Services.HealthChecks;
 using PizzaService.Base.Services.Swagger;
+using POS.Domains.Payment.Api;
+using POS.Domains.Payment.Service.Configurations;
 using POS.Persistence.PostgreSql;
 
 internal static class Program
@@ -14,6 +16,9 @@ internal static class Program
         builder.Services.AddSwaggerServices();
 
         builder.Services.AddPizzaServiceSupport();
+
+        builder.Services.AddPaypalPaymentSupport()
+            .Configure<PaypalProcessorSettings>(x => builder.Configuration.Bind("PaypalApi", x));
 
         builder.Services.AddHealthChecks()
             .AddPOSDbHealthCheck();
