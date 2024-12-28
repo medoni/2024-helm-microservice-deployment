@@ -6,6 +6,7 @@ using POS.Domains.Customer.Persistence.Menus;
 using POS.Domains.Customer.Persistence.Menus.Decorators;
 using POS.Domains.Customer.Persistence.Orders;
 using POS.Domains.Customer.Persistence.Orders.Decorators;
+using POS.Domains.Payment.Service;
 using POS.Persistence.PostgreSql.Data;
 using POS.Persistence.PostgreSql.HealthChecks;
 using POS.Persistence.PostgreSql.Repositories;
@@ -36,6 +37,7 @@ public static class PostgreSqlStartup
             .AddTransient<IMenuRespository, PostgresMenuRepository, LoggingMenuRepositoryDecorator>()
             .AddTransient<ICartRepository, PostgresCartRepository, LoggingCartRepositoryDecorator>()
             .AddTransient<IOrderRepository, PostgresOrderRepository, LoggingOrderRepositoryDecorator>()
+            .AddTransient<IPaymentRepository, PostgresPaymentRepository>()
         ;
 
         services.AddUnitOfWorkSupport<POSDbContext>();

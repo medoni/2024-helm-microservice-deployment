@@ -12,6 +12,7 @@
   <ItemGroup>
     <ProjectReference Include="..\..\Domains\Customer\POS.Domains.Customer.Domain\POS.Domains.Customer.Domain.csproj" />
     <ProjectReference Include="..\..\Domains\Customer\POS.Domains.Customer.Persistence\POS.Domains.Customer.Persistence.csproj" />
+    <ProjectReference Include="..\..\Domains\Payment\POS.Domains.Payment.Service\POS.Domains.Payment.Service.csproj" />
     <ProjectReference Include="..\..\Shared\Infrastructure\POS.Shared.Infrastructure.DependencyInjection\POS.Shared.Infrastructure.DependencyInjection.csproj" />
     <ProjectReference Include="..\..\Shared\Persistence\POS.Shared.Persistence.PostgreSql\POS.Shared.Persistence.PostgreSql.csproj" />
   </ItemGroup>

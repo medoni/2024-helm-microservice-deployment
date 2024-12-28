@@ -69,7 +69,7 @@ internal class PaypalPaymentProcessor(
                 CustomId = order.Id.ToString(),
                 InvoiceId = order.Id.ToString(),
                 Description = paymentDescription,
-                Payee = settings.Payee,
+                //Payee = settings.Payee,
                 Items = order.OrderItems.ToPaypalItems(),
                 Amount = new()
                 {
@@ -78,7 +78,8 @@ internal class PaypalPaymentProcessor(
                     Breakdown = new AmountBreakdown
                     {
                         ItemTotal = order.PriceSummary.TotalItemPrice.ToPaypalMoney(),
-                        TaxTotal = new Money("EUR", "0"), // TODO: https://github.com/medoni/2024-helm-microservice-deployment/issues/18
+                        // TODO: https://github.com/medoni/2024-helm-microservice-deployment/issues/18
+                        TaxTotal = order.OrderItems.CalculateTaxTotal(),
                         Discount = order.PriceSummary.Discount.ToPaypalMoney(),
                         Shipping = order.PriceSummary.DeliveryCosts.ToPaypalMoney(),
                     }

@@ -19,3 +19,25 @@ resource "aws_ssm_parameter" "pizza_service_paypal_client_secret" {
     ignore_changes = [ value ]
   }
 }
+
+resource "aws_ssm_parameter" "pizza_service_paypal_login_mail" {
+  name        = "/${var.project.short}/${var.env.long}/Pizza-Service/PaypalService/LoginMail"
+  description = "Email to login"
+  type        = "SecureString"
+  value       = "MISSING"
+
+  lifecycle {
+    ignore_changes = [ value ]
+  }
+}
+
+resource "aws_ssm_parameter" "pizza_service_paypal_login_password" {
+  name        = "/${var.project.short}/${var.env.long}/Pizza-Service/PaypalService/LoginPassword"
+  description = "Password to login"
+  type        = "SecureString"
+  value       = "MISSING"
+
+  lifecycle {
+    ignore_changes = [ value ]
+  }
+}

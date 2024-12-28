@@ -11,7 +11,12 @@ internal static class PaypalProviderExtensions
 {
     public static PaypalMoney ToPaypalMoney(this GrossNetPriceDto value)
     {
-        return new PaypalMoney(value.Currency, value.Gross.ToString("c", CultureInfo.InvariantCulture));
+        return new PaypalMoney(value.Currency, value.Gross.ToString("0.00", CultureInfo.InvariantCulture));
+    }
+
+    public static PaypalMoney CalculateTaxTotal(this IEnumerable<PosOrderItem> orderItems)
+    {
+        throw new NotImplementedException();
     }
 
     public static PaypalItem ToPaypalItem(this PosOrderItem orderItem)
@@ -20,11 +25,11 @@ internal static class PaypalProviderExtensions
         {
             Name = orderItem.Name,
             Description = orderItem.Description,
-            Quantity = orderItem.Quantity.ToString("d", CultureInfo.InvariantCulture),
+            Quantity = orderItem.Quantity.ToString(CultureInfo.InvariantCulture),
             UnitAmount = orderItem.UnitPrice.Price.ToPaypalMoney(),
             Tax = new PaypalMoney(
                 orderItem.UnitPrice.Price.Currency,
-                (orderItem.UnitPrice.Price.Vat * orderItem.Quantity).ToString("d", CultureInfo.InvariantCulture)
+                (orderItem.UnitPrice.Price.Vat * orderItem.Quantity).ToString("0.00", CultureInfo.InvariantCulture)
             )
         };
     }

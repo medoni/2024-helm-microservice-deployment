@@ -3,6 +3,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using PaypalServerSdk.Standard;
 using PaypalServerSdk.Standard.Authentication;
+using POS.Domains.Customer.Persistence.Orders;
 using POS.Domains.Payment.Service.Configurations;
 using POS.Domains.Payment.Service.Domain;
 using POS.Domains.Payment.Service.Processors;
@@ -21,9 +22,17 @@ public static class PaymentServiceStartup
     /// <returns></returns>
     public static IServiceCollection AddPaymentServiceSupport(this IServiceCollection services)
     {
-        services.AddKeyedTransient<IPaymentProcessor, PaypalPaymentProcessor>(PaymentProviders.Paypal);
         services.AddTransient<IPaymentService, DefaultPaymentService>();
         services.AddPaypalClient();
+
+        services.AddKeyedTransient<IPaymentProcessor, PaypalPaymentProcessor>(PaymentProviders.Paypal, (svcp, key) =>
+        {
+            return new PaypalPaymentProcessor(
+                svcp.GetRequiredService<PaypalServerSdkClient>(),
+                svcp.GetRequiredService<IOptions<PaypalProcessorSettings>>().Value,
+                svcp.GetRequiredService<IOrderRepository>()
+            );
+        });
 
         return services;
     }

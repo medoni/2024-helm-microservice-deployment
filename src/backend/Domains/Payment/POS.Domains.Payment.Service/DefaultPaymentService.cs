@@ -49,7 +49,7 @@ internal class DefaultPaymentService(
 
     private IPaymentProcessor GetPaymentProcessor(PaymentProviders providerType)
     {
-        var provider = serviceProvider.GetRequiredKeyedService<IPaymentProcessor>($"serviceProvider_{providerType}");
+        var provider = serviceProvider.GetRequiredKeyedService<IPaymentProcessor>(providerType);
         return provider;
     }
 }
