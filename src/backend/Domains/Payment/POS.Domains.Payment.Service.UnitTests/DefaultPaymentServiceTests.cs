@@ -2,10 +2,13 @@
 using NSubstitute;
 using POS.Domains.Payment.Service.Domain;
 using POS.Domains.Payment.Service.Dtos;
+using POS.Domains.Payment.Service.Events;
 using POS.Domains.Payment.Service.Exceptions;
 using POS.Domains.Payment.Service.Mapper;
 using POS.Domains.Payment.Service.Processors;
+using POS.Shared.Domain.Events;
 using POS.Shared.Domain.Generic.Dtos;
+using POS.Shared.Infrastructure.PubSub.Abstractions;
 using POS.Shared.Testing;
 using POS.Shared.Testing.NUnit;
 using System.Collections.Concurrent;
@@ -20,16 +23,19 @@ public class DefaultPaymentServiceTests
 
     private IKeyedServiceProvider ServiceProviderMock { get; set; }
     private IPaymentRepository PaymentRepository { get; set; }
+    private IEventPublisher EventPublisherMock { get; set; }
 
     [SetUp]
     public void SetUp()
     {
         ServiceProviderMock = Substitute.For<IKeyedServiceProvider>();
         PaymentRepository = new InMemoryPaymentRepository();
+        EventPublisherMock = Substitute.For<IEventPublisher>();
 
         Sut = new DefaultPaymentService(
             ServiceProviderMock,
-            PaymentRepository
+            PaymentRepository,
+            EventPublisherMock
         );
 
         ServiceProviderMock
@@ -79,7 +85,7 @@ public class DefaultPaymentServiceTests
             RequestedAt = new DateTimeOffset(2024, 12, 24, 06, 25, 00, TimeSpan.Zero)
         };
 
-        await PaymentRepository.AddOrUpdateAsync(new PaymentEntity()
+        await PaymentRepository.AddAsync(new PaymentEntity()
         {
             Id = Guid.NewGuid(),
             EntityId = requestDto.EntityId,
@@ -144,7 +150,7 @@ public class DefaultPaymentServiceTests
             ProviderState = TestPaymentProviderState.Default
         };
 
-        await PaymentRepository.AddOrUpdateAsync(paymentEntity);
+        await PaymentRepository.AddAsync(paymentEntity);
 
         // act
         var result = await Sut.GetPaymentDetailsAsync(paymentId);
@@ -168,21 +174,93 @@ public class DefaultPaymentServiceTests
 
     #endregion
 
+    #region OnSuccessfullyProcessedAsync
+
+    [Test]
+    public async Task OnSuccessfullyProcessedAsync_Should_Capture_Payment_When_Payed()
+    {
+        // arrange
+        var paymentId = Guid.Parse("eabf2aec-76e4-484c-82d2-69bcc1b62f7d");
+        var paymentEntity = new PaymentEntity
+        {
+            Id = paymentId,
+            EntityType = EntityTypes.CustomerOrder,
+            EntityId = "abcdef",
+            RequestedAt = new DateTimeOffset(2024, 12, 29, 07, 24, 33, TimeSpan.Zero),
+            State = PaymentStates.Requested,
+            Provider = PaymentProviders.Paypal,
+            ProviderState = TestPaymentProviderState.Default
+        };
+        await PaymentRepository.AddAsync(paymentEntity);
+
+        var raisedEvents = new List<IDomainEvent>();
+        EventPublisherMock.PublishAsync(Arg.Any<IDomainEvent[]>())
+            .Returns(Task.CompletedTask)
+            .AndDoes(args => raisedEvents.AddRange((IEnumerable<IDomainEvent>)args[0]));
+
+        // act
+        await Sut.OnSuccessfullyProcessedAsync(paymentId);
+
+        // assert
+        Assert.That(raisedEvents, Is.EqualTo(
+            new List<IDomainEvent>()
+            {
+                new PaymentSuccessfullyCapturedEvent(
+                    paymentId,
+                    paymentEntity.EntityType,
+                    paymentEntity.EntityId,
+                    paymentEntity.RequestedAt,
+                    paymentEntity.PayedAt!.Value,
+                    paymentEntity.PayedAt.Value,
+                    paymentEntity.Provider
+                )
+            }
+        ));
+    }
+
+    [Test]
+    public void OnSuccessfullyProcessedAsync_Should_Do_Nothing_When_Not_Payed()
+    {
+        // arrange
+
+        // act
+
+        // assert
+        Assert.Fail();
+    }
+
+    [Test]
+    public void OnSuccessfullyProcessedAsync_Should_Do_Nothing_When_Already_Captured()
+    {
+        // arrange
+
+        // act
+
+        // assert
+        Assert.Fail();
+    }
+
+    #endregion
+
     private class TestPaymentProcessor : IPaymentProcessor
     {
         public const string Description = "Lorem Ipsum";
 
-        public async Task<PaymentProviderState> RequestPaymentAsync(RequestPaymentDto dto)
+        public async Task<PaymentProviderState> RequestPaymentAsync(Guid paymentId, RequestPaymentDto dto)
         {
             await Task.Yield();
 
             return TestPaymentProviderState.Default;
         }
+
+        public Task<PaymentProviderState> CapturePaymentAsync(PaymentEntity paymentEntity)
+        {
+            throw new NotImplementedException();
+        }
     }
 
     private class TestPaymentProviderState : PaymentProviderState
     {
-
         public static TestPaymentProviderState Default = new()
         {
             Amount = GrossNetPriceDto.CreateByGross(MoneyDto.Create(42.23m, "EUR"), 7),
@@ -199,7 +277,16 @@ public class DefaultPaymentServiceTests
     {
         private readonly ConcurrentDictionary<Guid, PaymentEntity> _store = new();
 
-        public async Task AddOrUpdateAsync(PaymentEntity entity)
+        public async Task AddAsync(PaymentEntity entity)
+        {
+            await Task.Yield();
+            if (!_store.TryAdd(entity.Id, entity))
+            {
+                throw new InvalidOperationException();
+            }
+        }
+
+        public async Task UpdateAsync(PaymentEntity entity)
         {
             await Task.Yield();
             _store[entity.Id] = entity;

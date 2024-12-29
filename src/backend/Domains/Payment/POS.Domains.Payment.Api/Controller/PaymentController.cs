@@ -49,4 +49,28 @@ public class PaymentController(
         var paymentDetails = await PaymentService.GetPaymentDetailsAsync(id);
         return Ok(paymentDetails);
     }
+
+    /// <summary>
+    /// Callback for the payment provider when the payment has been successfully processed.
+    /// </summary>
+    [HttpGet("{id}/OnSuccess")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType<ProblemDetails>(StatusCodes.Status400BadRequest, "application/json")]
+    public async Task<IActionResult> PaymentOnSuccessAsync(Guid id)
+    {
+        await PaymentService.OnSuccessfullyProcessedAsync(id);
+        return Ok();
+    }
+
+    /// <summary>
+    /// Callback for the payment provider when the payment was canceled.
+    /// </summary>
+    [HttpGet("{id}/OnCancel")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType<ProblemDetails>(StatusCodes.Status400BadRequest, "application/json")]
+    public async Task<IActionResult> PaymentOnCancelAsync(Guid id)
+    {
+        await PaymentService.OnCanceledAsync(id);
+        return Ok();
+    }
 }

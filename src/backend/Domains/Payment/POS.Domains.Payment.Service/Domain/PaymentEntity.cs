@@ -27,7 +27,7 @@ public class PaymentEntity
     /// <summary>
     /// State of the payment
     /// </summary>
-    public required PaymentStates State { get; init; }
+    public required PaymentStates State { get; set; }
 
     /// <summary>
     /// Payment provider.
@@ -37,10 +37,15 @@ public class PaymentEntity
     /// <summary>
     /// State of the payment provider.
     /// </summary>
-    public required PaymentProviderState ProviderState { get; init; }
+    public required PaymentProviderState ProviderState { get; set; }
 
     /// <summary>
     /// Date and time when the request was successfully paid.
     /// </summary>
-    public DateTimeOffset? PayedAt { get; init; }
+    public DateTimeOffset? PayedAt { get; set; }
+
+    /// <summary>
+    /// Date and time when the payment was captured.
+    /// </summary>
+    public DateTimeOffset? CapturedAt { get; set; }
 }

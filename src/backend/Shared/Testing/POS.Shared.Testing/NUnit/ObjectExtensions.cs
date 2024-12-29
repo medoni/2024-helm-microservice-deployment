@@ -1,4 +1,4 @@
-﻿using System.Text.Json;
+﻿using Newtonsoft.Json;
 
 namespace POS.Shared.Testing.NUnit;
 /// <summary>
@@ -11,14 +11,14 @@ public static class ObjectExtensions
     /// </summary>
     public static string ToJson(this object value)
     {
-        return ToJson(value, new JsonSerializerOptions { WriteIndented = true });
+        return ToJson(value, Formatting.Indented);
     }
 
     /// <summary>
     /// Serializes the object to a JSON string.
     /// </summary>
-    public static string ToJson(this object value, JsonSerializerOptions options)
+    public static string ToJson(this object value, Formatting formatting)
     {
-        return JsonSerializer.Serialize(value, options);
+        return JsonConvert.SerializeObject(value, Formatting.Indented);
     }
 }

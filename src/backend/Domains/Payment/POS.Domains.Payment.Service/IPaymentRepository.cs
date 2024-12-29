@@ -9,7 +9,12 @@ public interface IPaymentRepository
     /// <summary>
     /// Adds and new entity.
     /// </summary>
-    Task AddOrUpdateAsync(PaymentEntity entity);
+    Task AddAsync(PaymentEntity entity);
+
+    /// <summary>
+    /// Updates and an existing entity.
+    /// </summary>
+    Task UpdateAsync(PaymentEntity entity);
 
     /// <summary>
     /// Loads a payment.

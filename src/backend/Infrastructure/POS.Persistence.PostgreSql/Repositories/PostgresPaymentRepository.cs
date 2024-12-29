@@ -9,9 +9,15 @@ internal class PostgresPaymentRepository(
     POSDbContext dbContext
 ) : IPaymentRepository
 {
-    public async Task AddOrUpdateAsync(PaymentEntity entity)
+    public async Task AddAsync(PaymentEntity entity)
     {
         dbContext.Payments.Add(entity);
+        await dbContext.SaveChangesAsync();
+    }
+
+    public async Task UpdateAsync(PaymentEntity entity)
+    {
+        dbContext.Payments.Update(entity);
         await dbContext.SaveChangesAsync();
     }
 

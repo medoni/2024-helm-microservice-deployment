@@ -20,4 +20,14 @@ public interface IPaymentService
     /// Returns payment details for a given payment id.
     /// </summary>
     Task<PaymentDetailsDto> GetPaymentDetailsAsync(Guid paymentId);
+
+    /// <summary>
+    /// Callback, when the payment has been successfully processed by the payment provider.
+    /// </summary>
+    Task OnSuccessfullyProcessedAsync(Guid paymentId);
+
+    /// <summary>
+    /// Callback, when the payment has been canceled by the payment provider.
+    /// </summary>
+    Task OnCanceledAsync(Guid paymentId);
 }

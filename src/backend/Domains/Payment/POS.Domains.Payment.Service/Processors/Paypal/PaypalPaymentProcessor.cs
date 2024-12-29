@@ -4,6 +4,8 @@ using POS.Domains.Customer.Persistence.Orders;
 using POS.Domains.Payment.Service.Configurations;
 using POS.Domains.Payment.Service.Domain;
 using POS.Domains.Payment.Service.Dtos;
+using POS.Domains.Payment.Service.Exceptions;
+using System.Globalization;
 
 namespace POS.Domains.Payment.Service.Processors.Paypal;
 
@@ -13,8 +15,10 @@ internal class PaypalPaymentProcessor(
     IOrderRepository orderRepository
 ) : IPaymentProcessor
 {
-
-    public async Task<PaymentProviderState> RequestPaymentAsync(RequestPaymentDto dto)
+    public async Task<PaymentProviderState> RequestPaymentAsync(
+        Guid paymentId,
+        RequestPaymentDto dto
+    )
     {
         var purchaseData = await CreatePurchaseUnitRequest(dto);
 
@@ -29,8 +33,8 @@ internal class PaypalPaymentProcessor(
                 },
                 ApplicationContext = new OrderApplicationContext()
                 {
-                    ReturnUrl = settings.ReturnUrl,
-                    CancelUrl = settings.CancelUrl
+                    ReturnUrl = settings.ReturnUrl.Replace("{id}", paymentId.ToString()),
+                    CancelUrl = settings.CancelUrl.Replace("{id}", paymentId.ToString())
                 }
             }
         };
@@ -65,7 +69,7 @@ internal class PaypalPaymentProcessor(
         var purchaseRequest = new PurchaseUnitRequest()
         {
             CustomId = order.Id.ToString(),
-            InvoiceId = order.Id.ToString(),
+            InvoiceId = Guid.NewGuid().ToString(),
             Description = paymentDescription,
             //Payee = settings.Payee,
             Items = order.OrderItems.ToPaypalItems(),
@@ -79,5 +83,31 @@ internal class PaypalPaymentProcessor(
             purchaseRequest,
             paymentDescription
         );
+    }
+
+    public async Task<PaymentProviderState> CapturePaymentAsync(PaymentEntity paymentEntity)
+    {
+        var providerState = (PaypalPaymentProviderState)paymentEntity.ProviderState;
+
+        var captureInput = new OrdersCaptureInput
+        {
+            Id = providerState.PaymentProviderId
+        };
+
+        var captureResult = await paypalClient.OrdersController.OrdersCaptureAsync(
+            captureInput
+        );
+
+        if (captureResult.Data.Status != OrderStatus.Completed)
+        {
+            throw new PaymentCaptureNotCompletedException(paymentEntity.Id, captureResult.Data.Status?.ToString() ?? "<NULL>");
+        }
+
+        providerState.PayedAt = DateTimeOffset.Parse(
+            captureResult.Data.PurchaseUnits.Last().Payments.Captures.Last().CreateTime, CultureInfo.InvariantCulture
+        );
+        providerState.CapturedAt = DateTimeOffset.UtcNow;
+
+        return providerState;
     }
 }

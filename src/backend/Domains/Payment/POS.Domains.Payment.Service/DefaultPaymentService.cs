@@ -1,28 +1,32 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using POS.Domains.Payment.Service.Domain;
 using POS.Domains.Payment.Service.Dtos;
+using POS.Domains.Payment.Service.Events;
 using POS.Domains.Payment.Service.Exceptions;
 using POS.Domains.Payment.Service.Mapper;
 using POS.Domains.Payment.Service.Processors;
+using POS.Shared.Infrastructure.PubSub.Abstractions;
 
 namespace POS.Domains.Payment.Service;
 
 internal class DefaultPaymentService(
     IServiceProvider serviceProvider,
-    IPaymentRepository paymentRepository
+    IPaymentRepository paymentRepository,
+    IEventPublisher eventPublisher
 ) : IPaymentService
 {
     public async Task<PaymentDetailsDto> RequestPaymentAsync(RequestPaymentDto dto)
     {
+        var paymentId = Guid.NewGuid();
         var payment = await paymentRepository.TryGetByEntityIdAsync(dto.EntityType, dto.EntityId);
         if (payment != null) throw new PaymentStillInProgress(dto.EntityType, dto.EntityId);
 
         var processor = GetPaymentProcessor(dto.Provider);
-        var providerState = await processor.RequestPaymentAsync(dto);
+        var providerState = await processor.RequestPaymentAsync(paymentId, dto);
 
         var entity = new PaymentEntity
         {
-            Id = Guid.NewGuid(),
+            Id = paymentId,
             EntityId = dto.EntityId,
             EntityType = dto.EntityType,
             RequestedAt = dto.RequestedAt,
@@ -31,7 +35,7 @@ internal class DefaultPaymentService(
             ProviderState = providerState
         };
 
-        await paymentRepository.AddOrUpdateAsync(entity);
+        await paymentRepository.AddAsync(entity);
 
         var detailsDto = entity.ToDetailsDto();
         return detailsDto;
@@ -40,6 +44,35 @@ internal class DefaultPaymentService(
     public Task<PaymentDetailsDto> CapturePaymentAsync(CapturePaymentDto dto)
     {
         throw new NotImplementedException();
+    }
+
+    private async Task TryCapturePaymentAsync(Guid paymentId)
+    {
+        var paymentEntity = await paymentRepository.GetAsync(paymentId);
+        if (paymentEntity.State == PaymentStates.Payed) return;
+        if (paymentEntity.State == PaymentStates.Canceled) return;
+
+        var paymentProcessor = GetPaymentProcessor(paymentEntity.Provider);
+        var paymentProviderState = await paymentProcessor.CapturePaymentAsync(paymentEntity);
+
+        paymentEntity.State = PaymentStates.Payed;
+        paymentEntity.ProviderState = paymentProviderState;
+        paymentEntity.PayedAt = paymentProviderState.PayedAt;
+        paymentEntity.CapturedAt = paymentProviderState.CapturedAt;
+
+        await paymentRepository.UpdateAsync(paymentEntity);
+
+        var evt = new PaymentSuccessfullyCapturedEvent(
+            paymentEntity.Id,
+            paymentEntity.EntityType,
+            paymentEntity.EntityId,
+            paymentEntity.RequestedAt,
+            paymentProviderState.PayedAt!.Value,
+            paymentProviderState.CapturedAt!.Value,
+            paymentEntity.Provider
+        );
+
+        await eventPublisher.PublishAsync(evt);
     }
 
     public async Task<PaymentDetailsDto> GetPaymentDetailsAsync(Guid paymentId)
@@ -52,5 +85,15 @@ internal class DefaultPaymentService(
     {
         var provider = serviceProvider.GetRequiredKeyedService<IPaymentProcessor>(providerType);
         return provider;
+    }
+
+    public async Task OnSuccessfullyProcessedAsync(Guid paymentId)
+    {
+        await TryCapturePaymentAsync(paymentId);
+    }
+
+    public Task OnCanceledAsync(Guid paymentId)
+    {
+        throw new NotImplementedException();
     }
 }

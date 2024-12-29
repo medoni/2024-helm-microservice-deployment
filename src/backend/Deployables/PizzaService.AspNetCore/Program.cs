@@ -1,10 +1,12 @@
 ﻿using Microsoft.AspNetCore.Diagnostics.HealthChecks;
+using PizzaService.AspNetCore.Services.EventPublisher;
 using PizzaService.Base;
 using PizzaService.Base.Services.HealthChecks;
 using PizzaService.Base.Services.Swagger;
 using POS.Domains.Payment.Api;
 using POS.Domains.Payment.Service.Configurations;
 using POS.Persistence.PostgreSql;
+using POS.Shared.Infrastructure.PubSub.Abstractions;
 
 internal static class Program
 {
@@ -24,6 +26,7 @@ internal static class Program
             .AddPOSDbHealthCheck();
 
         builder.Services.AddPOSDb(builder.Configuration);
+        builder.Services.AddSingleton<IEventPublisher, NullEventPublisher>();
 
         var app = builder.Build();
 

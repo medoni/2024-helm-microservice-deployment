@@ -29,4 +29,14 @@ public abstract class PaymentProviderState
     /// Allowed links for the payment
     /// </summary>
     public required List<PaymentLinkDescription> Links { get; init; }
+
+    /// <summary>
+    /// Date and time when the request was payed.
+    /// </summary>
+    public DateTimeOffset? PayedAt { get; set; }
+
+    /// <summary>
+    /// Date and time when the payment was captured.
+    /// </summary>
+    public DateTimeOffset? CapturedAt { get; set; }
 }

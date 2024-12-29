@@ -127,40 +127,30 @@ public class PaypalProviderExtensionsTests
             """
             [
               {
-                "Name": "Item 1",
-                "UnitAmount": {
-                  "CurrencyCode": "EUR",
-                  "MValue": "39.65"
+                "name": "Item 1",
+                "unit_amount": {
+                  "currency_code": "EUR",
+                  "value": "39.65"
                 },
-                "Tax": {
-                  "CurrencyCode": "EUR",
-                  "MValue": "2.78"
+                "tax": {
+                  "currency_code": "EUR",
+                  "value": "2.78"
                 },
-                "Quantity": "1",
-                "Description": "Description Item 1",
-                "Sku": null,
-                "Url": null,
-                "Category": null,
-                "ImageUrl": null,
-                "Upc": null
+                "quantity": "1",
+                "description": "Description Item 1"
               },
               {
-                "Name": "Item 2",
-                "UnitAmount": {
-                  "CurrencyCode": "EUR",
-                  "MValue": "21.71"
+                "name": "Item 2",
+                "unit_amount": {
+                  "currency_code": "EUR",
+                  "value": "21.71"
                 },
-                "Tax": {
-                  "CurrencyCode": "EUR",
-                  "MValue": "3.04"
+                "tax": {
+                  "currency_code": "EUR",
+                  "value": "3.04"
                 },
-                "Quantity": "2",
-                "Description": "Description Item 2",
-                "Sku": null,
-                "Url": null,
-                "Category": null,
-                "ImageUrl": null,
-                "Upc": null
+                "quantity": "2",
+                "description": "Description Item 2"
               }
             ]
             """
