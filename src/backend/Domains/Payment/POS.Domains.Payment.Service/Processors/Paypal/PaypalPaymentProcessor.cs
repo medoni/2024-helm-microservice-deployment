@@ -4,7 +4,6 @@ using POS.Domains.Customer.Persistence.Orders;
 using POS.Domains.Payment.Service.Configurations;
 using POS.Domains.Payment.Service.Domain;
 using POS.Domains.Payment.Service.Dtos;
-using POS.Shared.Domain.Generic.Dtos;
 
 namespace POS.Domains.Payment.Service.Processors.Paypal;
 
@@ -39,7 +38,7 @@ internal class PaypalPaymentProcessor(
 
         var paymentState = new PaypalPaymentProviderState
         {
-            Amount = purchaseData.totalPrice,
+            Amount = purchaseData.request.Amount.ToGrossNetPriceDto(),
             Description = purchaseData.description,
             Links = orderResponse.Data.Links.ToPosLinks(),
             PaymentProviderId = orderResponse.Data.Id,
@@ -49,7 +48,7 @@ internal class PaypalPaymentProcessor(
         return paymentState;
     }
 
-    internal Task<(PurchaseUnitRequest request, GrossNetPriceDto totalPrice, string description)> CreatePurchaseUnitRequest(RequestPaymentDto dto)
+    internal Task<(PurchaseUnitRequest request, string description)> CreatePurchaseUnitRequest(RequestPaymentDto dto)
     {
         switch (dto.EntityType)
         {
@@ -58,34 +57,26 @@ internal class PaypalPaymentProcessor(
         }
     }
 
-    internal async Task<(PurchaseUnitRequest request, GrossNetPriceDto totalPrice, string description)> CreatePurchaseUnitRequestFromOrder(RequestPaymentDto dto)
+    internal async Task<(PurchaseUnitRequest request, string description)> CreatePurchaseUnitRequestFromOrder(RequestPaymentDto dto)
     {
         var order = await orderRepository.GetByIdAsync(Guid.Parse(dto.EntityId));
         var paymentDescription = "Lorem Ipsum Description"; // TODO:
 
+        var purchaseRequest = new PurchaseUnitRequest()
+        {
+            CustomId = order.Id.ToString(),
+            InvoiceId = order.Id.ToString(),
+            Description = paymentDescription,
+            //Payee = settings.Payee,
+            Items = order.OrderItems.ToPaypalItems(),
+        };
+        purchaseRequest.Amount = purchaseRequest.Items.CalculateAmountWithBreakdown(
+            order.PriceSummary.Discount,
+            order.PriceSummary.DeliveryCosts
+        );
+
         return (
-            new PurchaseUnitRequest()
-            {
-                CustomId = order.Id.ToString(),
-                InvoiceId = order.Id.ToString(),
-                Description = paymentDescription,
-                //Payee = settings.Payee,
-                Items = order.OrderItems.ToPaypalItems(),
-                Amount = new()
-                {
-                    CurrencyCode = order.PriceSummary.TotalPrice.ToPaypalMoney().CurrencyCode,
-                    MValue = order.PriceSummary.TotalPrice.ToPaypalMoney().MValue,
-                    Breakdown = new AmountBreakdown
-                    {
-                        ItemTotal = order.PriceSummary.TotalItemPrice.ToPaypalMoney(),
-                        // TODO: https://github.com/medoni/2024-helm-microservice-deployment/issues/18
-                        TaxTotal = order.OrderItems.CalculateTaxTotal(),
-                        Discount = order.PriceSummary.Discount.ToPaypalMoney(),
-                        Shipping = order.PriceSummary.DeliveryCosts.ToPaypalMoney(),
-                    }
-                }
-            },
-            order.PriceSummary.TotalPrice,
+            purchaseRequest,
             paymentDescription
         );
     }

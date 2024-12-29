@@ -4,6 +4,7 @@ using POS.Domains.Payment.Service.Domain;
 using POS.Shared.Domain.Generic.Dtos;
 using POS.Shared.Testing;
 using POS.Shared.Testing.NUnit;
+using System.Text.Json;
 using Sut = POS.Domains.Payment.Service.Processors.Paypal.PaypalProviderExtensions;
 
 namespace POS.Domains.Payment.Service.UnitTests.Processors.Paypal;
@@ -13,8 +14,8 @@ namespace POS.Domains.Payment.Service.UnitTests.Processors.Paypal;
 public class PaypalProviderExtensionsTests
 {
     [TestCase(0, "EUR", "0.00 EUR")]
-    [TestCase(42.43, "EUR", "42.43 EUR")]
-    [TestCase(-42.43, "EUR", "-42.43 EUR")]
+    [TestCase(42.43, "EUR", "39.65 EUR")]
+    [TestCase(-42.43, "EUR", "-39.65 EUR")]
     public void ToPaypalMoney_Should_Return_Correct_Results(
         decimal money,
         string currency,
@@ -38,36 +39,58 @@ public class PaypalProviderExtensionsTests
     public void CalculateTaxTotal_Should_Return_Correct_Items()
     {
         // arrange
-        var orderItems = new List<OrderItem>()
-        {
-            // TODO: https://github.com/medoni/2024-helm-microservice-deployment/issues/19
-            new OrderItem(
-                Guid.NewGuid(),
-                Guid.NewGuid(),
-                "Item 1",
-                "Description Item 1",
-                new PriceInfoDto { Price = GrossNetPriceDto.CreateByGross(MoneyDto.Create(42.43m, "EUR"), 7), RegularyVatInPercent = 7 },
-                1,
-                GrossNetPriceDto.CreateByGross(MoneyDto.Create(42.43m, "EUR"), 7)
-            ),
-            new OrderItem(
-                Guid.NewGuid(),
-                Guid.NewGuid(),
-                "Item 2",
-                "Description Item 2",
-                new PriceInfoDto { Price = GrossNetPriceDto.CreateByGross(MoneyDto.Create(23.23m, "EUR"), 7), RegularyVatInPercent = 7 },
-                2,
-                GrossNetPriceDto.CreateByGross(MoneyDto.Create(46.46m, "EUR"), 7)
-            )
-        };
+        var items = JsonSerializer.Deserialize<List<Item>>(
+            """
+            [
+                {
+                    "Name": "Arugula and Parmesan Salad",
+                    "UnitAmount": {
+                        "CurrencyCode": "EUR",
+                        "MValue": "6.20"
+                    },
+                    "Tax": {
+                        "CurrencyCode": "EUR",
+                        "MValue": "0.41"
+                    },
+                    "Quantity": "1",
+                    "Description": "Arugula topped with shaved Parmesan."
+                },
+                {
+                    "Name": "Vegetable Calzone",
+                    "UnitAmount": {
+                        "CurrencyCode": "EUR",
+                        "MValue": "8.20"
+                    },
+                    "Tax": {
+                        "CurrencyCode": "EUR",
+                        "MValue": "2.15"
+                    },
+                    "Quantity": "4",
+                    "Description": "Calzone stuffed with vegetables and cheese."
+                },
+                {
+                    "Name": "Vegetable Calzone",
+                    "UnitAmount": {
+                        "CurrencyCode": "EUR",
+                        "MValue": "8.20"
+                    },
+                    "Tax": {
+                        "CurrencyCode": "EUR",
+                        "MValue": "0.54"
+                    },
+                    "Quantity": "1",
+                    "Description": "Calzone stuffed with vegetables and cheese."
+                }
+            ]
+            """
+        );
 
         // act
-        var result = Sut.CalculateTaxTotal(orderItems);
+        var result = Sut.CalculateTaxTotal(items!);
 
         // assert
-        Assert.That($"{result.MValue} {result.CurrencyCode}", Is.EqualTo("0 EUR"));
+        Assert.That($"{result.MValue} {result.CurrencyCode}", Is.EqualTo("9.55 EUR"));
     }
-
 
     [Test]
     public void ToPaypalItems_Should_Return_Correct_Items()
@@ -107,7 +130,7 @@ public class PaypalProviderExtensionsTests
                 "Name": "Item 1",
                 "UnitAmount": {
                   "CurrencyCode": "EUR",
-                  "MValue": "42.43"
+                  "MValue": "39.65"
                 },
                 "Tax": {
                   "CurrencyCode": "EUR",
@@ -125,7 +148,7 @@ public class PaypalProviderExtensionsTests
                 "Name": "Item 2",
                 "UnitAmount": {
                   "CurrencyCode": "EUR",
-                  "MValue": "23.23"
+                  "MValue": "21.71"
                 },
                 "Tax": {
                   "CurrencyCode": "EUR",

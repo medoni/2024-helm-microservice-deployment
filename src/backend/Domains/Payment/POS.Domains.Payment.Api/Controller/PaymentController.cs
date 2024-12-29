@@ -44,9 +44,9 @@ public class PaymentController(
     [HttpGet("{id}")]
     [ProducesResponseType<PaymentDetailsDto>(StatusCodes.Status201Created)]
     [ProducesResponseType<ProblemDetails>(StatusCodes.Status400BadRequest, "application/json")]
-    public async Task<IActionResult> GetPaymentDetails(Guid paymentId)
+    public async Task<IActionResult> GetPaymentDetails(Guid id)
     {
-        var paymentDetails = await PaymentService.GetPaymentDetailsAsync(paymentId);
+        var paymentDetails = await PaymentService.GetPaymentDetailsAsync(id);
         return Ok(paymentDetails);
     }
 }

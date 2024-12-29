@@ -42,9 +42,10 @@ internal class DefaultPaymentService(
         throw new NotImplementedException();
     }
 
-    public Task<PaymentDetailsDto> GetPaymentDetailsAsync(Guid paymentId)
+    public async Task<PaymentDetailsDto> GetPaymentDetailsAsync(Guid paymentId)
     {
-        throw new NotImplementedException();
+        var payment = await paymentRepository.GetAsync(paymentId);
+        return payment.ToDetailsDto();
     }
 
     private IPaymentProcessor GetPaymentProcessor(PaymentProviders providerType)

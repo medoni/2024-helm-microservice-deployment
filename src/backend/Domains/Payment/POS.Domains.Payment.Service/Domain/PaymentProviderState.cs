@@ -1,9 +1,13 @@
-﻿using POS.Shared.Domain.Generic.Dtos;
+﻿using POS.Domains.Payment.Service.Processors.Paypal;
+using POS.Shared.Domain.Generic.Dtos;
+using System.Text.Json.Serialization;
 
 namespace POS.Domains.Payment.Service.Domain;
 /// <summary>
-/// Perstistable state of the payment provider.
+/// Persistable state of the payment provider.
 /// </summary>
+[JsonPolymorphic(TypeDiscriminatorPropertyName = "$type")]
+[JsonDerivedType(typeof(PaypalPaymentProviderState), nameof(PaypalPaymentProviderState))]
 public abstract class PaymentProviderState
 {
     /// <summary>

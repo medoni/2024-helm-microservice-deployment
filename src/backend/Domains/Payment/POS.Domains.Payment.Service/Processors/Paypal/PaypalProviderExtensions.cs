@@ -1,4 +1,5 @@
-﻿using POS.Shared.Domain.Generic.Dtos;
+﻿using PaypalServerSdk.Standard.Models;
+using POS.Shared.Domain.Generic.Dtos;
 using System.Globalization;
 using PaypalItem = PaypalServerSdk.Standard.Models.Item;
 using PaypalLinks = System.Collections.Generic.List<PaypalServerSdk.Standard.Models.LinkDescription>;
@@ -9,14 +10,31 @@ using PosOrderItem = POS.Domains.Customer.Abstractions.Orders.OrderItem;
 namespace POS.Domains.Payment.Service.Processors.Paypal;
 internal static class PaypalProviderExtensions
 {
-    public static PaypalMoney ToPaypalMoney(this GrossNetPriceDto value)
+    public static decimal ToDecimal(this PaypalMoney money)
     {
-        return new PaypalMoney(value.Currency, value.Gross.ToString("0.00", CultureInfo.InvariantCulture));
+        return decimal.Parse(money.MValue, CultureInfo.InvariantCulture);
     }
 
-    public static PaypalMoney CalculateTaxTotal(this IEnumerable<PosOrderItem> orderItems)
+    public static PaypalMoney ToPaypalMoney(this decimal amount, string currencyCode)
     {
-        throw new NotImplementedException();
+        return new PaypalMoney(currencyCode, amount.ToString("0.00", CultureInfo.InvariantCulture));
+    }
+
+    public static PaypalMoney ToPaypalMoney(this GrossNetPriceDto value)
+    {
+        return value.Net.ToPaypalMoney(value.Currency);
+    }
+
+    public static PaypalMoney CalculateTaxTotal(this IEnumerable<PaypalItem> items)
+    {
+        var vatTotal = items.Sum(x => x.Tax.ToDecimal() * int.Parse(x.Quantity));
+        return vatTotal.ToPaypalMoney(items.First().Tax.CurrencyCode);
+    }
+
+    public static PaypalMoney CalculateItemTotal(this IEnumerable<PaypalItem> items)
+    {
+        var itemTotal = items.Sum(x => x.UnitAmount.ToDecimal() * int.Parse(x.Quantity));
+        return itemTotal.ToPaypalMoney(items.First().Tax.CurrencyCode);
     }
 
     public static PaypalItem ToPaypalItem(this PosOrderItem orderItem)
@@ -27,10 +45,7 @@ internal static class PaypalProviderExtensions
             Description = orderItem.Description,
             Quantity = orderItem.Quantity.ToString(CultureInfo.InvariantCulture),
             UnitAmount = orderItem.UnitPrice.Price.ToPaypalMoney(),
-            Tax = new PaypalMoney(
-                orderItem.UnitPrice.Price.Currency,
-                (orderItem.UnitPrice.Price.Vat * orderItem.Quantity).ToString("0.00", CultureInfo.InvariantCulture)
-            )
+            Tax = (orderItem.UnitPrice.Price.Vat * orderItem.Quantity).ToPaypalMoney(orderItem.UnitPrice.Price.Currency)
         };
     }
 
@@ -53,5 +68,49 @@ internal static class PaypalProviderExtensions
             .Cast<Domain.PaymentLinkDescription>()
             .ToList();
         ;
+    }
+
+    public static GrossNetPriceDto ToGrossNetPriceDto(this AmountWithBreakdown amount)
+    {
+        var gross = decimal.Parse(amount.MValue, CultureInfo.InvariantCulture);
+        var vat = amount.Breakdown.TaxTotal.ToDecimal();
+        var net = gross - vat;
+
+        return new GrossNetPriceDto
+        {
+            Currency = amount.CurrencyCode,
+            Gross = gross,
+            Net = net,
+            Vat = vat
+        };
+    }
+
+    public static AmountWithBreakdown CalculateAmountWithBreakdown(
+        this IEnumerable<PaypalItem> items,
+        GrossNetPriceDto discount,
+        GrossNetPriceDto deliveryCosts
+    )
+    {
+        var itemTotal = items.CalculateItemTotal();
+        var taxTotal = items.CalculateTaxTotal();
+
+        var total =
+            itemTotal.ToDecimal() +
+            taxTotal.ToDecimal() +
+            deliveryCosts.Net -
+            deliveryCosts.Net;
+
+        return new()
+        {
+            CurrencyCode = itemTotal.CurrencyCode,
+            MValue = total.ToPaypalMoney(itemTotal.CurrencyCode).MValue,
+            Breakdown = new AmountBreakdown
+            {
+                ItemTotal = itemTotal,
+                TaxTotal = taxTotal,
+                Discount = discount.ToPaypalMoney(),
+                Shipping = deliveryCosts.ToPaypalMoney(),
+            }
+        };
     }
 }

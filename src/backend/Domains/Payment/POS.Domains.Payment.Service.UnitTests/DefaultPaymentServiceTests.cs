@@ -3,9 +3,11 @@ using NSubstitute;
 using POS.Domains.Payment.Service.Domain;
 using POS.Domains.Payment.Service.Dtos;
 using POS.Domains.Payment.Service.Exceptions;
+using POS.Domains.Payment.Service.Mapper;
 using POS.Domains.Payment.Service.Processors;
 using POS.Shared.Domain.Generic.Dtos;
 using POS.Shared.Testing;
+using POS.Shared.Testing.NUnit;
 using System.Collections.Concurrent;
 
 namespace POS.Domains.Payment.Service.UnitTests;
@@ -31,7 +33,7 @@ public class DefaultPaymentServiceTests
         );
 
         ServiceProviderMock
-            .GetRequiredKeyedService(typeof(IPaymentProcessor), $"serviceProvider_{PaymentProviders.Paypal}")
+            .GetRequiredKeyedService(typeof(IPaymentProcessor), PaymentProviders.Paypal)
             .Returns(new TestPaymentProcessor());
     }
 
@@ -120,6 +122,48 @@ public class DefaultPaymentServiceTests
         Assert.That(storedState.Provider, Is.EqualTo(requestDto.Provider));
         Assert.That(storedState.ProviderState, Is.EqualTo(TestPaymentProviderState.Default));
         Assert.That(storedState.PayedAt, Is.Null);
+    }
+
+    #endregion
+
+    #region GetPaymentDetailsAsync
+
+    [Test]
+    public async Task GetPaymentDetailsAsync_Should_Return_Correct_Result()
+    {
+        // arrange
+        var paymentId = Guid.Parse("eabf2aec-76e4-484c-82d2-69bcc1b62f7d");
+        var paymentEntity = new PaymentEntity
+        {
+            Id = paymentId,
+            EntityType = EntityTypes.CustomerOrder,
+            EntityId = "abcdef",
+            RequestedAt = new DateTimeOffset(2024, 12, 29, 07, 24, 33, TimeSpan.Zero),
+            State = PaymentStates.Requested,
+            Provider = PaymentProviders.Paypal,
+            ProviderState = TestPaymentProviderState.Default
+        };
+
+        await PaymentRepository.AddOrUpdateAsync(paymentEntity);
+
+        // act
+        var result = await Sut.GetPaymentDetailsAsync(paymentId);
+
+        // assert
+        Assert.That(result.ToJson(), Is.EqualTo(paymentEntity.ToDetailsDto().ToJson()));
+    }
+
+    [Test]
+    public void GetPaymentDetailsAsync_Should_Throw_Exception_When_Entity_Was_Not_Found()
+    {
+        // arrange
+        var paymentId = Guid.NewGuid();
+
+        // act
+        Assert.That(
+            () => Sut.GetPaymentDetailsAsync(paymentId),
+            Throws.TypeOf<PaymentNotFoundException>()
+        );
     }
 
     #endregion
