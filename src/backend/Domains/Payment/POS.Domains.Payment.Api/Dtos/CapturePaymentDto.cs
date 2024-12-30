@@ -1,4 +1,4 @@
-﻿namespace POS.Domains.Payment.Service.Dtos;
+﻿namespace POS.Domains.Payment.Api.Dtos;
 
 /// <summary>
 /// Dto for capturing a requested payment.

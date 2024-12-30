@@ -1,12 +1,11 @@
 ﻿namespace POS.Domains.Payment.Service.Domain;
-
 /// <summary>
-/// Types for payment links
+/// Types of entities that can be paid.
 /// </summary>
-public enum PaymentLinkTypes
+public enum EntityTypes
 {
     /// <summary>
-    /// Approve
+    /// CustomerOrder
     /// </summary>
-    Approve
+    CustomerOrder
 }

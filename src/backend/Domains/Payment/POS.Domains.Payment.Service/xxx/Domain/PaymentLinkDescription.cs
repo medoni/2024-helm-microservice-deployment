@@ -1,7 +1,7 @@
-﻿using System.Diagnostics.CodeAnalysis;
+﻿
+using System.Diagnostics.CodeAnalysis;
 
 namespace POS.Domains.Payment.Service.Domain;
-
 /// <summary>
 /// Link description for a payment.
 /// </summary>

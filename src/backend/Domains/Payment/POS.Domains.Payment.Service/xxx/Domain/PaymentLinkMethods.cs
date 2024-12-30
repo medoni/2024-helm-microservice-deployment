@@ -1,5 +1,4 @@
 ﻿namespace POS.Domains.Payment.Service.Domain;
-
 /// <summary>
 /// Methods for payment links
 /// </summary>

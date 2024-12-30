@@ -1,8 +1,8 @@
 ﻿using Asp.Versioning;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using POS.Domains.Payment.Service;
-using POS.Domains.Payment.Service.Dtos;
+using POS.Domains.Payment.Api.Dtos;
+using POS.Domains.Payment.Service.Services.PaymentProcessor;
 
 namespace POS.Domains.Payment.Api.Controller;
 /// <summary>
@@ -12,7 +12,7 @@ namespace POS.Domains.Payment.Api.Controller;
 [ApiController]
 [Route("v1/Payment")]
 public class PaymentController(
-    IPaymentService PaymentService
+    IPaymentProcessor paymentProcessor
 ) : ControllerBase
 {
     /// <summary>
@@ -22,7 +22,14 @@ public class PaymentController(
     [ProducesResponseType<PaymentDetailsDto>(StatusCodes.Status201Created)]
     public async Task<IActionResult> RequestPaymentAsync(RequestPaymentDto dto)
     {
-        var paymentDetails = await PaymentService.RequestPaymentAsync(dto);
+        var payment = await paymentProcessor.RequestPaymentAsync(
+            dto.Provider,
+            dto.EntityType,
+            dto.EntityId,
+            dto.RequestedAt
+        );
+        var paymentDetails = payment.ToPaymentDetailsDto();
+
         return Ok(paymentDetails);
     }
 
@@ -32,10 +39,9 @@ public class PaymentController(
     [HttpPost("Capture")]
     [ProducesResponseType<PaymentDetailsDto>(StatusCodes.Status201Created)]
     [ProducesResponseType<ProblemDetails>(StatusCodes.Status400BadRequest, "application/json")]
-    public async Task<IActionResult> CapturePaymentAsync(CapturePaymentDto dto)
+    public Task<IActionResult> CapturePaymentAsync(CapturePaymentDto dto)
     {
-        var paymentDetails = await PaymentService.CapturePaymentAsync(dto);
-        return Ok(paymentDetails);
+        throw new NotImplementedException();
     }
 
     /// <summary>
@@ -44,10 +50,9 @@ public class PaymentController(
     [HttpGet("{id}")]
     [ProducesResponseType<PaymentDetailsDto>(StatusCodes.Status201Created)]
     [ProducesResponseType<ProblemDetails>(StatusCodes.Status400BadRequest, "application/json")]
-    public async Task<IActionResult> GetPaymentDetails(Guid id)
+    public Task<IActionResult> GetPaymentDetails(Guid id)
     {
-        var paymentDetails = await PaymentService.GetPaymentDetailsAsync(id);
-        return Ok(paymentDetails);
+        throw new NotImplementedException();
     }
 
     /// <summary>
@@ -56,10 +61,9 @@ public class PaymentController(
     [HttpGet("{id}/OnSuccess")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType<ProblemDetails>(StatusCodes.Status400BadRequest, "application/json")]
-    public async Task<IActionResult> PaymentOnSuccessAsync(Guid id)
+    public Task<IActionResult> PaymentOnSuccessAsync(Guid id)
     {
-        await PaymentService.OnSuccessfullyRequestedAsync(id);
-        return Ok();
+        throw new NotImplementedException();
     }
 
     /// <summary>
@@ -68,9 +72,8 @@ public class PaymentController(
     [HttpGet("{id}/OnCancel")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType<ProblemDetails>(StatusCodes.Status400BadRequest, "application/json")]
-    public async Task<IActionResult> PaymentOnCancelAsync(Guid id)
+    public Task<IActionResult> PaymentOnCancelAsync(Guid id)
     {
-        await PaymentService.OnCanceledAsync(id);
-        return Ok();
+        throw new NotImplementedException();
     }
 }

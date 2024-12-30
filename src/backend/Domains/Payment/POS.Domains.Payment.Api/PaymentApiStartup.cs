@@ -12,7 +12,7 @@ public static class PaymentApiStartup
     /// </summary>
     public static IServiceCollection AddPaypalPaymentSupport(this IServiceCollection services)
     {
-        services.AddPaymentServiceSupport();
+        services.AddPaymentSupport();
 
         return services;
     }

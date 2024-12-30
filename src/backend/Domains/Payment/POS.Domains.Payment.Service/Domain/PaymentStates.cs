@@ -1,26 +1,21 @@
 ﻿namespace POS.Domains.Payment.Service.Domain;
 /// <summary>
-/// States of the payment
+/// States of the Payment
 /// </summary>
 public enum PaymentStates
 {
-    /// <summary>
-    /// Requested
-    /// </summary>
+    /// <summary>Created</summary>
+    Created,
+
+    /// <summary>Requested</summary>
     Requested,
 
-    /// <summary>
-    /// Payed
-    /// </summary>
+    /// <summary>Approved</summary>
     Approved,
 
-    /// <summary>
-    /// Captured (successfully payed by the buyer)
-    /// </summary>
+    /// <summary>Captured</summary>
     Captured,
 
-    /// <summary>
-    /// Canceled
-    /// </summary>
+    /// <summary>Canceled</summary>
     Canceled
 }
