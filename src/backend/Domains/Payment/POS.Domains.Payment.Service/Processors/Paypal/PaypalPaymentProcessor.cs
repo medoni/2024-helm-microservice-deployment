@@ -1,4 +1,5 @@
 ﻿using PaypalServerSdk.Standard;
+using PaypalServerSdk.Standard.Exceptions;
 using PaypalServerSdk.Standard.Models;
 using POS.Domains.Customer.Persistence.Orders;
 using POS.Domains.Payment.Service.Configurations;
@@ -85,29 +86,46 @@ internal class PaypalPaymentProcessor(
         );
     }
 
+    public async Task<PaymentProviderState> CheckPaymentRequestAsync(PaymentEntity paymentEntity)
+    {
+        var providerState = (PaypalPaymentProviderState)paymentEntity.ProviderState;
+        var orderResult = await paypalClient.OrdersController.OrdersGetAsync(new() { Id = providerState.PaymentProviderId });
+        var orderStatus = orderResult.Data.Status ?? OrderStatus._Unknown;
+
+
+    }
+
     public async Task<PaymentProviderState> CapturePaymentAsync(PaymentEntity paymentEntity)
     {
         var providerState = (PaypalPaymentProviderState)paymentEntity.ProviderState;
-
-        var captureInput = new OrdersCaptureInput
+        var orderResult = await CaptureOrGetCaptureStateAsync(providerState);
+        var orderStatus = orderResult.Status ?? OrderStatus._Unknown;
+        if (orderStatus != OrderStatus.Completed)
         {
-            Id = providerState.PaymentProviderId
-        };
-
-        var captureResult = await paypalClient.OrdersController.OrdersCaptureAsync(
-            captureInput
-        );
-
-        if (captureResult.Data.Status != OrderStatus.Completed)
-        {
-            throw new PaymentCaptureNotCompletedException(paymentEntity.Id, captureResult.Data.Status?.ToString() ?? "<NULL>");
+            throw new PaymentCaptureNotCompletedException(paymentEntity.Id, orderStatus.ToString());
         }
 
-        providerState.PayedAt = DateTimeOffset.Parse(
-            captureResult.Data.PurchaseUnits.Last().Payments.Captures.Last().CreateTime, CultureInfo.InvariantCulture
+        providerState.Payer = orderResult.Payer.ToPosPayer();
+        providerState.CapturedAt = DateTimeOffset.Parse(
+            orderResult.PurchaseUnits.Last().Payments.Captures.Last().CreateTime, CultureInfo.InvariantCulture
         );
-        providerState.CapturedAt = DateTimeOffset.UtcNow;
-
+        providerState.CapturedAt = providerState.CapturedAt;
         return providerState;
+    }
+
+    private async Task<Order> CaptureOrGetCaptureStateAsync(
+        PaypalPaymentProviderState providerState
+    )
+    {
+        try
+        {
+            var captureResult = await paypalClient.OrdersController.OrdersCaptureAsync(new() { Id = providerState.PaymentProviderId });
+            return captureResult.Data;
+        }
+        catch (ErrorException ex) when (ex.Details.Count == 1 && ex.Details[0].Issue == "ORDER_ALREADY_CAPTURED")
+        {
+            var orderResult = await paypalClient.OrdersController.OrdersGetAsync(new() { Id = providerState.PaymentProviderId });
+            return orderResult.Data;
+        }
     }
 }

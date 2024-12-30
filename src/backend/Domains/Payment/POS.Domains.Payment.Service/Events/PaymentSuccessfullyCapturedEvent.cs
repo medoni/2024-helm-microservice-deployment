@@ -9,7 +9,6 @@ namespace POS.Domains.Payment.Service.Events;
 /// <param name="EntityType">Type of the entity</param>
 /// <param name="EntityId">Id of the entity</param>
 /// <param name="RequestedAt">Date and time when the payment was requested.</param>
-/// <param name="PayedAt">Date and time when the payment was payed.</param>
 /// <param name="CapturedAt">Date and time when payment was captured.</param>
 /// <param name="PaymentProvider">The payment provider.</param>
 public record PaymentSuccessfullyCapturedEvent(
@@ -17,7 +16,6 @@ public record PaymentSuccessfullyCapturedEvent(
     EntityTypes EntityType,
     string EntityId,
     DateTimeOffset RequestedAt,
-    DateTimeOffset PayedAt,
     DateTimeOffset CapturedAt,
     PaymentProviders PaymentProvider
 ) : IDomainEvent

@@ -58,7 +58,7 @@ public class PaymentController(
     [ProducesResponseType<ProblemDetails>(StatusCodes.Status400BadRequest, "application/json")]
     public async Task<IActionResult> PaymentOnSuccessAsync(Guid id)
     {
-        await PaymentService.OnSuccessfullyProcessedAsync(id);
+        await PaymentService.OnSuccessfullyRequestedAsync(id);
         return Ok();
     }
 

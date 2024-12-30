@@ -42,7 +42,7 @@ public class PaymentEntity
     /// <summary>
     /// Date and time when the request was successfully paid.
     /// </summary>
-    public DateTimeOffset? PayedAt { get; set; }
+    public DateTimeOffset? PayedAt { get; set; } //TODO: Remove
 
     /// <summary>
     /// Date and time when the payment was captured.

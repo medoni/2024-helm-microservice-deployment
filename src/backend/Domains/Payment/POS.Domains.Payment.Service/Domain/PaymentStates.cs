@@ -12,7 +12,12 @@ public enum PaymentStates
     /// <summary>
     /// Payed
     /// </summary>
-    Payed,
+    Approved,
+
+    /// <summary>
+    /// Captured (successfully payed by the buyer)
+    /// </summary>
+    Captured,
 
     /// <summary>
     /// Canceled

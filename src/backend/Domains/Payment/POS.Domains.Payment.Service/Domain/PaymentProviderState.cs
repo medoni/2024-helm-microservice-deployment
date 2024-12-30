@@ -1,4 +1,5 @@
-﻿using POS.Domains.Payment.Service.Processors.Paypal;
+﻿using POS.Domains.Payment.Service.Dtos;
+using POS.Domains.Payment.Service.Processors.Paypal;
 using POS.Shared.Domain.Generic.Dtos;
 using System.Text.Json.Serialization;
 
@@ -31,12 +32,17 @@ public abstract class PaymentProviderState
     public required List<PaymentLinkDescription> Links { get; init; }
 
     /// <summary>
-    /// Date and time when the request was payed.
+    /// Date and time when the request was approved.
     /// </summary>
-    public DateTimeOffset? PayedAt { get; set; }
+    public DateTimeOffset? ApprovedAt { get; set; }
 
     /// <summary>
     /// Date and time when the payment was captured.
     /// </summary>
     public DateTimeOffset? CapturedAt { get; set; }
+
+    /// <summary>
+    /// Information about the payer.
+    /// </summary>
+    public PayerDto? Payer { get; set; }
 }

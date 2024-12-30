@@ -49,15 +49,15 @@ internal class DefaultPaymentService(
     private async Task TryCapturePaymentAsync(Guid paymentId)
     {
         var paymentEntity = await paymentRepository.GetAsync(paymentId);
-        if (paymentEntity.State == PaymentStates.Payed) return;
+        if (paymentEntity.State == PaymentStates.Captured) return;
         if (paymentEntity.State == PaymentStates.Canceled) return;
 
         var paymentProcessor = GetPaymentProcessor(paymentEntity.Provider);
         var paymentProviderState = await paymentProcessor.CapturePaymentAsync(paymentEntity);
 
-        paymentEntity.State = PaymentStates.Payed;
+        paymentEntity.State = PaymentStates.Captured;
         paymentEntity.ProviderState = paymentProviderState;
-        paymentEntity.PayedAt = paymentProviderState.PayedAt;
+        paymentEntity.PayedAt = paymentProviderState.CapturedAt;
         paymentEntity.CapturedAt = paymentProviderState.CapturedAt;
 
         await paymentRepository.UpdateAsync(paymentEntity);
@@ -67,12 +67,22 @@ internal class DefaultPaymentService(
             paymentEntity.EntityType,
             paymentEntity.EntityId,
             paymentEntity.RequestedAt,
-            paymentProviderState.PayedAt!.Value,
             paymentProviderState.CapturedAt!.Value,
             paymentEntity.Provider
         );
 
         await eventPublisher.PublishAsync(evt);
+    }
+
+    private async Task TryUpdatePaymentApproval(Guid paymentId)
+    {
+        var paymentEntity = await paymentRepository.GetAsync(paymentId);
+        if (paymentEntity.State == PaymentStates.Approved) return;
+        if (paymentEntity.State == PaymentStates.Captured) return;
+        if (paymentEntity.State == PaymentStates.Canceled) return;
+
+        var paymentProcessor = GetPaymentProcessor(paymentEntity.Provider);
+        var providerState = await paymentProcessor.CheckPaymentRequestAsync(paymentEntity);
     }
 
     public async Task<PaymentDetailsDto> GetPaymentDetailsAsync(Guid paymentId)
@@ -87,9 +97,9 @@ internal class DefaultPaymentService(
         return provider;
     }
 
-    public async Task OnSuccessfullyProcessedAsync(Guid paymentId)
+    public async Task OnSuccessfullyRequestedAsync(Guid paymentId)
     {
-        await TryCapturePaymentAsync(paymentId);
+        await TryUpdatePaymentApproval(paymentId);
     }
 
     public Task OnCanceledAsync(Guid paymentId)

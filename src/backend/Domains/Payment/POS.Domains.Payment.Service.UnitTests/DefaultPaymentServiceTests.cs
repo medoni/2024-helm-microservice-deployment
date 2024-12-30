@@ -199,7 +199,7 @@ public class DefaultPaymentServiceTests
             .AndDoes(args => raisedEvents.AddRange((IEnumerable<IDomainEvent>)args[0]));
 
         // act
-        await Sut.OnSuccessfullyProcessedAsync(paymentId);
+        await Sut.OnSuccessfullyRequestedAsync(paymentId);
 
         // assert
         Assert.That(raisedEvents, Is.EqualTo(

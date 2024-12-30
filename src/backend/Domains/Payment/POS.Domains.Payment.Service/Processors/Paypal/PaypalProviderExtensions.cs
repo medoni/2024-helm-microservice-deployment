@@ -1,11 +1,15 @@
 ﻿using PaypalServerSdk.Standard.Models;
 using POS.Shared.Domain.Generic.Dtos;
 using System.Globalization;
+using PaypalAddress = PaypalServerSdk.Standard.Models.Address;
 using PaypalItem = PaypalServerSdk.Standard.Models.Item;
 using PaypalLinks = System.Collections.Generic.List<PaypalServerSdk.Standard.Models.LinkDescription>;
 using PaypalMoney = PaypalServerSdk.Standard.Models.Money;
+using PaypalPayer = PaypalServerSdk.Standard.Models.Payer;
+using PosAddress = POS.Domains.Payment.Service.Dtos.PayerAddressDto;
 using PosLinks = System.Collections.Generic.List<POS.Domains.Payment.Service.Domain.PaymentLinkDescription>;
 using PosOrderItem = POS.Domains.Customer.Abstractions.Orders.OrderItem;
+using PosPayer = POS.Domains.Payment.Service.Dtos.PayerDto;
 
 namespace POS.Domains.Payment.Service.Processors.Paypal;
 internal static class PaypalProviderExtensions
@@ -111,6 +115,30 @@ internal static class PaypalProviderExtensions
                 Discount = discount.ToPaypalMoney(),
                 Shipping = deliveryCosts.ToPaypalMoney(),
             }
+        };
+    }
+
+    public static PosPayer ToPosPayer(this PaypalPayer payer)
+    {
+        return new PosPayer
+        {
+            FirstName = payer.Name.GivenName,
+            LastName = payer.Name.Surname,
+            Email = payer.EmailAddress,
+            Phone = payer.Phone?.PhoneNumber?.NationalNumber,
+            Address = payer.Address?.ToPosAddress()
+        };
+    }
+
+    public static PosAddress ToPosAddress(this PaypalAddress address)
+    {
+        return new PosAddress
+        {
+            AddressLine1 = address.AddressLine1,
+            AddressLine2 = address.AddressLine2,
+            Zip = address.PostalCode,
+            City = address.AdminArea2,
+            CountryCode = address.CountryCode
         };
     }
 }
