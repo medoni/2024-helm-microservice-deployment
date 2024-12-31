@@ -1,4 +1,5 @@
-﻿using POS.Domains.Payment.Service.Services.PaymentProvider;
+﻿using POS.Domains.Payment.Service.Domain.Models;
+using POS.Domains.Payment.Service.Services.PaymentProvider;
 using POS.Shared.Domain.Generic.Dtos;
 
 namespace POS.Domains.Payment.Service.Domain;
@@ -38,6 +39,11 @@ public record PaymentAggregateState
     public required DateTimeOffset CreatedAt { get; init; }
 
     /// <summary>
+    /// Date and time when the payment was requested.
+    /// </summary>
+    public DateTimeOffset? RequestedAt { get; set; }
+
+    /// <summary>
     /// Description for the payment.
     /// </summary>
     public required string Description { get; init; }
@@ -45,10 +51,15 @@ public record PaymentAggregateState
     /// <summary>
     /// Total amount of the payment.
     /// </summary>
-    public required GrossNetPriceDto TotalAmount { get; init; }
+    public required GrossNetPriceDto TotalAmount { get; set; }
 
     /// <summary>
     /// Allowed links on the payment.
     /// </summary>
     public List<PaymentLinkDescription> Links { get; set; } = new();
+
+    /// <summary>
+    /// Payload for the underlaying payment provider.
+    /// </summary>
+    public string? PaymentProviderPayload { get; set; }
 }

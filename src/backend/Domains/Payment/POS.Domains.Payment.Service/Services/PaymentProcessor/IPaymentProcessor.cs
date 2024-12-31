@@ -1,4 +1,5 @@
 ﻿using POS.Domains.Payment.Service.Domain;
+using POS.Domains.Payment.Service.Domain.Models;
 using POS.Domains.Payment.Service.Services.PaymentProvider;
 
 namespace POS.Domains.Payment.Service.Services.PaymentProcessor;

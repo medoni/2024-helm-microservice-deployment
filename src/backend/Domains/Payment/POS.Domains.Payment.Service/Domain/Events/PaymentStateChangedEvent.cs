@@ -1,6 +1,6 @@
-﻿using POS.Domains.Payment.Service.Domain;
+﻿using POS.Domains.Payment.Service.Domain.Models;
 
-namespace POS.Domains.Payment.Service.Events;
+namespace POS.Domains.Payment.Service.Domain.Events;
 
 /// <summary>
 /// Abstract event, used when the state of the payment was changed.

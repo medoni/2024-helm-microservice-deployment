@@ -4,7 +4,7 @@ using PizzaService.Base;
 using PizzaService.Base.Services.HealthChecks;
 using PizzaService.Base.Services.Swagger;
 using POS.Domains.Payment.Api;
-using POS.Domains.Payment.Service.Configurations;
+using POS.Domains.Payment.Service.Services.PaymentProvider.Paypal;
 using POS.Persistence.PostgreSql;
 using POS.Shared.Infrastructure.PubSub.Abstractions;
 
@@ -20,7 +20,7 @@ internal static class Program
         builder.Services.AddPizzaServiceSupport();
 
         builder.Services.AddPaypalPaymentSupport()
-            .Configure<PaypalProcessorSettings>(x => builder.Configuration.Bind("PaypalApi", x));
+            .Configure<PaypalPaymentSettings>(x => builder.Configuration.Bind("PaypalApi", x));
 
         builder.Services.AddHealthChecks()
             .AddPOSDbHealthCheck();

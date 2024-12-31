@@ -1,4 +1,4 @@
-﻿namespace POS.Domains.Payment.Service.Domain;
+﻿namespace POS.Domains.Payment.Service.Domain.Models;
 /// <summary>
 /// States of the Payment
 /// </summary>

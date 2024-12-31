@@ -1,4 +1,6 @@
-﻿using POS.Domains.Payment.Service.Events;
+﻿using POS.Domains.Payment.Service.Domain.Events;
+using POS.Domains.Payment.Service.Domain.Exceptions;
+using POS.Domains.Payment.Service.Domain.Models;
 using POS.Domains.Payment.Service.Services.PaymentProvider;
 using POS.Shared.Domain;
 using POS.Shared.Domain.Generic;
@@ -53,9 +55,31 @@ public class PaymentAggregate : AggregateRoot
     public string Description => _state.Description;
 
     /// <summary>
+    /// Date and time when the payment was requested.
+    /// </summary>
+    public DateTimeOffset? RequestedAt
+    {
+        get => _state.RequestedAt;
+        private set => _state.RequestedAt = value;
+    }
+
+    /// <summary>
     /// Total amount of the payment.
     /// </summary>
-    public GrossNetPrice TotalAmount => _state.TotalAmount.ToDomain();
+    public GrossNetPrice TotalAmount
+    {
+        get => _state.TotalAmount.ToDomain();
+        private set => _state.TotalAmount = value.ToDto();
+    }
+
+    /// <summary>
+    /// Internal payload of the payment provider.
+    /// </summary>
+    public string? PaymentProviderPayload
+    {
+        get => _state.PaymentProviderPayload;
+        private set => _state.PaymentProviderPayload = value;
+    }
 
     /// <summary>
     /// Allowed links on the payment.
@@ -118,6 +142,59 @@ public class PaymentAggregate : AggregateRoot
     public PaymentAggregate(PaymentAggregateState state)
     {
         _state = state ?? throw new ArgumentNullException(nameof(state));
+    }
+
+    #endregion
+
+    private void CheckAllowedStates(PaymentStates expectedState)
+    {
+        if (State != expectedState) throw new PaymentStateException(Id, State, expectedState);
+    }
+
+    #region Request payment
+
+    /// <summary>
+    /// Checks if a payment can be requested.
+    /// </summary>
+    public void CheckPaymentCanBeRequested()
+    {
+        CheckAllowedStates(PaymentStates.Created);
+    }
+
+    /// <summary>
+    /// The payment was successfully requested by the payment provider.
+    /// </summary>
+    /// <param name="totalAmountRequested">The total amount that was requested.</param>
+    /// <param name="requestedAt">Date and time when the payment was requested.</param>
+    /// <param name="paymentApprovalLink">The link to approve the payment by the buyer.</param>
+    /// <param name="paymentProviderState">Internal state object of the underlaying payment provider.</param>
+    public void PaymentRequested(
+        GrossNetPrice totalAmountRequested,
+        DateTimeOffset requestedAt,
+        PaymentLinkDescription paymentApprovalLink,
+        string paymentProviderState
+    )
+    {
+        CheckPaymentCanBeRequested();
+
+        State = PaymentStates.Requested;
+        TotalAmount = totalAmountRequested;
+        RequestedAt = requestedAt;
+
+        _state.Links.RemoveAll(x => x.Type == PaymentLinkTypes.Approve);
+        _state.Links.Add(paymentApprovalLink);
+        _state.PaymentProviderPayload = paymentProviderState;
+
+        Apply(new PaymentRequestedEvent(
+            Id,
+            PaymentProvider,
+            EntityType,
+            EntityId,
+            requestedAt,
+            totalAmountRequested.ToDto(),
+            Links.ToList(),
+            paymentProviderState
+        ));
     }
 
     #endregion

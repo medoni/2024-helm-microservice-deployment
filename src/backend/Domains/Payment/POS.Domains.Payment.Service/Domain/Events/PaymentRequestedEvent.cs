@@ -1,15 +1,14 @@
-﻿using POS.Domains.Payment.Service.Domain;
+﻿using POS.Domains.Payment.Service.Domain.Models;
 using POS.Domains.Payment.Service.Services.PaymentProvider;
 using POS.Shared.Domain.Events;
 using POS.Shared.Domain.Generic.Dtos;
 using System.Diagnostics.CodeAnalysis;
 
-namespace POS.Domains.Payment.Service.Events;
-
+namespace POS.Domains.Payment.Service.Domain.Events;
 /// <summary>
-/// Event, raised when the payment was created
+/// Event, raised when a payment was requested.
 /// </summary>
-public class PaymentCreatedEvent : PaymentStateChangedEvent, IDomainEvent
+public class PaymentRequestedEvent : PaymentStateChangedEvent, IDomainEvent
 {
     /// <summary>
     /// The used payment provider
@@ -27,14 +26,9 @@ public class PaymentCreatedEvent : PaymentStateChangedEvent, IDomainEvent
     public required string EntityId { get; init; }
 
     /// <summary>
-    /// Date and time when the payment was created.
+    /// Date and time when the payment was requested.
     /// </summary>
-    public required DateTimeOffset CreatedAt { get; init; }
-
-    /// <summary>
-    /// Description for the payment.
-    /// </summary>
-    public required string Description { get; init; }
+    public required DateTimeOffset RequestedAt { get; init; }
 
     /// <summary>
     /// Total amount of the payment.
@@ -42,25 +36,37 @@ public class PaymentCreatedEvent : PaymentStateChangedEvent, IDomainEvent
     public required GrossNetPriceDto TotalAmount { get; init; }
 
     /// <summary>
-    /// Creates a new <see cref="PaymentCreatedEvent"/>.
+    /// Links of the payment.
+    /// </summary>
+    public required List<PaymentLinkDescription> Links { get; init; }
+
+    /// <summary>
+    /// Payload of the payment provider.
+    /// </summary>
+    public required string PaymentProviderPayload { get; init; }
+
+    /// <summary>
+    /// Creates a new <see cref="PaymentRequestedEvent"/>.
     /// </summary>
     [SetsRequiredMembers]
-    public PaymentCreatedEvent(
+    public PaymentRequestedEvent(
         Guid id,
         PaymentProviderTypes paymentProvider,
         EntityTypes entityType,
         string entityId,
-        DateTimeOffset createdAt,
-        string description,
-        GrossNetPriceDto totalAmount
+        DateTimeOffset requestedAt,
+        GrossNetPriceDto totalAmount,
+        List<PaymentLinkDescription> links,
+        string paymentProviderPayload
     )
-    : base(id, PaymentStates.Created, createdAt)
+    : base(id, PaymentStates.Created, requestedAt)
     {
         PaymentProvider = paymentProvider;
         EntityType = entityType;
         EntityId = entityId ?? throw new ArgumentNullException(nameof(entityId));
-        CreatedAt = createdAt;
-        Description = description ?? throw new ArgumentNullException(nameof(description));
+        RequestedAt = requestedAt;
         TotalAmount = totalAmount ?? throw new ArgumentNullException(nameof(totalAmount));
+        Links = links;
+        PaymentProviderPayload = paymentProviderPayload;
     }
 }

@@ -1,5 +1,4 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using POS.Domains.Payment.Service.Domain;
 using POS.Persistence.PostgreSql.Data.Customer;
 
 #nullable disable
@@ -16,8 +15,6 @@ public class POSDbContext : DbContext
     public DbSet<CartEntity> Carts { get; set; }
 
     public DbSet<OrderEntity> Orders { get; set; }
-
-    public DbSet<PaymentEntity> Payments { get; set; }
 
     public POSDbContext(DbContextOptions options) : base(options)
     {
