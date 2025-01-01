@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using POS.Domains.Customer.Abstractions.Orders;
+using POS.Domains.Customer.Domain.Orders.Models;
 using POS.Persistence.PostgreSql.Abstractions;
 
 namespace POS.Persistence.PostgreSql.Data.Customer;
@@ -20,6 +21,8 @@ public class OrderEntity : IEntity<Guid>
     public ICollection<OrderItemEntity> Items { get; set; } = null!;
 
     public OrderPriceInformationEntity PriceSummary { get; set; } = null!;
+
+    public PaymentInfo? PaymentInfo { get; set; }
 
     [Obsolete("For deserializing only.")]
     public OrderEntity()
@@ -61,6 +64,9 @@ internal class OrderEntityConfiguration : IEntityTypeConfiguration<OrderEntity>
 
         builder.Property(x => x.State)
             .HasConversion(v => v.ToString(), v => Enum.Parse<OrderStates>(v));
+
+        builder.Property(x => x.PaymentInfo)
+            .HasJsonConversion();
 
         builder
             .HasOne(x => x.PriceSummary)

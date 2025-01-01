@@ -84,15 +84,4 @@ public class DefaultPaymentProcessorTests
     }
 
     #endregion
-
-    [Test]
-    public void Test()
-    {
-        // arrange
-
-        // act
-
-        // assert
-        Assert.Fail();
-    }
 }

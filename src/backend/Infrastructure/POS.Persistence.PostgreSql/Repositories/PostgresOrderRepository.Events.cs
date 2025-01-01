@@ -1,4 +1,5 @@
 ﻿using POS.Domains.Customer.Abstractions.Orders.Events;
+using POS.Domains.Customer.Domain.Orders.Events;
 using POS.Persistence.PostgreSql.Data.Customer;
 using POS.Persistence.PostgreSql.Mapper.Customer;
 
@@ -19,5 +20,12 @@ partial class PostgresOrderRepository
 
         DbContext.Orders.Add(order);
         return Task.CompletedTask;
+    }
+
+    public async Task ProcessUncommitedEventAsync(OrderPaymentRequestedEvent evt)
+    {
+        var order = await DbContext.Orders.FindAsync(evt.OrderId)
+            ?? throw new InvalidOperationException($"Order with id '{evt.OrderId}' was not found.");
+        order.PaymentInfo = evt.PaymentInfo;
     }
 }

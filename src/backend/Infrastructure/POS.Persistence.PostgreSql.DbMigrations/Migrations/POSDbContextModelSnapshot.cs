@@ -22,47 +22,6 @@ namespace POS.Persistence.PostgreSql.DbMigrations.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
-            modelBuilder.Entity("POS.Domains.Payment.Service.Domain.PaymentEntity", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
-
-                    b.Property<DateTimeOffset?>("CapturedAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<string>("EntityId")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<int>("EntityType")
-                        .HasColumnType("integer");
-
-                    b.Property<DateTimeOffset?>("PayedAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<string>("Provider")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("ProviderState")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<DateTimeOffset>("RequestedAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<string>("State")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("EntityType", "EntityId");
-
-                    b.ToTable("Payments", "Payments");
-                });
-
             modelBuilder.Entity("POS.Persistence.PostgreSql.Data.Customer.CartCheckoutInfoEntity", b =>
                 {
                     b.Property<Guid>("CartId")
@@ -239,6 +198,9 @@ namespace POS.Persistence.PostgreSql.DbMigrations.Migrations
                     b.Property<DateTimeOffset>("LastChangedAt")
                         .HasColumnType("timestamp with time zone");
 
+                    b.Property<string>("PaymentInfo")
+                        .HasColumnType("text");
+
                     b.Property<string>("State")
                         .IsRequired()
                         .HasColumnType("text");
@@ -288,6 +250,53 @@ namespace POS.Persistence.PostgreSql.DbMigrations.Migrations
                     b.HasKey("OrderId");
 
                     b.ToTable("OrderPriceInfos", "Customer");
+                });
+
+            modelBuilder.Entity("POS.Persistence.PostgreSql.Data.Payment.PaymentEntity", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTimeOffset>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("EntityId")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("EntityType")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<DateTimeOffset>("LastChangedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Links")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("PaymentProvider")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("PaymentProviderPayload")
+                        .HasColumnType("text");
+
+                    b.Property<DateTimeOffset?>("RequestedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("State")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Payments", "Payment");
                 });
 
             modelBuilder.Entity("POS.Persistence.PostgreSql.Data.Customer.CartCheckoutInfoEntity", b =>
@@ -688,6 +697,42 @@ namespace POS.Persistence.PostgreSql.DbMigrations.Migrations
                         .IsRequired();
 
                     b.Navigation("TotalPrice")
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("POS.Persistence.PostgreSql.Data.Payment.PaymentEntity", b =>
+                {
+                    b.OwnsOne("POS.Shared.Domain.Generic.Dtos.GrossNetPriceDto", "TotalAmount", b1 =>
+                        {
+                            b1.Property<Guid>("PaymentEntityId")
+                                .HasColumnType("uuid");
+
+                            b1.Property<string>("Currency")
+                                .IsRequired()
+                                .HasColumnType("text")
+                                .HasColumnName("Currency");
+
+                            b1.Property<decimal>("Gross")
+                                .HasColumnType("numeric")
+                                .HasColumnName("TotalAmountGross");
+
+                            b1.Property<decimal>("Net")
+                                .HasColumnType("numeric")
+                                .HasColumnName("TotalAmountNet");
+
+                            b1.Property<decimal>("Vat")
+                                .HasColumnType("numeric")
+                                .HasColumnName("TotalAmountVat");
+
+                            b1.HasKey("PaymentEntityId");
+
+                            b1.ToTable("Payments", "Payment");
+
+                            b1.WithOwner()
+                                .HasForeignKey("PaymentEntityId");
+                        });
+
+                    b.Navigation("TotalAmount")
                         .IsRequired();
                 });
 

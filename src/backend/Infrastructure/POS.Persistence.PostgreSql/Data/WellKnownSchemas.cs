@@ -2,5 +2,5 @@
 internal static class WellKnownSchemas
 {
     public const string CustomerSchema = "Customer";
-    public const string PaymentsSchema = "Payments";
+    public const string PaymentSchema = "Payment";
 }
