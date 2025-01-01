@@ -2,6 +2,9 @@
 using POS.Domains.Customer.Abstractions.Orders;
 using POS.Domains.Customer.Abstractions.Orders.Events;
 using POS.Domains.Customer.Domain.Carts;
+using POS.Domains.Customer.Domain.Orders.Events;
+using POS.Domains.Customer.Domain.Orders.Exceptions;
+using POS.Domains.Customer.Domain.Orders.Models;
 using POS.Shared.Domain;
 using POS.Shared.Domain.Generic;
 using POS.Shared.Domain.Generic.Mapper;
@@ -50,6 +53,15 @@ public class Order : AggregateRoot
     /// Items of the order.
     /// </summary>
     public IReadOnlyList<OrderItem> OrderItems => _state.Items;
+
+    /// <summary>
+    /// Information about the payment.
+    /// </summary>
+    public PaymentInfo? PaymentInfo
+    {
+        get => _state.PaymentInfo;
+        private set => _state.PaymentInfo = value;
+    }
 
     /// <inheritdoc/>
     public override TState GetCurrentState<TState>() => (dynamic)_state;
@@ -134,4 +146,48 @@ public class Order : AggregateRoot
         );
         return orderItem;
     }
+
+    private void CheckAllowedStates(OrderStates expectedState)
+    {
+        if (State != expectedState) throw new OrderStateException(Id, State, expectedState);
+    }
+
+    #region PaymentRequest
+
+    /// <summary>
+    /// Checks if payment can be requested for this order.
+    /// </summary>
+    public void CheckPaymentCanBeRequested()
+    {
+        CheckAllowedStates(OrderStates.Created);
+        if (PaymentInfo is null) return;
+        if (PaymentInfo.PayedAt is null) return;
+
+        throw new OrderAlreadyPaidException(Id);
+    }
+
+    /// <summary>
+    /// The payment was successfully requested.
+    /// </summary>
+    public void PaymentRequested(
+        Guid paymentId,
+        DateTimeOffset requestedAt
+    )
+    {
+        CheckPaymentCanBeRequested();
+
+        PaymentInfo = new PaymentInfo
+        {
+            PaymentId = paymentId,
+            RequestedAt = requestedAt
+        };
+
+        Apply(new OrderPaymentRequestedEvent(
+            Id,
+            requestedAt,
+            PaymentInfo
+        ));
+    }
+
+    #endregion
 }

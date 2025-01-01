@@ -1,0 +1,22 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="8.0.2" />
+    <PackageReference Include="Microsoft.Extensions.Options" Version="8.0.2" />
+    <PackageReference Include="PayPalServerSDK" Version="0.6.1" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\Shared\Domain\POS.Shared.Domain.Generic\POS.Shared.Domain.Generic.csproj" />
+    <ProjectReference Include="..\..\Customer\POS.Domains.Customer.Persistence\POS.Domains.Customer.Persistence.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <InternalsVisibleTo Include="POS.Domains.Payment.Service.UnitTests" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Remove="xxx\**\*" />
+  </ItemGroup>
+</Project>

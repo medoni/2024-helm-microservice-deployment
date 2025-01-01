@@ -7,6 +7,8 @@ using PizzaService.Base.Services.HealthChecks;
 using PizzaService.Base.Services.Swagger;
 using POS.Domains.Customer.Persistence.DynamoDb;
 using POS.Domains.Customer.Persistence.DynamoDb.Configurations;
+using POS.Domains.Payment.Api;
+using POS.Domains.Payment.Service.Services.PaymentProvider.Paypal;
 using POS.Infrastructure.PubSub.Sns;
 
 internal class Program
@@ -33,6 +35,8 @@ internal class Program
         builder.Services.ConfigureTracing(builder.Configuration);
 
         builder.Services.AddPizzaServiceSupport();
+        builder.Services.AddPaypalPaymentSupport()
+            .Configure<PaypalPaymentSettings>(x => builder.Configuration.Bind("PaypalApi", x));
 
         builder.Services.AddHealthChecks();
 

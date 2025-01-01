@@ -1,4 +1,5 @@
 ﻿using POS.Domains.Customer.Abstractions.Orders;
+using POS.Domains.Customer.Domain.Orders.Models;
 
 namespace POS.Domains.Customer.Domain.Orders;
 
@@ -36,4 +37,9 @@ public record OrderState
     /// Date and time when the order was last changed at.
     /// </summary>
     public required DateTimeOffset LastChangedAt { get; set; }
+
+    /// <summary>
+    /// Information about the payment.
+    /// </summary>
+    public PaymentInfo? PaymentInfo { get; set; }
 }
