@@ -26,7 +26,8 @@ jobs:
         node-version: latest
     
     - name: Build docs
-      run: npx @techdocs/cli build
+      run: npx @techdocs/cli build && \
+           chmod -R a+rX ./site         # fix permissions
     
     - name: Publish docs artifact
       if: inputs.deploy
