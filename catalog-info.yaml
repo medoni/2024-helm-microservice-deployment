@@ -2,7 +2,10 @@ apiVersion: backstage.io/v1alpha1
 kind: Component
 metadata:
   name: Pizza-Ordering-System
+  description: |
+    Pizza-Ordering-System is an example app to demonstrate modern Software development
   annotations:
+    github.com/project-slug: medoni/2024-helm-microservice-deployment
     backstage.io/techdocs-ref: dir:.
 spec:
   type: example
