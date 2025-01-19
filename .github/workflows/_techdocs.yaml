@@ -28,7 +28,8 @@ jobs:
     - name: Build docs
       run: |
         npx @techdocs/cli build && \
-        chmod -R a+rX ./site         # fix permissions
+        tree ./site/ \
+        ls -ahlv ./site/ \
     
     - name: Publish docs artifact
       if: inputs.deploy
