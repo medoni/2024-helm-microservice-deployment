@@ -26,10 +26,7 @@ jobs:
         node-version: latest
     
     - name: Build docs
-      run: |
-        npx @techdocs/cli build && \
-        tree ./site/ && \
-        ls -ahlv ./site/ \
+      run: npx @techdocs/cli build
     
     - name: Publish docs artifact
       if: inputs.deploy
