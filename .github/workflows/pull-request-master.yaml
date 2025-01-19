@@ -82,3 +82,10 @@ jobs:
     with:
       env: dev
     secrets: inherit
+  
+  techdocs-test:
+    name: Documentation tests
+    uses: ./.gthub/workflows/_techdocs.yaml
+    with:
+      deploy: false
+    secrets: inherit

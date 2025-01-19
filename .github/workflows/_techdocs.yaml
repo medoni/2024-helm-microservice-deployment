@@ -1,0 +1,31 @@
+name: Build and publish dockerfile
+
+on:
+  workflow_call:
+    inputs:
+      deploy:
+        required: true
+        type: boolean
+
+jobs:
+  build-and-deploy-techdocs:
+    name: Build and deploy documention with techdocs
+    runs-on: ubuntu-latest
+    # permissions:
+    #   contents: read
+    #   packages: write
+    steps: 
+    - name: Checkout code
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+    
+    - name: Setup node
+      uses: actions/setup-node@v4
+      with:
+        node-version: latest
+    
+    - name: Build docs
+      run: npx @techdocs/cli build
+    
+    
