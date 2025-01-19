@@ -28,7 +28,7 @@ jobs:
     - name: Build docs
       run: |
         npx @techdocs/cli build && \
-        tree ./site/ \
+        tree ./site/ && \
         ls -ahlv ./site/ \
     
     - name: Publish docs artifact
