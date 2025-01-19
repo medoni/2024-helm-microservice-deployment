@@ -35,6 +35,9 @@ jobs:
     - name: Build docs
       run: npx @techdocs/cli build
     
+    - name: Setup Pages
+      uses: actions/configure-pages@v5
+    
     - name: Publish docs artifact
       if: inputs.deploy
       uses: actions/upload-artifact@v4
