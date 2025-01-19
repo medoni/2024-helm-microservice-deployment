@@ -7,6 +7,10 @@ on:
         required: true
         type: boolean
 
+concurrency:
+  group: "pages"
+  cancel-in-progress: false
+
 jobs:
   build-and-deploy-techdocs:
     name: Build and deploy documentation with techdocs
@@ -14,6 +18,9 @@ jobs:
     permissions:
       pages: write
       id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
     steps: 
     - name: Checkout code
       uses: actions/checkout@v4
