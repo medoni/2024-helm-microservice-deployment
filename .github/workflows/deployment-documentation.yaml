@@ -9,7 +9,7 @@ on:
 jobs:
   build-and-deploy-techdocs:
     name: Build and deploy documentation to github pages
-    uses: ./.gthub/workflows/_techdocs.yaml
+    uses: ./.github/workflows/_techdocs.yaml
     with:
       deploy: true
     secrets: inherit

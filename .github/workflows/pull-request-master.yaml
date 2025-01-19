@@ -85,7 +85,7 @@ jobs:
   
   techdocs-test:
     name: Documentation tests
-    uses: ./.gthub/workflows/_techdocs.yaml
+    uses: ./.github/workflows/_techdocs.yaml
     with:
       deploy: false
     secrets: inherit
