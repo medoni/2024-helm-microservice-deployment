@@ -87,5 +87,5 @@ jobs:
     name: Documentation tests
     uses: ./.github/workflows/_techdocs.yaml
     with:
-      deploy: false
+      deploy: true
     secrets: inherit
