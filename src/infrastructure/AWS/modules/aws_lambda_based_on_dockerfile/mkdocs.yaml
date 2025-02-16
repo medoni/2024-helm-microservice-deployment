@@ -6,3 +6,6 @@ repo_url: https://github.com/medoni/2024-helm-microservice-deployment/tree/maste
 
 plugins:
   - techdocs-core
+
+theme:
+  include-sidebar: false
