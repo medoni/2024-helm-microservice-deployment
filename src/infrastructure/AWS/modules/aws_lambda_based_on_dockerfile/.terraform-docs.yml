@@ -8,7 +8,7 @@ sections:
     - modules
 
 output:
-  file: README.md
+  file: docs/index.md
   mode: inject
   template: |-
     <!-- BEGIN_TF_DOCS -->
