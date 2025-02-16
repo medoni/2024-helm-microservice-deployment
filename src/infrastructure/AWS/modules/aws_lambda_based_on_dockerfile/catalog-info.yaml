@@ -9,7 +9,7 @@ metadata:
     - "aws"
   annotations:
     github.com/project-slug: medoni/2024-helm-microservice-deployment
-    backstage.io/techdocs-ref: dir:src/infrastructure/AWS/modules/aws_lambda_based_on_dockerfile/
+    backstage.io/techdocs-ref: dir:.
 spec:
   type: module
   system: terraform
