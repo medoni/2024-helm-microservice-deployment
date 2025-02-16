@@ -1,0 +1,8 @@
+---
+site_name: aws_lambda_based_on_dockerfile
+
+repo_name: medoni/2024-helm-microservice-deployment
+repo_url: https://github.com/medoni/2024-helm-microservice-deployment/tree/master/src/infrastructure/AWS/modules/aws_lambda_based_on_dockerfile
+
+plugins:
+  - techdocs-core

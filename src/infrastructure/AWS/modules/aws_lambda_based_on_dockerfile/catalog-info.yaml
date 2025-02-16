@@ -1,0 +1,17 @@
+---
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: aws_lambda_based_on_dockerfile
+  description: Aws Terraform module to create a lambda function based on a Dockerfile
+  tags:
+    - "terraform"
+    - "aws"
+  annotations:
+    github.com/project-slug: medoni/2024-helm-microservice-deployment
+    backstage.io/techdocs-ref: dir:src/infrastructure/AWS/modules/aws_lambda_based_on_dockerfile/
+spec:
+  type: module
+  system: terraform
+  owner: medoni
+  lifecycle: experimental
