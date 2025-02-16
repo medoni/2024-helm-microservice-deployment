@@ -43,6 +43,7 @@ variable "docker" {
     image_app_dir = string
   })
   description = <<EOF
+    <pr>
     docker = {
       image_name    = "The name of the Docker image to use for the Lambda function."
       image_tag     = "The name of Docker image tag."
@@ -53,6 +54,7 @@ variable "docker" {
       }
       image_app_dir = "The directory in the Docker image where the application resides."
     }
+    </pre>
 EOF
 }
 
