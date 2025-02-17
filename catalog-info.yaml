@@ -22,6 +22,17 @@ spec:
       target: Component:aws_lambda_based_on_dockerfile-terraform-module
 ---
 apiVersion: backstage.io/v1alpha1
+kind: System
+metadata:
+  name: Pizza-Ordering-Example-System
+  description: Pizza-Ordering-System is an example app to demonstrate modern Software development
+spec:
+  type: service
+  owner: medoni-team
+  components:
+    - Pizza-Ordering-System
+---
+apiVersion: backstage.io/v1alpha1
 kind: Location
 metadata:
   name: system-data
