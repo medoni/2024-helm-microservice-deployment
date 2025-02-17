@@ -4,10 +4,28 @@ metadata:
   name: Pizza-Ordering-System
   description: |
     Pizza-Ordering-System is an example app to demonstrate modern Software development
+  tags:
+    - aws
+    - kubernetes
+    - microservices
+    - monorepo
   annotations:
     github.com/project-slug: medoni/2024-helm-microservice-deployment
     backstage.io/techdocs-ref: dir:.
 spec:
-  type: example
+  type: service
   lifecycle: experimental
-  owner: medoni
+  owner: medoni-team
+  system: Pizza-Ordering-Example-System
+  relations:
+    - type: dependsOn
+      target: Component:aws_lambda_based_on_dockerfile-terraform-module
+---
+apiVersion: backstage.io/v1alpha1
+kind: Location
+metadata:
+  name: system-data
+spec:
+  type: dir
+  targets:
+    - src/infrastructure/AWS/modules/aws_lambda_based_on_dockerfile/catalog-info.yaml

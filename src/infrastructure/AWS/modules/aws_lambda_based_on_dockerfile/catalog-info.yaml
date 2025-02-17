@@ -2,7 +2,7 @@
 apiVersion: backstage.io/v1alpha1
 kind: Component
 metadata:
-  name: aws_lambda_based_on_dockerfile
+  name: aws_lambda_based_on_dockerfile-terraform-module
   description: Aws Terraform module to create a lambda function based on a Dockerfile
   tags:
     - "terraform"
@@ -12,6 +12,5 @@ metadata:
     backstage.io/techdocs-ref: dir:.
 spec:
   type: module
-  system: terraform
-  owner: medoni
+  owner: medoni-team
   lifecycle: experimental
