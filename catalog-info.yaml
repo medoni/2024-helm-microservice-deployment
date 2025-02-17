@@ -26,6 +26,6 @@ kind: Location
 metadata:
   name: system-data
 spec:
-  type: dir
+  type: file
   targets:
     - src/infrastructure/AWS/modules/aws_lambda_based_on_dockerfile/catalog-info.yaml
