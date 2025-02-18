@@ -17,9 +17,8 @@ spec:
   lifecycle: experimental
   owner: medoni-team
   system: Pizza-Ordering-Example-System
-  relations:
-    - type: dependsOn
-      target: Component:aws_lambda_based_on_dockerfile-terraform-module
+  dependsOn:
+    - component:aws_lambda_based_on_dockerfile-terraform-module
 ---
 apiVersion: backstage.io/v1alpha1
 kind: System
