@@ -5,11 +5,12 @@
 #   src/build-and-deploy-dev-local.ps1
 
 [CmdletBinding()]
-param()
+param(
+  $kubeNamespace     = "2024-helm-microservice-deployment",
+  $imageTagName      = "latest",
+  $containerRegistry = "registry.mycluster.localhost"
+)
 
-$kubeNamespace     = "2024-helm-microservice-deployment"
-$imageTagName      = "latest" 
-$containerRegistry = "registry.mycluster.localhost"
 $scriptDirectory = $PSScriptRoot
 
 

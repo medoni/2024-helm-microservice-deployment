@@ -9,12 +9,14 @@ variable "lambda" {
     memory_size = number
   })
   description = <<EOF
+    <pre>
     lambda = {
       handler     = "The entry point function to execute, e.g., 'index.handler' for Node.js."
       runtime     = "The runtime environment for the Lambda function, e.g., 'nodejs14.x', 'python3.9'."
       timeout     = "The maximum execution time (in seconds) for the function before it times out."
       memory_size = "The amount of memory (in MB) allocated to the function."
     }
+    </pre>
 EOF
 }
 
@@ -41,6 +43,7 @@ variable "docker" {
     image_app_dir = string
   })
   description = <<EOF
+    <pre>
     docker = {
       image_name    = "The name of the Docker image to use for the Lambda function."
       image_tag     = "The name of Docker image tag."
@@ -51,6 +54,7 @@ variable "docker" {
       }
       image_app_dir = "The directory in the Docker image where the application resides."
     }
+    </pre>
 EOF
 }
 

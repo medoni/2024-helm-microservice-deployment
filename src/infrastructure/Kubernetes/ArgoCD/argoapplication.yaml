@@ -8,7 +8,7 @@ spec:
   source:
     repoURL: https://github.com/medoni/2024-helm-microservice-deployment.git
     targetRevision: master
-    path: src/infrastructure/helm/dev-local/PizzaService
+    path: src/infrastructure/Kubernetes/helm/dev-local/PizzaService
   destination:
     server: https://kubernetes.default.svc
     namespace: 2024-helm-microservice-deployment
