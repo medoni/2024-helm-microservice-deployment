@@ -38,7 +38,11 @@ resource "google_cloud_run_service" "service" {
     latest_revision = true
   }
 
-  depends_on = [google_artifact_registry_repository_iam_member.docker_pusher]
+  # Ensure the Docker image is built and pushed before creating the Cloud Run service
+  depends_on = [
+    google_artifact_registry_repository_iam_member.docker_pusher,
+    null_resource.docker_build_push
+  ]
 }
 
 # Make the service publicly accessible
