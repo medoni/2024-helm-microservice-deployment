@@ -2,6 +2,8 @@ resource "google_firestore_database" "database" {
   name        = "${var.project.short}-${var.env.short}-db"
   location_id = data.google_client_config.current.region
   type        = "FIRESTORE_NATIVE"
+  
+  depends_on = [google_project_service.firestore_api]
 }
 
 resource "google_firestore_index" "menus_index" {

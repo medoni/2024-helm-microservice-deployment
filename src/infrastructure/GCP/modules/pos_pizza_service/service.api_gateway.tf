@@ -57,6 +57,12 @@ paths:
         '200':
           description: Item added to cart
 EOF
+
+  depends_on = [
+    google_project_service.endpoints,
+    google_project_service.servicemanagement,
+    google_project_service.servicecontrol
+  ]
 }
 
 resource "google_project_service" "endpoints" {
@@ -98,6 +104,8 @@ resource "google_compute_global_address" "endpoints_ip" {
   name         = "pizza-endpoints-ip"
   description  = "Global IP for Pizza API Endpoints"
   address_type = "EXTERNAL"
+  
+  depends_on = [google_project_service.compute_api]
 }
 
 output "endpoints_url" {

@@ -23,6 +23,7 @@ resource "google_cloud_run_service" "service" {
         }
       }
       timeout_seconds = var.cloud_run.timeout_seconds
+      service_account_name = google_service_account.docker_pusher.email
     }
 
     metadata {
