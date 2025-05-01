@@ -76,49 +76,30 @@ resource "google_api_gateway_api_config" "pizza_api_config" {
         produces:
           - application/json
         paths:
-          /api/menus:
+          /api/v1/menu:
             get:
               summary: Get menu items
-              operationId: getMenuItems
+              operationId: getMenus
               x-google-backend:
-                address: ${module.pizza_service.service_url}/api/menus
+                address: ${module.pizza_service.service_url}/v1/menu
               responses:
                 '200':
                   description: A list of menu items
-          /api/orders:
+          /api/v1/menu/{id}:
             get:
-              summary: Get customer orders
-              operationId: getOrders
+              summary: Get menu item by ID
+              operationId: getMenuById
+              parameters:
+                - name: id
+                  in: path
+                  required: true
+                  type: string
               x-google-backend:
-                address: ${module.pizza_service.service_url}/api/orders
+                address: ${module.pizza_service.service_url}/v1/menu/{id}
               responses:
                 '200':
-                  description: A list of orders
-            post:
-              summary: Create a new order
-              operationId: createOrder
-              x-google-backend:
-                address: ${module.pizza_service.service_url}/api/orders
-              responses:
-                '201':
-                  description: Order created successfully
-          /api/carts:
-            get:
-              summary: Get customer cart
-              operationId: getCart
-              x-google-backend:
-                address: ${module.pizza_service.service_url}/api/carts
-              responses:
-                '200':
-                  description: Customer cart
-            post:
-              summary: Add item to cart
-              operationId: addItemToCart
-              x-google-backend:
-                address: ${module.pizza_service.service_url}/api/carts
-              responses:
-                '200':
-                  description: Item added to cart
+                  description: Menu item details
+          
         EOT
       )
     }
@@ -128,10 +109,6 @@ resource "google_api_gateway_api_config" "pizza_api_config" {
     backend_config {
       google_service_account = google_service_account.api_gateway_sa.email
     }
-  }
-  
-  lifecycle {
-    create_before_destroy = true
   }
   
   depends_on = [
