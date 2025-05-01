@@ -47,7 +47,7 @@ module "pizza_service" {
     long  = "Development"
   }
   
-  service_version = "0.1.0"
+  service_version = "0.1.0-alpha-4"
   build_date      = "2025-05-01T00:00:00Z"
   build_git_sha   = "123456789abcdef"
 }

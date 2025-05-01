@@ -22,3 +22,8 @@ output "project_id" {
   description = "The ID of the Google Cloud Project where the service is deployed"
   value       = data.google_project.current.project_id
 }
+
+output "service_account_email" {
+  description = "The email of the service account used by the Cloud Run service"
+  value       = google_service_account.docker_pusher.email
+}

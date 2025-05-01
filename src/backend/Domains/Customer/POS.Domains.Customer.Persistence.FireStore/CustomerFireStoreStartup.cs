@@ -1,5 +1,6 @@
 ﻿using Google.Cloud.Firestore;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using POS.Domains.Customer.Domain.Carts;
 using POS.Domains.Customer.Domain.Menus;
@@ -46,6 +47,8 @@ public static class CustomerFireStoreStartup
 
         services.AddUnitOfWork<FireStoreUnitOfWork>();
 
+        services.AddFireStoreDb();
+
         return services;
     }
 
@@ -60,10 +63,34 @@ public static class CustomerFireStoreStartup
         services.AddScoped<TRepositoryService, TRepositoryImpl>(svcp =>
         {
             var customerFireStoreOptions = svcp.GetRequiredService<IOptions<CustomerFireStoreSettings>>().Value;
-            var firestoreDb = FirestoreDb.Create(customerFireStoreOptions.ProjectId);
+
+            var firestoreDb = svcp.GetRequiredService<FirestoreDb>();
 
             var repo = factory(svcp, firestoreDb, customerFireStoreOptions);
             return repo;
+        });
+
+        return services;
+    }
+
+    private static IServiceCollection AddFireStoreDb(
+        this IServiceCollection services
+    )
+    {
+        services.AddScoped<FirestoreDb>(svcp =>
+        {
+            var logger = svcp.GetRequiredService<ILogger<FirestoreDb>>();
+            var customerFireStoreOptions = svcp.GetRequiredService<IOptions<CustomerFireStoreSettings>>().Value;
+
+            var firestoreDbBuilder = new FirestoreDbBuilder();
+            firestoreDbBuilder.ProjectId = customerFireStoreOptions.ProjectId;
+            firestoreDbBuilder.DatabaseId = customerFireStoreOptions.Database;
+
+            var firestoreDb = firestoreDbBuilder.Build();
+
+            logger.LogDebug("FireStoreDb created with '{projectId}' and '{databaseId}'.", firestoreDb.ProjectId, firestoreDb.DatabaseId);
+
+            return firestoreDb;
         });
 
         return services;

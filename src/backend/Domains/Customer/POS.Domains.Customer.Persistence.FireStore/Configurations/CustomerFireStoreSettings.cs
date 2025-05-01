@@ -1,4 +1,4 @@
-namespace POS.Domains.Customer.Persistence.FireStore.Configurations;
+﻿namespace POS.Domains.Customer.Persistence.FireStore.Configurations;
 
 /// <summary>
 /// Responsible for storing settings about FireStore settings for customers
@@ -8,8 +8,13 @@ public class CustomerFireStoreSettings
     /// <summary>
     /// The Google Cloud Project ID where FireStore is located
     /// </summary>
-    public required string ProjectId { get; init; }
-    
+    public string? ProjectId { get; init; }
+
+    /// <summary>
+    /// The database
+    /// </summary>
+    public string? Database { get; init; }
+
     /// <summary>
     /// Name of FireStore collection for Menus.
     /// </summary>
