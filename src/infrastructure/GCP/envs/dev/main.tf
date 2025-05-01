@@ -1,5 +1,5 @@
 provider "google" {
-  project = "pizza-ordering-system-dev"
+  project = "pizza-ordering-service-458504"
   region  = "europe-west3"
 }
 

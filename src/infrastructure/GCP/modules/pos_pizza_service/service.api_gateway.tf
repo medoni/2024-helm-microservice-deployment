@@ -80,50 +80,27 @@ resource "google_project_service" "servicecontrol" {
   disable_on_destroy = false
 }
 
-resource "google_api_gateway_api" "api" {
-  provider = google
-  
-  api_id       = "pizza-api-gateway"
-  display_name = "Pizza API Gateway"
-  depends_on   = [google_project_service.apigateway]
+# Create a service account for the Cloud Endpoints
+resource "google_service_account" "endpoints_service_account" {
+  account_id   = "pizza-endpoints-sa"
+  display_name = "Pizza API Endpoints Service Account"
 }
 
-resource "google_project_service" "apigateway" {
-  service = "apigateway.googleapis.com"
-
-  disable_on_destroy = false
+# Grant necessary permissions to the service account
+resource "google_project_iam_member" "endpoints_service_account_role" {
+  project = data.google_project.current.project_id
+  role    = "roles/servicemanagement.serviceController"
+  member  = "serviceAccount:${google_service_account.endpoints_service_account.email}"
 }
 
-resource "google_api_gateway_api_config" "api_config" {
-  provider = google
-  
-  api           = google_api_gateway_api.api.api_id
-  api_config_id = "pizza-api-config-${var.env.short}"
-  display_name  = "Pizza API Config"
-  
-  openapi_documents {
-    document {
-      path     = "spec.yaml"
-      contents = base64encode(google_endpoints_service.pizza_api.openapi_config)
-    }
-  }
-  
-  gateway_config {
-    backend_config {
-      google_service_account = "${data.google_project.current.project_id}@appspot.gserviceaccount.com"
-    }
-  }
-  
-  lifecycle {
-    create_before_destroy = true
-  }
+# Create a Cloud Endpoints service attachment to expose the API
+resource "google_compute_global_address" "endpoints_ip" {
+  name         = "pizza-endpoints-ip"
+  description  = "Global IP for Pizza API Endpoints"
+  address_type = "EXTERNAL"
 }
 
-resource "google_api_gateway_gateway" "gateway" {
-  provider = google
-  
-  api_config   = google_api_gateway_api_config.api_config.id
-  gateway_id   = "pizza-api-gateway-${var.env.short}"
-  display_name = "Pizza API Gateway"
-  region       = data.google_client_config.current.region
+output "endpoints_url" {
+  value       = "https://${google_endpoints_service.pizza_api.service_name}"
+  description = "The URL of the Cloud Endpoints API"
 }
