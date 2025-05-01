@@ -1,4 +1,4 @@
-using Google.Cloud.Firestore;
+﻿using Google.Cloud.Firestore;
 
 namespace POS.Domains.Customer.Persistence.FireStore.Entities;
 
@@ -6,36 +6,11 @@ namespace POS.Domains.Customer.Persistence.FireStore.Entities;
 internal class OrderEntity
 {
     [FirestoreDocumentId]
-    public string Id { get; set; }
-    
-    [FirestoreProperty]
-    public string CustomerId { get; set; }
-    
-    [FirestoreProperty]
-    public List<OrderItemEntity> Items { get; set; } = new();
-    
-    [FirestoreProperty]
-    public decimal TotalPrice { get; set; }
-    
-    [FirestoreProperty]
-    public string Status { get; set; }
-    
-    [FirestoreProperty]
-    public Timestamp OrderDate { get; set; }
-}
+    public required string Id { get; set; }
 
-[FirestoreData]
-internal class OrderItemEntity
-{
     [FirestoreProperty]
-    public string MenuItemId { get; set; }
-    
+    public required string CreatedAt { get; set; }
+
     [FirestoreProperty]
-    public string Name { get; set; }
-    
-    [FirestoreProperty]
-    public int Quantity { get; set; }
-    
-    [FirestoreProperty]
-    public decimal UnitPrice { get; set; }
+    public required string Payload { get; set; }
 }

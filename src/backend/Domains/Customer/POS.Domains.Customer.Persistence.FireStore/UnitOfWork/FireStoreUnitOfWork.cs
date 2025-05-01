@@ -1,30 +1,47 @@
-﻿using POS.Domains.Customer.Persistence.Carts;
-using POS.Domains.Customer.Persistence.Menus;
-using POS.Domains.Customer.Persistence.Orders;
+﻿using POS.Shared.Persistence.Repositories;
 using POS.Shared.Persistence.UOW;
 
 namespace POS.Domains.Customer.Persistence.FireStore.UnitOfWork;
 
-internal class FireStoreUnitOfWork : IUnitOfWork
+internal class FireStoreUnitOfWork : BaseUnitOfWork
 {
-    private readonly IMenuRespository _menuRespository;
-    private readonly ICartRepository _cartRepository;
-    private readonly IOrderRepository _orderRepository;
-
     public FireStoreUnitOfWork(
-        IMenuRespository menuRepository,
-        ICartRepository cartRepository,
-        IOrderRepository orderRepository)
+        IServiceProvider serviceProvider,
+        BaseRepositoryFactory repositoryFactory
+    ) : base(serviceProvider, repositoryFactory)
     {
-        _menuRespository = menuRepository;
-        _cartRepository = cartRepository;
-        _orderRepository = orderRepository;
     }
 
-    public Task<int> SaveChangesAsync()
+    protected override TrackedRecord CreateAddRecord<TAggregate>(TAggregate aggregate, Func<IGenericRepository<TAggregate>> getRepo)
     {
-        // FireStore operations are atomic by nature and already saved when performed
-        // No explicit save operation is required, return 0 affected records as changes were already persisted
-        return Task.FromResult(0);
+        var commitAction = async () =>
+        {
+            var repo = getRepo();
+            await repo.AddAsync(aggregate);
+        };
+
+        return new TrackedRecord(
+            aggregate,
+            commitAction
+        );
+    }
+
+    protected override TrackedRecord CreateUpdateRecord<TAggregate>(TAggregate aggregate, Func<IGenericRepository<TAggregate>> getRepo)
+    {
+        var commitAction = async () =>
+        {
+            var repo = getRepo();
+            await repo.UpdateAsync(aggregate);
+        };
+
+        return new TrackedRecord(
+            aggregate,
+            commitAction
+        );
+    }
+
+    protected override Task FlushCommitsAsync()
+    {
+        return Task.CompletedTask;
     }
 }

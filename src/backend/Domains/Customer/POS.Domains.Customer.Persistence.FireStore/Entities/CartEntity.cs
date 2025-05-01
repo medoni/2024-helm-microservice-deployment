@@ -1,4 +1,4 @@
-using Google.Cloud.Firestore;
+﻿using Google.Cloud.Firestore;
 
 namespace POS.Domains.Customer.Persistence.FireStore.Entities;
 
@@ -6,30 +6,11 @@ namespace POS.Domains.Customer.Persistence.FireStore.Entities;
 internal class CartEntity
 {
     [FirestoreDocumentId]
-    public string Id { get; set; }
-    
-    [FirestoreProperty]
-    public string CustomerId { get; set; }
-    
-    [FirestoreProperty]
-    public List<CartItemEntity> Items { get; set; } = new();
-    
-    [FirestoreProperty]
-    public decimal TotalPrice { get; set; }
-}
+    public required string Id { get; set; }
 
-[FirestoreData]
-internal class CartItemEntity
-{
     [FirestoreProperty]
-    public string MenuItemId { get; set; }
-    
+    public required string CreatedAt { get; set; }
+
     [FirestoreProperty]
-    public string Name { get; set; }
-    
-    [FirestoreProperty]
-    public int Quantity { get; set; }
-    
-    [FirestoreProperty]
-    public decimal UnitPrice { get; set; }
+    public required string Payload { get; set; }
 }

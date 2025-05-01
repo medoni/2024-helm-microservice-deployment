@@ -1,4 +1,4 @@
-using Google.Cloud.Firestore;
+﻿using Google.Cloud.Firestore;
 using POS.Shared.Domain;
 using POS.Shared.Persistence.Repositories;
 
@@ -29,7 +29,7 @@ where TEntity : class
     {
         var docRef = FireStoreDb.Collection(CollectionName).Document(id.ToString());
         var snapshot = await docRef.GetSnapshotAsync();
-        
+
         if (!snapshot.Exists)
         {
             throw new KeyNotFoundException($"Entity with id {id} not found");
@@ -44,7 +44,7 @@ where TEntity : class
     {
         var entity = CreateFireStoreEntity(aggregate);
         var docRef = FireStoreDb.Collection(CollectionName).Document(aggregate.Id.ToString());
-        
+
         await docRef.SetAsync(entity);
     }
 
@@ -54,7 +54,7 @@ where TEntity : class
     {
         var collection = FireStoreDb.Collection(CollectionName);
         var querySnapshot = await collection.GetSnapshotAsync();
-        
+
         foreach (var document in querySnapshot.Documents)
         {
             var entity = document.ConvertTo<TEntity>();

@@ -1,7 +1,8 @@
-using Google.Cloud.Firestore;
+﻿using Google.Cloud.Firestore;
 using POS.Domains.Customer.Domain.Menus;
 using POS.Domains.Customer.Persistence.FireStore.Entities;
 using POS.Domains.Customer.Persistence.Menus;
+using System.Text.Json;
 
 namespace POS.Domains.Customer.Persistence.FireStore.Repositories;
 
@@ -14,41 +15,35 @@ internal class MenuRepository : BaseFireStoreRepository<Menu, MenuEntity>, IMenu
     {
     }
 
-    protected override MenuEntity CreateFireStoreEntity(Menu aggregate)
+    public async Task<Menu?> GetActiveAsync()
     {
-        var entity = new MenuEntity
+        // TODO: slow
+        await foreach (var menu in IterateAsync())
         {
-            Id = aggregate.Id.ToString(),
-            Name = aggregate.Name,
-            Description = aggregate.Description,
-            Items = aggregate.Items.Select(i => new MenuItemEntity
-            {
-                Id = i.Id.ToString(),
-                Name = i.Name,
-                Description = i.Description,
-                Price = i.Price
-            }).ToList()
-        };
+            if (menu.IsActive) return menu;
+        }
 
-        return entity;
+        return null;
     }
 
     protected override Menu CreateAggregate(MenuEntity entity)
     {
-        var menuItems = entity.Items.Select(i => new MenuItem(
-            Guid.Parse(i.Id),
-            i.Name,
-            i.Description,
-            i.Price
-        )).ToList();
+        var state = JsonSerializer.Deserialize<MenuState>(entity.Payload)!;
+        var aggregate = new Menu(state);
+        return aggregate;
+    }
 
-        var menu = new Menu(
-            Guid.Parse(entity.Id),
-            entity.Name,
-            entity.Description,
-            menuItems
-        );
+    protected override MenuEntity CreateFireStoreEntity(Menu aggregate)
+    {
+        var state = aggregate.GetCurrentState<MenuState>();
 
-        return menu;
+        var entity = new MenuEntity
+        {
+            Id = aggregate.Id.ToString(),
+            CreatedAt = aggregate.CreatedAt.ToString("O"),
+            Payload = JsonSerializer.Serialize(state),
+            Active = state.IsActive ? 1 : 0
+        };
+        return entity;
     }
 }
