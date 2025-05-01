@@ -1,6 +1,6 @@
 provider "google" {
   project = "pizza-ordering-system-dev"
-  region  = "us-central1"
+  region  = "europe-west3"
 }
 
 provider "docker" {
@@ -20,7 +20,7 @@ terraform {
   }
   
   backend "gcs" {
-    bucket = "pizza-ordering-system-dev-tfstate"
+    bucket = "pizza-ordering-service-458504-tfstate"
     prefix = "terraform/state"
   }
 }
