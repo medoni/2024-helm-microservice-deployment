@@ -26,7 +26,7 @@ module "pizza_service" {
 
   environment = {
     variables = {
-      "Logging__LogLevel__Default" = "Debug"
+      "Logging__LogLevel__Default" = "Information"
       "Swagger__Enabled"           = "True"
       "Gcp__FireStore__ProjectId"  = data.google_project.current.project_id
       "Gcp__FireStore__Database"   = google_firestore_database.database.name
