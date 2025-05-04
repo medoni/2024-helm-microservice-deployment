@@ -55,74 +55,11 @@ resource "google_api_gateway_api" "pizza_api" {
   ]
 }
 
-# Define the API Gateway configuration
-resource "google_api_gateway_api_config" "pizza_api_config" {
-  provider      = google-beta
-  api           = google_api_gateway_api.pizza_api.api_id
-  api_config_id = "${var.project.short}-${var.env.short}-config"
-  display_name  = "Pizza API Config"
-  
-  openapi_documents {
-    document {
-      path = "spec.yaml"
-      contents = base64encode(<<-EOT
-        swagger: '2.0'
-        info:
-          title: Pizza Ordering API
-          description: API for Pizza Ordering System
-          version: 1.0.0
-        schemes:
-          - https
-        produces:
-          - application/json
-        paths:
-          /api/v1/menu:
-            get:
-              summary: Get menu items
-              operationId: getMenus
-              x-google-backend:
-                address: ${module.pizza_service.service_url}/v1/menu
-              responses:
-                '200':
-                  description: A list of menu items
-          /api/v1/menu/{id}:
-            get:
-              summary: Get menu item by ID
-              operationId: getMenuById
-              parameters:
-                - name: id
-                  in: path
-                  required: true
-                  type: string
-              x-google-backend:
-                address: ${module.pizza_service.service_url}/v1/menu/{id}
-              responses:
-                '200':
-                  description: Menu item details
-          
-        EOT
-      )
-    }
-  }
-  
-  gateway_config {
-    backend_config {
-      google_service_account = google_service_account.api_gateway_sa.email
-    }
-  }
-  
-  depends_on = [
-    google_api_gateway_api.pizza_api,
-    google_project_iam_member.api_gateway_invoker,
-    google_project_iam_member.api_gateway_servicecontrol
-  ]
-}
-
 # Deploy the API Gateway
 resource "google_api_gateway_gateway" "pizza_gateway" {
   provider     = google-beta
   api_config   = google_api_gateway_api_config.pizza_api_config.id
-  gateway_id   = "${var.project.short}-${var.env.short}-gateway"
+  gateway_id   = "${var.project.short}-${var.env.short}-gw1"
   display_name = "Pizza API Gateway"
   
   depends_on = [google_api_gateway_api_config.pizza_api_config]

@@ -21,6 +21,7 @@ public static class SwaggerStartup
         services.AddSwaggerGen(options =>
         {
             options.ExampleFilters();
+            options.CustomOperationIds(e => $"{e.ActionDescriptor.RouteValues["controller"]}_{e.ActionDescriptor.RouteValues["action"]}_{e.HttpMethod}");
 
             options.SwaggerDoc("v1", new OpenApiInfo
             {
@@ -83,6 +84,7 @@ public static class SwaggerStartup
     {
         app.UseSwagger(c =>
         {
+            c.SerializeAsV2 = true;
             c.PreSerializeFilters.Add((swaggerDoc, request) =>
             {
                 if (request.Headers.TryGetValue("X-Forwarded-Prefix", out var serverPath))

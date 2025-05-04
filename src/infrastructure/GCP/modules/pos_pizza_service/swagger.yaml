@@ -1,0 +1,712 @@
+swagger: '2.0'
+info:
+  title: PizzaService Api
+  description: API to cover a sample ordering process for pizzas.
+  contact:
+    name: GitHub
+    url: https://github.com/medoni/2024-helm-microservice-deployment
+  license:
+    name: MIT License
+    url: https://github.com/medoni/2024-helm-microservice-deployment/blob/master/LICENSE.TXT
+  version: v1
+paths:
+  /api/v1/Cart:
+    post:
+      tags:
+        - Cart
+      summary: Create a new cart.
+      operationId: Cart_CreateCart_POST
+      x-google-backend:
+        address: ${TARGET_URL}/v1/Cart
+      consumes:
+        - application/json
+        - text/json
+        - application/*+json
+      produces:
+        - application/json
+      parameters:
+        - in: body
+          name: body
+          schema:
+            $ref: '#/definitions/CreateCartDto'
+      responses:
+        '201':
+          description: The cart was successfully created.
+        '400':
+          description: The cart or it's content was incorrect.
+          schema:
+            $ref: '#/definitions/ProblemDetails'
+  '/api/v1/Cart/{id}':
+    get:
+      tags:
+        - Cart
+      summary: Retrieve a specific cart by its unique identifier.
+      operationId: Cart_GetCartById_GET
+      x-google-backend:
+        address: ${TARGET_URL}/v1/Cart/{id}
+      produces:
+        - application/json
+      parameters:
+        - in: path
+          name: id
+          description: The unique identifier (UUID) of the cart.
+          required: true
+          type: string
+          format: uuid
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/CartDto'
+        '404':
+          description: The cart was not found.
+          schema:
+            $ref: '#/definitions/ProblemDetails'
+  '/api/v1/Cart/{id}/items':
+    post:
+      tags:
+        - Cart
+      summary: Add a new item to the cart.
+      operationId: Cart_AddItem_POST
+      x-google-backend:
+        address: ${TARGET_URL}/v1/Cart/{id}/items
+      consumes:
+        - application/json
+        - text/json
+        - application/*+json
+      produces:
+        - application/json
+      parameters:
+        - in: path
+          name: id
+          required: true
+          type: string
+          format: uuid
+        - in: body
+          name: body
+          schema:
+            $ref: '#/definitions/AddItemDto'
+      responses:
+        '201':
+          description: The item was successfully added.
+        '400':
+          description: The cart or the item was invalid.
+          schema:
+            $ref: '#/definitions/ProblemDetails'
+    patch:
+      tags:
+        - Cart
+      summary: Update an existing item of the cart.
+      operationId: Cart_UpdateItem_PATCH
+      x-google-backend:
+        address: ${TARGET_URL}/v1/Cart/{id}/items
+      consumes:
+        - application/json
+        - text/json
+        - application/*+json
+      produces:
+        - application/json
+      parameters:
+        - in: path
+          name: id
+          required: true
+          type: string
+          format: uuid
+        - in: body
+          name: body
+          schema:
+            $ref: '#/definitions/UpdateItemDto'
+      responses:
+        '200':
+          description: The item was successfully updated.
+        '400':
+          description: The cart or the item was invalid.
+          schema:
+            $ref: '#/definitions/ProblemDetails'
+    get:
+      tags:
+        - Cart
+      summary: Retrieve all cart items of the cart.
+      operationId: Cart_GetCardItems_GET
+      x-google-backend:
+        address: ${TARGET_URL}/v1/Cart/{id}/items
+      produces:
+        - application/json
+      parameters:
+        - in: path
+          name: id
+          description: The unique identifier (UUID) of the cart.
+          required: true
+          type: string
+          format: uuid
+        - in: query
+          name: token
+          description: The pagination token to retrieve.
+          type: string
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/CartItemDtoResultSetDto'
+        '404':
+          description: The cart was not found.
+          schema:
+            $ref: '#/definitions/ProblemDetails'
+  '/api/v1/Cart/{id}/checkout':
+    post:
+      tags:
+        - Cart
+      summary: Checks out cart.
+      operationId: Cart_Checkout_POST
+      x-google-backend:
+        address: ${TARGET_URL}/v1/Cart/{id}/checkout
+      consumes:
+        - application/json
+        - text/json
+        - application/*+json
+      produces:
+        - application/json
+      parameters:
+        - in: path
+          name: id
+          description: The unique identifier (UUID) of the cart.
+          required: true
+          type: string
+          format: uuid
+        - in: body
+          name: body
+          description: ''
+          schema:
+            $ref: '#/definitions/CartCheckOutDto'
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/CartCheckedOutDto'
+        '404':
+          description: The cart was not found.
+          schema:
+            $ref: '#/definitions/ProblemDetails'
+  '/api/v1/Menu/{id}':
+    get:
+      tags:
+        - Menu
+      summary: Retrieve a specific menu by its unique identifier.
+      operationId: Menu_GetMenuById_GET
+      x-google-backend:
+        address: ${TARGET_URL}/v1/Menu/{id}
+      produces:
+        - application/json
+      parameters:
+        - in: path
+          name: id
+          description: The unique identifier (UUID) of the menu.
+          required: true
+          type: string
+          format: uuid
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/MenuDto'
+        '404':
+          description: The menu was not found.
+          schema:
+            $ref: '#/definitions/ProblemDetails'
+  /api/v1/Menu:
+    post:
+      tags:
+        - Menu
+      summary: Create a new menu with sections and items.
+      operationId: Menu_CreateMenu_POST
+      x-google-backend:
+        address: ${TARGET_URL}/v1/Menu
+      consumes:
+        - application/json
+        - text/json
+        - application/*+json
+      produces:
+        - application/json
+      parameters:
+        - in: body
+          name: body
+          schema:
+            $ref: '#/definitions/CreateMenuDto'
+      responses:
+        '201':
+          description: The menu was successfully created.
+        '400':
+          description: The menu or it's content was incorrect.
+          schema:
+            $ref: '#/definitions/ProblemDetails'
+    get:
+      tags:
+        - Menu
+      summary: Retrieve all menus available in the system.
+      operationId: Menu_GetMenus_GET
+      x-google-backend:
+        address: ${TARGET_URL}/v1/Menu
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+      parameters:
+        - in: query
+          name: token
+          type: string
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/MenuDtoResultSetDto'
+    patch:
+      tags:
+        - Menu
+      summary: Update an existing menu.
+      operationId: Menu_UpdateMenu_PATCH
+      x-google-backend:
+        address: ${TARGET_URL}/v1/Menu
+      consumes:
+        - application/json
+        - text/json
+        - application/*+json
+      produces:
+        - application/json
+      parameters:
+        - in: body
+          name: body
+          schema:
+            $ref: '#/definitions/UpdateMenuDto'
+      responses:
+        '204':
+          description: The menu was successfully updated.
+        '400':
+          description: The menu or it's content was incorrect.
+          schema:
+            $ref: '#/definitions/ProblemDetails'
+  '/api/v1/Menu/{id}/publish':
+    patch:
+      tags:
+        - Menu
+      summary: Publish an existing menu to make it visible to customers.
+      operationId: Menu_PublishMenu_PATCH
+      x-google-backend:
+        address: ${TARGET_URL}/v1/Menu/{id}/publish
+      produces:
+        - application/json
+      parameters:
+        - in: path
+          name: id
+          description: The unique identifier (UUID) of the menu to publish.
+          required: true
+          type: string
+          format: uuid
+      responses:
+        '204':
+          description: The menu was successfully published.
+        '400':
+          description: The menu or the state is incorrect.
+          schema:
+            $ref: '#/definitions/ProblemDetails'
+        '404':
+          description: The menu was not found.
+          schema:
+            $ref: '#/definitions/ProblemDetails'
+  /api/v1/Menu/active:
+    get:
+      tags:
+        - Menu
+      summary: Retrieve the currently active menu.
+      operationId: Menu_GetActiveMenu_GET
+      x-google-backend:
+        address: ${TARGET_URL}/v1/Menu/active
+      responses:
+        '204':
+          description: No Content
+        '200':
+          description: OK
+  '/api/v1/Order/{id}':
+    get:
+      tags:
+        - Order
+      summary: Retrieve a specific order by its unique identifier.
+      operationId: Order_GetOrderById_GET
+      x-google-backend:
+        address: ${TARGET_URL}/v1/Order/{id}
+      produces:
+        - application/json
+      parameters:
+        - in: path
+          name: id
+          description: The unique identifier (UUID) of the order.
+          required: true
+          type: string
+          format: uuid
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/OrderDto'
+        '404':
+          description: The order was not found.
+          schema:
+            $ref: '#/definitions/ProblemDetails'
+definitions:
+  AddItemDto:
+    type: object
+    properties:
+      menuItemId:
+        format: uuid
+        type: string
+      requestedAt:
+        format: date-time
+        type: string
+      quantity:
+        format: int32
+        type: integer
+    additionalProperties: false
+  CartCheckOutDto:
+    type: object
+    properties:
+      checkoutAt:
+        format: date-time
+        type: string
+    additionalProperties: false
+  CartCheckedOutDto:
+    type: object
+    properties:
+      cartId:
+        format: uuid
+        type: string
+      orderId:
+        format: uuid
+        type: string
+      checkedOutAt:
+        format: date-time
+        type: string
+    additionalProperties: false
+  CartCheckoutInfoDto:
+    type: object
+    properties:
+      checkedOutAt:
+        format: date-time
+        type: string
+      orderId:
+        format: uuid
+        type: string
+    additionalProperties: false
+  CartDto:
+    type: object
+    properties:
+      id:
+        format: uuid
+        type: string
+      createdAt:
+        format: date-time
+        type: string
+      lastChangedAt:
+        format: date-time
+        type: string
+      state:
+        $ref: '#/definitions/CartStates'
+      activeMenuId:
+        format: uuid
+        type: string
+      totalItems:
+        format: int32
+        type: integer
+      totalPrice:
+        $ref: '#/definitions/GrossNetPriceDto'
+      checkoutInfo:
+        $ref: '#/definitions/CartCheckoutInfoDto'
+    additionalProperties: false
+  CartItemDto:
+    type: object
+    properties:
+      id:
+        format: uuid
+        type: string
+      addedAt:
+        format: date-time
+        type: string
+      name:
+        type: string
+      description:
+        type: string
+      unitPrice:
+        $ref: '#/definitions/PriceInfoDto'
+      quantity:
+        format: int32
+        type: integer
+    additionalProperties: false
+  CartItemDtoResultSetDto:
+    description: Dto for list of data
+    type: object
+    properties:
+      data:
+        description: The collection of items in the current result set.
+        type: array
+        items:
+          $ref: '#/definitions/CartItemDto'
+      nextPageToken:
+        description: Token to retrieve the next page of results.
+        type: string
+      previousPageToken:
+        description: Token to retrieve the previous page of results.
+        type: string
+      metadata:
+        description: Additional metadata or information about the request or result.
+        type: object
+        additionalProperties:
+          type: string
+    additionalProperties: false
+  CartStates:
+    enum:
+      - Created
+      - CheckedOut
+    type: string
+  CreateCartDto:
+    type: object
+    properties:
+      id:
+        format: uuid
+        type: string
+      requestedAt:
+        format: date-time
+        type: string
+    additionalProperties: false
+  CreateMenuDto:
+    type: object
+    properties:
+      id:
+        format: uuid
+        type: string
+      currency:
+        type: string
+      sections:
+        type: array
+        items:
+          $ref: '#/definitions/MenuSectionDto'
+    additionalProperties: false
+  GrossNetPriceDto:
+    required:
+      - currency
+      - gross
+      - net
+      - vat
+    type: object
+    properties:
+      gross:
+        format: double
+        type: number
+      net:
+        format: double
+        type: number
+      vat:
+        format: double
+        type: number
+      currency:
+        type: string
+    additionalProperties: false
+  MenuDto:
+    type: object
+    properties:
+      id:
+        format: uuid
+        type: string
+      createdAt:
+        format: date-time
+        type: string
+      lastChangedAt:
+        format: date-time
+        type: string
+      sections:
+        type: array
+        items:
+          $ref: '#/definitions/MenuSectionDto'
+      isActive:
+        type: boolean
+      activatedAt:
+        format: date-time
+        type: string
+    additionalProperties: false
+  MenuDtoResultSetDto:
+    description: Dto for list of data
+    type: object
+    properties:
+      data:
+        description: The collection of items in the current result set.
+        type: array
+        items:
+          $ref: '#/definitions/MenuDto'
+      nextPageToken:
+        description: Token to retrieve the next page of results.
+        type: string
+      previousPageToken:
+        description: Token to retrieve the previous page of results.
+        type: string
+      metadata:
+        description: Additional metadata or information about the request or result.
+        type: object
+        additionalProperties:
+          type: string
+    additionalProperties: false
+  MenuItemDto:
+    type: object
+    properties:
+      id:
+        format: uuid
+        type: string
+      name:
+        type: string
+      price:
+        $ref: '#/definitions/PriceInfoDto'
+      description:
+        type: string
+      ingredients:
+        type: array
+        items:
+          type: string
+    additionalProperties: false
+  MenuSectionDto:
+    type: object
+    properties:
+      id:
+        format: uuid
+        type: string
+      name:
+        type: string
+      items:
+        type: array
+        items:
+          $ref: '#/definitions/MenuItemDto'
+    additionalProperties: false
+  OrderDto:
+    required:
+      - createdAt
+      - id
+      - items
+      - lastChangedAt
+      - priceSummary
+      - state
+    type: object
+    properties:
+      id:
+        format: uuid
+        type: string
+      createdAt:
+        format: date-time
+        type: string
+      lastChangedAt:
+        format: date-time
+        type: string
+      state:
+        $ref: '#/definitions/OrderStates'
+      items:
+        type: array
+        items:
+          $ref: '#/definitions/OrderItemDto'
+      priceSummary:
+        $ref: '#/definitions/OrderPriceSummaryDto'
+    additionalProperties: false
+  OrderItemDto:
+    required:
+      - cartItemId
+      - description
+      - itemId
+      - name
+      - quantity
+      - totalPrice
+      - unitPrice
+    type: object
+    properties:
+      itemId:
+        format: uuid
+        type: string
+      cartItemId:
+        format: uuid
+        type: string
+      name:
+        type: string
+      description:
+        type: string
+      unitPrice:
+        $ref: '#/definitions/PriceInfoDto'
+      quantity:
+        format: int32
+        type: integer
+      totalPrice:
+        $ref: '#/definitions/GrossNetPriceDto'
+    additionalProperties: false
+  OrderPriceSummaryDto:
+    required:
+      - deliveryCosts
+      - discount
+      - totalItemPrice
+      - totalPrice
+    type: object
+    properties:
+      totalItemPrice:
+        $ref: '#/definitions/GrossNetPriceDto'
+      totalPrice:
+        $ref: '#/definitions/GrossNetPriceDto'
+      deliveryCosts:
+        $ref: '#/definitions/GrossNetPriceDto'
+      discount:
+        $ref: '#/definitions/GrossNetPriceDto'
+    additionalProperties: false
+  OrderStates:
+    enum:
+      - Created
+    type: string
+  PriceInfoDto:
+    required:
+      - price
+      - regularyVatInPercent
+    type: object
+    properties:
+      price:
+        $ref: '#/definitions/GrossNetPriceDto'
+      regularyVatInPercent:
+        format: double
+        type: number
+    additionalProperties: false
+  ProblemDetails:
+    type: object
+    properties:
+      type:
+        type: string
+      title:
+        type: string
+      status:
+        format: int32
+        type: integer
+      detail:
+        type: string
+      instance:
+        type: string
+    additionalProperties: { }
+  UpdateItemDto:
+    type: object
+    properties:
+      menuItemId:
+        format: uuid
+        type: string
+      requestedAt:
+        format: date-time
+        type: string
+      quantity:
+        format: int32
+        type: integer
+    additionalProperties: false
+  UpdateMenuDto:
+    type: object
+    properties:
+      id:
+        format: uuid
+        type: string
+      sections:
+        type: array
+        items:
+          $ref: '#/definitions/MenuSectionDto'
+    additionalProperties: false
