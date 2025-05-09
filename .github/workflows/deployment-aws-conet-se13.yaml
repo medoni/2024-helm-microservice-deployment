@@ -44,7 +44,7 @@ jobs:
     
     - name: "[SETUP] Terraform init"
       run: terraform init -no-color
-      working-directory: ./src/infrastructure/AWS/envs/dev
+      working-directory: ./src/infrastructure/AWS/envs/conet-se1.3
 
     - name: "[DEPLOY] Terraform apply"
       run: |
@@ -52,7 +52,7 @@ jobs:
           -var 'service_version=${{ env.version }}' \
           -var 'build_date=${{ env.git_date }}' \
           -var 'build_git_sha=${{ github.sha }}'
-      working-directory: ./src/infrastructure/AWS/envs/dev
+      working-directory: ./src/infrastructure/AWS/envs/conet-se1.3
     
     - name: "[SETUP] K6"
       uses: grafana/setup-k6-action@v1    
