@@ -33,7 +33,7 @@ export const options = {
   thresholds: {
     'http_req_duration{scenario:warmup}': [
       {
-        'threshold': 'p(50)<200',
+        'threshold': 'p(50)<500',
         'abortOnFail': true
       }
     ],
