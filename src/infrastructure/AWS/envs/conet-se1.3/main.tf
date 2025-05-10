@@ -1,6 +1,13 @@
 
 module "aws_account" {
   source = "../../modules/aws_account"
+
+  iam_roles = {
+    contributor = {
+      enabled = true
+      name    = "${var.project.short}-contributor"
+    }
+  }
 }
 
 module "pos_pizza_service" {
