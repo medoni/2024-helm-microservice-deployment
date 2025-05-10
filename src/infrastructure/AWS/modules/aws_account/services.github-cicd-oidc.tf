@@ -40,7 +40,6 @@ resource "aws_iam_role" "github_deploy_role" {
 }
 
 data "aws_iam_policy_document" "github_deploy_policy" {
-
   statement {
     effect = "Allow"
     actions = [
@@ -49,7 +48,6 @@ data "aws_iam_policy_document" "github_deploy_policy" {
       "ecr:*",
       "dynamodb:*",
       "events:*",
-      "iam:*",
       "lambda:*",
       "logs:*",
       "s3:*",
@@ -57,11 +55,37 @@ data "aws_iam_policy_document" "github_deploy_policy" {
     ]
     resources = ["*"]
   }
+
+  statement {
+    effect = "Allow"
+    actions = [
+      "iam:CreateRole",
+      "iam:DeleteRole",
+      "iam:UpdateRole",
+      "iam:GetRole",
+      "iam:PassRole",
+      "iam:TagRole",
+      "iam:AttachRolePolicy",
+      "iam:DetachRolePolicy",
+      "iam:PutRolePolicy",
+      "iam:DeleteRolePolicy"
+    ]
+    resources = ["*"]
+  }
+  
+  statement {
+    effect = "Deny"
+    actions = [
+      "s3:DeleteBucket",
+      "dynamodb:DeleteTable",
+      "logs:DeleteLogGroup"
+    ]
+    resources = ["*"]
+  }
 }
 
 resource "aws_iam_role_policy" "deploy" {
   name        = "github-oidc-deploy-policy"
-  # description = "Policy used for deployments on CI from Github"
-  role   = aws_iam_role.github_deploy_role.id
+  role        = aws_iam_role.github_deploy_role.id
   policy      = data.aws_iam_policy_document.github_deploy_policy.json
 }
