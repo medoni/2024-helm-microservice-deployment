@@ -76,7 +76,10 @@ data "aws_iam_policy_document" "github_deploy_policy" {
       "iam:GetPolicy",
       "iam:GetPolicyVersion",
       "iam:ListPolicies",
-      "iam:ListPolicyVersions"
+      "iam:ListPolicyVersions",
+      "iam:GetOpenIDConnectProvider",
+      "iam:ListOpenIDConnectProviders",
+      "iam:TagOpenIDConnectProvider"
     ]
     resources = ["*"]
   }
