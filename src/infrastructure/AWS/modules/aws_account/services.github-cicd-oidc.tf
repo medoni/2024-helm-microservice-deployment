@@ -64,11 +64,19 @@ data "aws_iam_policy_document" "github_deploy_policy" {
       "iam:UpdateRole",
       "iam:GetRole",
       "iam:PassRole",
-      "iam:TagRole",
+      "iam:TagRole",      
       "iam:AttachRolePolicy",
       "iam:DetachRolePolicy",
       "iam:PutRolePolicy",
-      "iam:DeleteRolePolicy"
+      "iam:DeleteRolePolicy",
+      "iam:ListRoles",
+      "iam:ListRolePolicies",
+      "iam:ListAttachedRolePolicies",
+      "iam:GetRolePolicy",
+      "iam:GetPolicy",
+      "iam:GetPolicyVersion",
+      "iam:ListPolicies",
+      "iam:ListPolicyVersions"
     ]
     resources = ["*"]
   }
