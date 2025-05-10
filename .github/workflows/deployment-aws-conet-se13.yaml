@@ -1,0 +1,67 @@
+name: Deployment Aws dev-System
+
+on:
+  push:
+    branches:
+      - master
+      - stories/deployment-se1-3
+  workflow_dispatch:
+
+jobs:
+  aws-integration-tests:
+    name: "Aws integration tests using Terraform"
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
+    steps:
+    - name: "[SETUP] Checkout code"
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+    
+    - name: "[SETUP] Configure AWS Credentials"
+      uses: aws-actions/configure-aws-credentials@v4
+      with:
+        aws-region: eu-central-1
+        role-to-assume: arn:aws:iam::074682455637:role/github-oidc-deploy-role
+
+    - name: "[SETUP] Login to Amazon ECR"
+      uses: aws-actions/amazon-ecr-login@v2
+    
+    - name: "[SETUP] Terraform"
+      uses: hashicorp/setup-terraform@v3
+      with:
+        terraform_version: "1.10.2"
+    
+    - name: "[Setup] Install minver CLI"
+      run: dotnet tool install --tool-path ./minver minver-cli --version 4.3.0
+    - name: "[SETUP] Calculate build date and version"
+      id: version
+      run: |
+          echo "version=$(./minver/minver --default-pre-release-identifiers alpha --tag-prefix v)" >> "$GITHUB_ENV"
+          echo "git_date=$(git log -1 --format=%cd --date=iso-strict)" >> "$GITHUB_ENV"
+    
+    - name: "[SETUP] Terraform init"
+      run: terraform init -no-color
+      working-directory: ./src/infrastructure/AWS/envs/conet-se1.3
+
+    - name: "[DEPLOY] Terraform apply"
+      run: |
+        terraform apply -no-color -auto-approve \
+          -var 'service_version=${{ env.version }}' \
+          -var 'build_date=${{ env.git_date }}' \
+          -var 'build_git_sha=${{ github.sha }}'
+      working-directory: ./src/infrastructure/AWS/envs/conet-se1.3
+    
+    - name: "[SETUP] K6"
+      uses: grafana/setup-k6-action@v1    
+    - name: "[TEST] Run K6 smoke tests"
+      uses: grafana/run-k6-action@v1
+      with:
+        path: ./src/tests/k6/smoke-create-cart-and-checkout.js
+        fail-fast: true
+        debug: true
+      env:
+        BASE_URL: https://ldxhjq0gi9.execute-api.eu-central-1.amazonaws.com/api
+        SLOWMO: "0"
