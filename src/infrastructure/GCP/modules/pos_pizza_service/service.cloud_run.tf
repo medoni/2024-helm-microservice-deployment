@@ -28,6 +28,7 @@ module "pizza_service" {
     variables = {
       "Logging__LogLevel__Default" = "Information"
       "Swagger__Enabled"           = "True"
+      "Gcp__Tracing__ProjectId"    = data.google_project.current.project_id
       "Gcp__FireStore__ProjectId"  = data.google_project.current.project_id
       "Gcp__FireStore__Database"   = google_firestore_database.database.name
     }
@@ -49,5 +50,12 @@ resource "google_project_iam_member" "firestore_user" {
 resource "google_project_iam_member" "firestore_data_owner" {
   project = data.google_project.current.project_id
   role    = "roles/datastore.owner"
+  member  = "serviceAccount:${module.pizza_service.service_account_email}"
+}
+
+# Add permissions for writing log entries
+resource "google_project_iam_member" "tracing_user" {
+  project = data.google_project.current.project_id
+  role    = "roles/logging.logWriter"
   member  = "serviceAccount:${module.pizza_service.service_account_email}"
 }

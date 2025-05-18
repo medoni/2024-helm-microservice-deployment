@@ -13,10 +13,10 @@ FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
     COPY --parents **/*.Build.props .
     COPY --parents **/*.Build.targets .
     COPY --parents **/*.csproj .
-    RUN dotnet restore backend/Deployables/PizzaService.Gcp/*.csproj
+    RUN dotnet restore backend/Deployables/PizzaService.Gcp/PizzaService.Gcp.csproj
 
     COPY . .
-    RUN dotnet publish backend/Deployables/PizzaService.Gcp/*.csproj \
+    RUN dotnet publish backend/Deployables/PizzaService.Gcp/PizzaService.Gcp.csproj \
         -c Release \
         -o /app/publish \
         /p:MINVERVERSIONOVERRIDE=$BUILD_VERSION \

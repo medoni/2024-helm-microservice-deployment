@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Diagnostics.HealthChecks;
+﻿using Google.Cloud.Diagnostics.AspNetCore3;
+using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using PizzaService.Base;
 using PizzaService.Base.Services.AspNet;
 using PizzaService.Base.Services.HealthChecks;
@@ -12,6 +13,7 @@ internal class Program
     {
         var builder = WebApplication.CreateBuilder(args);
 
+        builder.ConfigureGCloudTracing();
         builder.Services.AddEndpointsApiExplorer();
         builder.Services.AddSwaggerServices();
 
@@ -50,5 +52,19 @@ internal static class ProgramExtension
 
         services.AddCustomerFireStoreSupport();
         return services;
+    }
+
+    internal static WebApplicationBuilder ConfigureGCloudTracing(
+        this WebApplicationBuilder appBuilder
+    )
+    {
+        var configuration = appBuilder.Configuration;
+        var projectId = configuration.GetValue<string>("Gcp:Tracing:ProjectId");
+
+        appBuilder.Services.AddGoogleDiagnosticsForAspNetCore(
+            projectId
+        );
+
+        return appBuilder;
     }
 }
