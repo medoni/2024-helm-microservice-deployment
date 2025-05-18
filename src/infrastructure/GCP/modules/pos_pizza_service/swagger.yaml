@@ -18,6 +18,7 @@ paths:
       operationId: Cart_CreateCart_POST
       x-google-backend:
         address: ${TARGET_URL}/v1/Cart
+        path_translation: APPEND_PATH_TO_ADDRESS
       consumes:
         - application/json
         - text/json
@@ -44,6 +45,7 @@ paths:
       operationId: Cart_GetCartById_GET
       x-google-backend:
         address: ${TARGET_URL}/v1/Cart/{id}
+        path_translation: APPEND_PATH_TO_ADDRESS
       produces:
         - application/json
       parameters:
@@ -70,6 +72,7 @@ paths:
       operationId: Cart_AddItem_POST
       x-google-backend:
         address: ${TARGET_URL}/v1/Cart/{id}/items
+        path_translation: APPEND_PATH_TO_ADDRESS
       consumes:
         - application/json
         - text/json
@@ -100,6 +103,7 @@ paths:
       operationId: Cart_UpdateItem_PATCH
       x-google-backend:
         address: ${TARGET_URL}/v1/Cart/{id}/items
+        path_translation: APPEND_PATH_TO_ADDRESS
       consumes:
         - application/json
         - text/json
@@ -130,6 +134,7 @@ paths:
       operationId: Cart_GetCardItems_GET
       x-google-backend:
         address: ${TARGET_URL}/v1/Cart/{id}/items
+        path_translation: APPEND_PATH_TO_ADDRESS
       produces:
         - application/json
       parameters:
@@ -160,6 +165,7 @@ paths:
       operationId: Cart_Checkout_POST
       x-google-backend:
         address: ${TARGET_URL}/v1/Cart/{id}/checkout
+        path_translation: APPEND_PATH_TO_ADDRESS
       consumes:
         - application/json
         - text/json
@@ -195,6 +201,7 @@ paths:
       operationId: Menu_GetMenuById_GET
       x-google-backend:
         address: ${TARGET_URL}/v1/Menu/{id}
+        path_translation: APPEND_PATH_TO_ADDRESS
       produces:
         - application/json
       parameters:
@@ -221,6 +228,7 @@ paths:
       operationId: Menu_CreateMenu_POST
       x-google-backend:
         address: ${TARGET_URL}/v1/Menu
+        path_translation: APPEND_PATH_TO_ADDRESS
       consumes:
         - application/json
         - text/json
@@ -246,6 +254,7 @@ paths:
       operationId: Menu_GetMenus_GET
       x-google-backend:
         address: ${TARGET_URL}/v1/Menu
+        path_translation: APPEND_PATH_TO_ADDRESS
       produces:
         - text/plain
         - application/json
@@ -266,6 +275,7 @@ paths:
       operationId: Menu_UpdateMenu_PATCH
       x-google-backend:
         address: ${TARGET_URL}/v1/Menu
+        path_translation: APPEND_PATH_TO_ADDRESS
       consumes:
         - application/json
         - text/json
@@ -292,6 +302,7 @@ paths:
       operationId: Menu_PublishMenu_PATCH
       x-google-backend:
         address: ${TARGET_URL}/v1/Menu/{id}/publish
+        path_translation: APPEND_PATH_TO_ADDRESS
       produces:
         - application/json
       parameters:
@@ -320,6 +331,7 @@ paths:
       operationId: Menu_GetActiveMenu_GET
       x-google-backend:
         address: ${TARGET_URL}/v1/Menu/active
+        path_translation: APPEND_PATH_TO_ADDRESS
       responses:
         '204':
           description: No Content
@@ -333,6 +345,7 @@ paths:
       operationId: Order_GetOrderById_GET
       x-google-backend:
         address: ${TARGET_URL}/v1/Order/{id}
+        path_translation: APPEND_PATH_TO_ADDRESS
       produces:
         - application/json
       parameters:
