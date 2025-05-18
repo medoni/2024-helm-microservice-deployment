@@ -16,7 +16,7 @@ export function create_cart_and_checkout_scenario(
     fillCart(testContext, activeMenu, cart.id);
     sleep(1 * testContext.slowMo);
 
-    checkCartItems(testContext, cart.id, res => res.items.length > 0);
+    checkCartItems(testContext, cart.id, res => res.data.length > 0);
     sleep(1 * testContext.slowMo);
     
     checkoutCart(testContext, cart.id, {
@@ -82,7 +82,7 @@ export function create_cart_and_checkout_scenario(
     itemsPredicate = itemsPredicate || (() => true);
     let response = http.get(`${testContext.baseUrl}/v1/Cart/${cartId}/items`);
     check(response, {
-      'cart items fetched successfully': (res) => res.status === 200 && itemsPredicate(JSON.parse(res.body)),
+      'cart items fetched successfully': (res) => res.status === 200 && itemsPredicate(JSON.parse(res.body))
     }) || testContext.counters.error.add(1);
   
     return JSON.parse(response.body);

@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using PizzaService.Base;
+using PizzaService.Base.Services.AspNet;
 using PizzaService.Base.Services.HealthChecks;
 using PizzaService.Base.Services.Swagger;
 using POS.Domains.Customer.Persistence.FireStore;
@@ -22,8 +23,10 @@ internal class Program
 
         var app = builder.Build();
 
+        app.UsePathBaseFromConfiguration(builder.Configuration);
         app.ConfigureSwagger(builder.Configuration);
         app.MapControllers();
+
         app.MapHealthChecks("/health", new HealthCheckOptions
         {
             ResponseWriter = JsonResponseWriter.WriteResponse

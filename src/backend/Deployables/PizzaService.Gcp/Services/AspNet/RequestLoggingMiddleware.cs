@@ -1,4 +1,4 @@
-﻿namespace PizzaService.Aws.Services.AspNet;
+﻿namespace PizzaService.Gcp.Services.AspNet;
 
 internal class RequestLoggingMiddleware(
     RequestDelegate next,
