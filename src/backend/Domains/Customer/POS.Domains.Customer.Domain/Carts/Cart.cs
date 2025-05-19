@@ -126,7 +126,7 @@ public class Cart : AggregateRoot
 
         LastChangedAt = changedAt;
 
-        var item = _state.Items.FirstOrDefault(x => x.Id == menuItemId);
+        var item = _state.Items.FirstOrDefault(x => x.MenuItemId == menuItemId);
         if (newQuantity == 0)
         {
             if (item is null) return;
