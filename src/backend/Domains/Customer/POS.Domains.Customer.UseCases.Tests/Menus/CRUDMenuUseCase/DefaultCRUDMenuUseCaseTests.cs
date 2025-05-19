@@ -1,15 +1,13 @@
 ﻿using NSubstitute;
-using NUnit.Framework;
 using POS.Domains.Customer.Domain.Menus;
 using POS.Domains.Customer.Persistence.Menus;
 using POS.Domains.Customer.UseCases.Menus.CRUDMenuUseCase;
 using POS.Domains.Customer.UseCases.Menus.CRUDMenuUseCase.Dtos;
+using POS.Shared.Domain.Generic;
 using POS.Shared.Persistence.UOW;
 using POS.Shared.Testing;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 
-namespace POS.Domains.Customer.UseCases.Tests.Menu.CRUDMenuUseCase;
+namespace POS.Domains.Customer.UseCases.Tests.Menus.CRUDMenuUseCase;
 
 [TestFixture]
 [Category(TestCategories.Unit)]
@@ -38,17 +36,17 @@ public class DefaultCRUDMenuUseCaseTests
     [Test]
     public async Task CreateMenuAsync_ShouldAddMenuToUnitOfWorkAndCommit()
     {
-        // arrange
+        // Arrange
         var dto = new CreateMenuDto(
             Guid.NewGuid(),
             "EUR",
             new List<MenuSectionDto>()
         );
 
-        // act
+        // Act
         await Sut.CreateMenuAsync(dto);
 
-        // assert
+        // Assert
         _uowMock.Received(1).Add(Arg.Is<Menu>(m =>
             m.Id == dto.Id &&
             m.Currency == dto.Currency
@@ -59,39 +57,36 @@ public class DefaultCRUDMenuUseCaseTests
     [Test]
     public async Task UpdateMenuAsync_ShouldUpdateMenuSectionsAndCommit()
     {
-        // arrange
+        // Arrange
         var id = Guid.NewGuid();
         var dto = new UpdateMenuDto(
             id,
             new List<MenuSectionDto>()
         );
 
-        var menuMock = Substitute.For<Menu>(id, DateTimeOffset.UtcNow, "EUR", new List<MenuSection>());
-        _uowMock.GetAsync<Menu>(id).Returns(menuMock);
+        var menu = CreateMenu(id);
+        _uowMock.GetAsync<Menu>(id).Returns(menu);
 
-        // act
+        // Act
         await Sut.UpdateMenuAsync(dto);
 
-        // assert
-        menuMock.Received(1).UpdateSections(
-            Arg.Any<DateTimeOffset>(),
-            Arg.Any<IReadOnlyList<MenuSection>>()
-        );
+        // Assert
+        Assert.That(menu.Sections, Is.Empty);
         await _uowMock.Received(1).CommitAsync();
     }
 
     [Test]
     public async Task GetByIdAsync_ShouldReturnMenuDto()
     {
-        // arrange
+        // Arrange
         var id = Guid.NewGuid();
-        var menuMock = Substitute.For<Menu>(id, DateTimeOffset.UtcNow, "EUR", new List<MenuSection>());
-        _uowMock.GetAsync<Menu>(id).Returns(menuMock);
+        var menu = CreateMenu(id);
+        _uowMock.GetAsync<Menu>(id).Returns(menu);
 
-        // act
+        // Act
         var result = await Sut.GetByIdAsync(id);
 
-        // assert
+        // Assert
         Assert.That(result, Is.Not.Null);
         Assert.That(result.Id, Is.EqualTo(id));
     }
@@ -99,20 +94,49 @@ public class DefaultCRUDMenuUseCaseTests
     [Test]
     public async Task GetAllAsync_ShouldReturnAllMenus()
     {
-        // arrange
-        var menu1 = new Menu(Guid.NewGuid(), DateTimeOffset.UtcNow, "EUR", new List<MenuSection>());
-        var menu2 = new Menu(Guid.NewGuid(), DateTimeOffset.UtcNow, "USD", new List<MenuSection>());
+        // Arrange
+        var menu1 = CreateMenu();
+        var menu2 = CreateMenu();
 
         _menuRepositoryMock.IterateAsync().Returns(new[] { menu1, menu2 }.ToAsyncEnumerable());
 
-        // act
+        // Act
         var result = Sut.GetAllAsync();
         var menus = await result.ToListAsync();
 
-        // assert
+        // Assert
         Assert.That(menus, Is.Not.Null);
         Assert.That(menus.Count, Is.EqualTo(2));
         Assert.That(menus[0].Id, Is.EqualTo(menu1.Id));
         Assert.That(menus[1].Id, Is.EqualTo(menu2.Id));
     }
+
+    #region helpers
+
+    private static Menu CreateMenu(
+        Guid? id = null,
+        DateTimeOffset? createdAt = null,
+        string currency = "EUR",
+        IReadOnlyList<MenuSection>? sections = null
+    )
+    {
+        sections ??= new List<MenuSection>()
+        {
+            new MenuSection(Guid.NewGuid(), "Example-Section", new List<MenuItem>
+            {
+                new MenuItem(Guid.NewGuid(), "Example-Item", PriceInfo.CreateByGross(10, 7, currency), "Description of example item", new[] { "Ingredients 1" })
+            })
+        };
+
+        var menu = new Menu(
+            id ?? Guid.NewGuid(),
+            createdAt ?? DateTimeOffset.UtcNow,
+            currency,
+            sections
+        );
+
+        return menu;
+    }
+
+    #endregion
 }
