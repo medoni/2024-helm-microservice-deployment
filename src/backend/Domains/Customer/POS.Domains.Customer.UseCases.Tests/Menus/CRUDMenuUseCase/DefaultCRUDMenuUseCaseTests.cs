@@ -3,7 +3,6 @@ using POS.Domains.Customer.Domain.Menus;
 using POS.Domains.Customer.Persistence.Menus;
 using POS.Domains.Customer.UseCases.Menus.CRUDMenuUseCase;
 using POS.Domains.Customer.UseCases.Menus.CRUDMenuUseCase.Dtos;
-using POS.Shared.Domain.Generic;
 using POS.Shared.Persistence.UOW;
 using POS.Shared.Testing;
 
@@ -36,17 +35,17 @@ public class DefaultCRUDMenuUseCaseTests
     [Test]
     public async Task CreateMenuAsync_ShouldAddMenuToUnitOfWorkAndCommit()
     {
-        // Arrange
+        // arrange
         var dto = new CreateMenuDto(
             Guid.NewGuid(),
             "EUR",
             new List<MenuSectionDto>()
         );
 
-        // Act
+        // act
         await Sut.CreateMenuAsync(dto);
 
-        // Assert
+        // assert
         _uowMock.Received(1).Add(Arg.Is<Menu>(m =>
             m.Id == dto.Id &&
             m.Currency == dto.Currency
@@ -57,20 +56,20 @@ public class DefaultCRUDMenuUseCaseTests
     [Test]
     public async Task UpdateMenuAsync_ShouldUpdateMenuSectionsAndCommit()
     {
-        // Arrange
+        // arrange
         var id = Guid.NewGuid();
         var dto = new UpdateMenuDto(
             id,
             new List<MenuSectionDto>()
         );
 
-        var menu = CreateMenu(id);
+        var menu = TestDataGenerator.CreateMenu(id);
         _uowMock.GetAsync<Menu>(id).Returns(menu);
 
-        // Act
+        // act
         await Sut.UpdateMenuAsync(dto);
 
-        // Assert
+        // assert
         Assert.That(menu.Sections, Is.Empty);
         await _uowMock.Received(1).CommitAsync();
     }
@@ -78,15 +77,15 @@ public class DefaultCRUDMenuUseCaseTests
     [Test]
     public async Task GetByIdAsync_ShouldReturnMenuDto()
     {
-        // Arrange
+        // arrange
         var id = Guid.NewGuid();
-        var menu = CreateMenu(id);
+        var menu = TestDataGenerator.CreateMenu(id);
         _uowMock.GetAsync<Menu>(id).Returns(menu);
 
-        // Act
+        // act
         var result = await Sut.GetByIdAsync(id);
 
-        // Assert
+        // assert
         Assert.That(result, Is.Not.Null);
         Assert.That(result.Id, Is.EqualTo(id));
     }
@@ -94,49 +93,20 @@ public class DefaultCRUDMenuUseCaseTests
     [Test]
     public async Task GetAllAsync_ShouldReturnAllMenus()
     {
-        // Arrange
-        var menu1 = CreateMenu();
-        var menu2 = CreateMenu();
+        // arrange
+        var menu1 = TestDataGenerator.CreateMenu();
+        var menu2 = TestDataGenerator.CreateMenu();
 
         _menuRepositoryMock.IterateAsync().Returns(new[] { menu1, menu2 }.ToAsyncEnumerable());
 
-        // Act
+        // act
         var result = Sut.GetAllAsync();
         var menus = await result.ToListAsync();
 
-        // Assert
+        // assert
         Assert.That(menus, Is.Not.Null);
         Assert.That(menus.Count, Is.EqualTo(2));
         Assert.That(menus[0].Id, Is.EqualTo(menu1.Id));
         Assert.That(menus[1].Id, Is.EqualTo(menu2.Id));
     }
-
-    #region helpers
-
-    private static Menu CreateMenu(
-        Guid? id = null,
-        DateTimeOffset? createdAt = null,
-        string currency = "EUR",
-        IReadOnlyList<MenuSection>? sections = null
-    )
-    {
-        sections ??= new List<MenuSection>()
-        {
-            new MenuSection(Guid.NewGuid(), "Example-Section", new List<MenuItem>
-            {
-                new MenuItem(Guid.NewGuid(), "Example-Item", PriceInfo.CreateByGross(10, 7, currency), "Description of example item", new[] { "Ingredients 1" })
-            })
-        };
-
-        var menu = new Menu(
-            id ?? Guid.NewGuid(),
-            createdAt ?? DateTimeOffset.UtcNow,
-            currency,
-            sections
-        );
-
-        return menu;
-    }
-
-    #endregion
 }
