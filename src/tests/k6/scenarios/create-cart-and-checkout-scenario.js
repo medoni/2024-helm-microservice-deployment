@@ -1,9 +1,7 @@
 import http from 'k6/http';
 import { check, sleep } from 'k6';
 
-import { uuidv4 } from 'https://jslib.k6.io/k6-utils/1.4.0/index.js';
-import { randomIntBetween } from 'https://jslib.k6.io/k6-utils/1.2.0/index.js';
-import { randomItem } from 'https://jslib.k6.io/k6-utils/1.2.0/index.js';
+import { uuidv4, randomItem, randomIntBetween} from 'https://jslib.k6.io/k6-utils/1.2.0/index.js';
 
 export function create_cart_and_checkout_scenario(
     testContext
@@ -14,6 +12,9 @@ export function create_cart_and_checkout_scenario(
     sleep(1 * testContext.slowMo);
   
     fillCart(testContext, activeMenu, cart.id);
+    sleep(1 * testContext.slowMo);
+
+    checkCartItems(testContext, cart.id, res => res.data.length > 0);
     sleep(1 * testContext.slowMo);
     
     checkoutCart(testContext, cart.id, {
@@ -58,7 +59,7 @@ export function create_cart_and_checkout_scenario(
         {
           menuItemId: menuItem.id,
           requestedAt: new Date(),
-          quantity: randomItem(1, 5)
+          quantity: randomIntBetween(1, 5)
         }
       )
       sleep(1 * testContext.slowMo);
@@ -72,6 +73,17 @@ export function create_cart_and_checkout_scenario(
     check(response, {
       'cart item successfully added': (res) => res.status === 204,
     }) || testContext.counters.error.add(1);
+  }
+
+  export function checkCartItems(testContext, cartId, itemsPredicate)
+  {
+    itemsPredicate = itemsPredicate || (() => true);
+    let response = http.get(`${testContext.baseUrl}/v1/Cart/${cartId}/items`);
+    check(response, {
+      'cart items fetched successfully': (res) => res.status === 200 && itemsPredicate(JSON.parse(res.body))
+    }) || testContext.counters.error.add(1);
+  
+    return JSON.parse(response.body);
   }
   
   export function checkoutCart(testContext, cartId, checkoutData) 
