@@ -1,6 +1,7 @@
 ﻿using NSubstitute;
 using NSubstitute.ReceivedExtensions;
 using POS.Domains.Customer.Domain.Carts;
+using POS.Domains.Customer.Domain.Exceptions;
 using POS.Domains.Customer.Domain.Menus;
 using POS.Domains.Customer.Domain.Orders;
 using POS.Domains.Customer.Persistence.Menus;
@@ -209,5 +210,26 @@ public class DefaultCartUseCaseTests
         Assert.That(cart.CheckoutInfo, Is.Not.Null);
         _uowMock.Received(1).Add<Order>(Arg.Any<Order>());
         await _uowMock.Received(1).CommitAsync();
+    }
+
+    [Test]
+    public void CheckoutCartAsync_Should_Throw_Exception_When_Containing_No_Items()
+    {
+        // arrange
+        var cartId = Guid.NewGuid();
+        var orderId = Guid.NewGuid();
+
+        var menu = TestDataGenerator.CreateMenu(active: true);
+        var cart = TestDataGenerator.CreateCart(cartId, menu: menu);
+        _uowMock.GetAsync<Menu>(menu.Id).Returns(menu);
+        _uowMock.GetAsync<Cart>(cartId).Returns(cart);
+
+        // act
+        var dto = new CartCheckOutDto(DateTimeOffset.UtcNow);
+
+        Assert.That(async () =>
+        {
+            await Sut.CheckoutCartAsync(cartId, dto);
+        }, Throws.InstanceOf<CartIsEmptyException>());
     }
 }

@@ -39,6 +39,25 @@ public class CartRepositoryIntegrationTests : BaseDynamoDbRepositoryIntegrationT
     }
 
     [Test]
+    public async Task UpdateAsync_Should_Store_Item()
+    {
+        // arrange
+        var menu = GetMenu();
+        var cart = CreateCart();
+        await Sut.AddAsync(cart);
+        cart = await Sut.GetByIdAsync(cart.Id);
+
+        cart.AddOrUpdateItem(DateTimeOffset.UtcNow, menu, menu.Sections.First().Items.First().Id, 2);
+
+        // act
+        await Sut.UpdateAsync(cart);
+
+        // assert
+        var storedCart = await Sut.GetByIdAsync(cart.Id);
+        Assert.That(storedCart.Items, Is.Not.Empty);
+    }
+
+    [Test]
     public async Task GetByIdAsync_Should_Return_Stored_Menu()
     {
         // arrange

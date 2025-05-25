@@ -1,6 +1,7 @@
 ﻿using POS.Domains.Customer.Abstractions.Carts;
 using POS.Domains.Customer.Abstractions.Carts.Events;
 using POS.Domains.Customer.Abstractions.Orders;
+using POS.Domains.Customer.Domain.Exceptions;
 using POS.Domains.Customer.Domain.Menus;
 using POS.Domains.Customer.Domain.Orders;
 using POS.Shared.Domain;
@@ -185,6 +186,7 @@ public class Cart : AggregateRoot
     )
     {
         EnsureCorrectDateTime(LastChangedAt, checkoutAt, nameof(checkoutAt));
+        EnsureCartHasItems(Id, Items);
 
         if (order.State != OrderStates.Created) throw new ArgumentException($"Order must be in state '{OrderStates.Created}'.");
         if (order.OrderItems.Select(x => x.CartItemId).Except(Items.Select(x => x.Id)).Count() > 0) throw new ArgumentException($"The order with id '{order.Id}' has different items.");
@@ -220,6 +222,14 @@ public class Cart : AggregateRoot
     )
     {
         if (changingAt < lastChangedAt) throw new ArgumentException($"'{parameterName}' cannot be in the past.", parameterName);
+    }
+
+    private static void EnsureCartHasItems(
+        Guid cartId,
+        IReadOnlyList<CartItem> items
+    )
+    {
+        if (items.Count == 0 || items.Sum(x => x.Quantity) == 0) throw new CartIsEmptyException(cartId);
     }
 
     #endregion
