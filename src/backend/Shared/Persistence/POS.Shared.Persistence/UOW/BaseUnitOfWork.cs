@@ -114,7 +114,7 @@ public abstract class BaseUnitOfWork : IUnitOfWork
     }
 
     /// <summary>
-    ///
+    /// Data class that stores Aggregate and corresponding commit function
     /// </summary>
     protected record TrackedRecord(
         AggregateRoot Aggregate,

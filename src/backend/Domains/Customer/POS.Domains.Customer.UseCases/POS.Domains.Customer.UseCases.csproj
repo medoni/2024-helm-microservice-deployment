@@ -22,6 +22,7 @@
 
   <ItemGroup>
     <InternalsVisibleTo Include="POS.Domains.Customer.Persistence.DynamoDb.Tests"/>
+    <InternalsVisibleTo Include="POS.Domains.Customer.UseCases.Tests"/>
   </ItemGroup>
 
 </Project>
