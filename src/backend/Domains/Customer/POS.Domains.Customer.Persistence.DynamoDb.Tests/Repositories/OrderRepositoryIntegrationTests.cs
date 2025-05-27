@@ -12,7 +12,7 @@ using System.Net;
 namespace POS.Domains.Customer.Persistence.DynamoDb.Tests.Repositories;
 [TestFixture]
 [Category(TestCategories.Integration)]
-public class OrderRepositoryIntegrationTests : BaseDynamoDbRepositoryIntegrationTests
+public class OrderRepositoryIntegrationTests : BaseDynamoDbRepositoryFixture
 {
     private OrderRepository Sut { get; set; }
 
