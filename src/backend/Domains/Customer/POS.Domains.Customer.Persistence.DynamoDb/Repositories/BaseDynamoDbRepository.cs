@@ -36,6 +36,9 @@ where TAggregate : AggregateRoot
 
     public async Task UpdateAsync(TAggregate aggregate)
     {
+        var changes = aggregate.GetUncommittedChanges();
+        if (changes.Length == 0) return;
+
         var entity = CreateDynamoDbEntity(aggregate);
         var batch = DynamoDbCtx.CreateBatchWrite<TEntity>(DynamoDbOperationConfig);
         batch.AddPutItem(entity);

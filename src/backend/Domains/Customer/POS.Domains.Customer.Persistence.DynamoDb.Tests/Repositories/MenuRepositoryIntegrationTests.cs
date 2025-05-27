@@ -10,9 +10,10 @@ using POS.Shared.Testing;
 using System.Net;
 
 namespace POS.Domains.Customer.Persistence.DynamoDb.Tests.Repositories;
+
 [TestFixture]
 [Category(TestCategories.Integration)]
-public class MenuRepositoryIntegrationTests : BaseDynamoDbRepositoryIntegrationTests
+public class MenuRepositoryIntegrationTests : BaseDynamoDbRepositoryFixture
 {
     private MenuRepository Sut { get; set; }
 
