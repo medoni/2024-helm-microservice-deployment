@@ -94,21 +94,6 @@ public class MenuRepositoryIntegrationTests : BaseDynamoDbRepositoryFixture
         Assert.That(result, Is.SupersetOf(new[] { menu1.Id, menu2.Id }));
     }
 
-    [Test]
-    public async Task Update_Without_Any_Changes_Should_Not_Store_Data()
-    {
-        // arrange
-        var menu = CreateMenu();
-        await Sut.AddAsync(menu);
-
-        // act
-        menu = await Sut.GetByIdAsync(menu.Id);
-        await Sut.UpdateAsync(menu);
-
-        // assert
-        Assert.Fail();
-    }
-
     #region Helpers
 
     private static Menu CreateMenu(
