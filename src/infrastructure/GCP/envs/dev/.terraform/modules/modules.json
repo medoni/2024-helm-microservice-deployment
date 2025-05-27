@@ -1,0 +1,1 @@
+{"Modules":[{"Key":"","Source":"","Dir":"."},{"Key":"pizza_service","Source":"../../modules/pos_pizza_service","Dir":"../../modules/pos_pizza_service"},{"Key":"pizza_service.pizza_service","Source":"../gcp_cloud_run_based_on_dockerfile","Dir":"../../modules/gcp_cloud_run_based_on_dockerfile"}]}
