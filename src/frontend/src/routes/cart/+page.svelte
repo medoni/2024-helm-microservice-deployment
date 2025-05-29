@@ -6,6 +6,8 @@
   import { goto } from '$app/navigation';
   import { onMount } from 'svelte';
 
+  let ignoreLoadFullCart = 0;
+
   /**
    * @type {import('$lib/services/pizza-ordering-service-api').CartDto?}
    */
@@ -17,6 +19,8 @@
   let cartItems = [];
   const unsubscribe = cartService.subscribe(async items => {
     cartItems = items;
+
+    loadFullCart();
   });
 
   let loading = true;
@@ -24,7 +28,7 @@
   onMount(async () => {
     try {
       loading = true;
-      cart = await cartService.loadFullCart();
+      await loadFullCart();
     } catch (err) {
       error = 'Failed to load cart. Please try again later.';
       console.error(err);
@@ -32,6 +36,18 @@
       loading = false;
     }
   });
+
+  async function loadFullCart() {
+    if (ignoreLoadFullCart !== 0) return;
+    ++ignoreLoadFullCart;
+
+    try {
+      cart = await cartService.loadFullCart();
+    }
+    finally {
+      --ignoreLoadFullCart;
+    }
+  }
 
   function placeOrder() {
     if (cartItems.length === 0) return;
