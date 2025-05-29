@@ -1,22 +1,20 @@
 <script>
+  /**
+   * @type {import('$lib/services/pizza-ordering-service-api').OrderDto}
+   */
   export let order;
 
   // Format date
-  const formattedDate = new Date(order.date).toLocaleDateString('en-US', {
-    year: 'numeric',
-    month: 'short',
-    day: 'numeric',
-    hour: '2-digit',
-    minute: '2-digit'
-  });
+  const formattedDate = new Date(order.createdAt).toLocaleDateString();
 
   // Status color mapping
+  /** @type Record<string, string> */
   const statusColors = {
-    'pending': '#FFA500',
-    'preparing': '#3498db',
-    'ready': '#2ecc71',
-    'delivered': '#27ae60',
-    'cancelled': '#e74c3c'
+    'Created': '#FFA500',
+    // 'preparing': '#3498db',
+    // 'ready': '#2ecc71',
+    // 'delivered': '#27ae60',
+    // 'cancelled': '#e74c3c'
   };
 </script>
 
@@ -27,13 +25,13 @@
   </div>
 
   <div class="order-status">
-    <span class="status-indicator" style="background-color: {statusColors[order.status] || '#999'}"></span>
-    <span class="status-text">{order.status.charAt(0).toUpperCase() + order.status.slice(1)}</span>
+    <span class="status-indicator" style="background-color: {statusColors[order.state] || '#999'}"></span>
+    <span class="status-text">{order.state.charAt(0).toUpperCase() + order.state.slice(1)}</span>
   </div>
 
   <div class="order-summary">
     <span>{order.items.length} item{order.items.length !== 1 ? 's' : ''}</span>
-    <span class="total">${order.totalAmount.toFixed(2)}</span>
+    <span class="total">{order.priceSummary.totalPrice.gross.toFixed(2)} {order.priceSummary.totalPrice.currency}</span>
   </div>
 </a>
 

@@ -1,74 +1,72 @@
 
-import { writable } from 'svelte/store';
-import { Order } from '../models/order';
-import { CartItem } from '$lib/models/cart-item';
+import { get, writable } from 'svelte/store';
+import { pizzaOrderingApi as api } from './pizza-ordering-service-api';
+
+const ORDER_STORAGE_KEY = "pizza-ordering-order-ids"
 
 class OrderService {
   constructor() {
     /**
-     * @type import('svelte/store').Writable<Order[]>
+     * @type {import('svelte/store').Writable<string[]>}
      */
-    this.orders = writable([]);
+    this.orderIds = writable([]);
+    this.loadOrderIds();
+  }
 
-    /**
-     * @type number
-     */
-    this.nextOrderId = 1;
+  async loadOrderIds() {
+    const rawOrderIds = localStorage.getItem(ORDER_STORAGE_KEY) || '[]';
+    const orderIds = JSON.parse(rawOrderIds);
+
+    this.orderIds.update(_ => orderIds);
+  }
+
+  async storeOrderIds() {
+    const orderIds = get(this.orderIds);
+    localStorage.setItem(ORDER_STORAGE_KEY, JSON.stringify(orderIds));
   }
 
   /**
    *
-   * @param {(param: any[]) => void} callback
+   * @param {(param: string[]) => void} callback
    * @returns
    */
   subscribe(callback) {
-    return this.orders.subscribe(callback);
+    return this.orderIds.subscribe(callback);
   }
 
   /**
    *
-   * @param {CartItem[]} cartItems
-   * @param {number} totalAmount
-   * @returns
+   * @param {string} cartId
+   * @returns {Promise<import('./pizza-ordering-service-api').CartCheckedOutDto>}
    */
-  createOrder(cartItems, totalAmount) {
-    const orderId = this.nextOrderId++;
-    const newOrder = new Order('' + orderId, [...cartItems], totalAmount);
-
-    this.orders.update(orders => {
-      return [newOrder, ...orders];
-    });
-
-    return newOrder;
+  async createOrder(cartId) {
+    const checkoutDto = await api.cartCheckout(cartId);
+    const orderId = checkoutDto.orderId;
+    this.orderIds.update(ids => [orderId, ...ids]);
+    this.storeOrderIds();
+    return checkoutDto;
   }
 
   /**
    *
-   * @param {string} id
-   * @returns {Order?}
+   * @param {string} orderId
+   * @returns {Promise<import('./pizza-ordering-service-api').OrderDto>}
    */
-  getOrderById(id) {
-    let foundOrder = null;
-    this.orders.subscribe(orders => {
-      foundOrder = orders.find(order => order.id === id);
-    })();
-    return foundOrder;
+  async getOrderById(orderId) {
+    const orderDto = await api.getOrderById(orderId);
+    return orderDto;
   }
 
   /**
-   *
-   * @param {string} id
-   * @param {string} status
+   * @returns {Promise<import('./pizza-ordering-service-api').OrderDto[]>}
    */
-  updateOrderStatus(id, status) {
-    this.orders.update(orders => {
-      return orders.map(order => {
-        if (order.id === id) {
-          return { ...order, status };
-        }
-        return order;
-      });
-    });
+  async loadAllOrders() {
+    const orderIds = get(this.orderIds);
+
+    const promisses = orderIds.map(id => this.getOrderById(id));
+    const result = await Promise.all(promisses);
+
+    return result;
   }
 }
 

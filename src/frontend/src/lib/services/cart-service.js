@@ -1,5 +1,6 @@
 import { writable, get } from 'svelte/store';
 import { pizzaOrderingApi as api } from './pizza-ordering-service-api';
+import { orderService } from './order-service';
 
 const CART_ID_STORAGE_KEY = 'pizza-ordering-cart-id';
 
@@ -48,16 +49,26 @@ class CartService {
     return false;
   }
 
+
+  ignoreLoadCartById = 0;
   /**
    *
    * @param {string} id
    */
   async loadCartById(id) {
-    const items = await api.getCartItemsById(id);
+    if (!this.ignoreLoadCartById) return;
 
-    this.cartId = id;
-    localStorage.setItem(CART_ID_STORAGE_KEY, id);
-    this.cartStore.set(items);
+    ++this.ignoreLoadCartById;
+    try {
+      const items = await api.getCartItemsById(id);
+
+      this.cartId = id;
+      localStorage.setItem(CART_ID_STORAGE_KEY, id);
+      this.cartStore.set(items);
+    }
+    finally {
+      --this.ignoreLoadCartById;
+    }
   }
 
   /**
@@ -152,7 +163,17 @@ class CartService {
   async clearCart() {
     this.cartId = '';
     localStorage.removeItem(CART_ID_STORAGE_KEY)
-    await this.ensureCartIsCreated();
+    this.cartStore.update(_ => []);
+  }
+
+  /**
+   * @returns {Promise<import('./pizza-ordering-service-api').CartCheckedOutDto>}
+   */
+  async checkoutCart() {
+    const checkedOutDto = await orderService.createOrder(this.cartId);
+    this.clearCart();
+
+    return checkedOutDto;
   }
 
   getTotalAmount() {

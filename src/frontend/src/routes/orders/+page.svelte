@@ -3,14 +3,27 @@
   import OrderCard from '$lib/components/order-cart.svelte';
   import Button from '$lib/components/button.svelte';
   import { goto } from '$app/navigation';
+  import { onMount } from 'svelte';
+  import LoadingSpinner from '$lib/components/loading-spinner.svelte';
+  import ErrorMessage from '$lib/components/error-message.svelte';
 
   /**
-   * @type any[]
+   * @type {import('$lib/services/pizza-ordering-service-api').OrderDto[]}
    */
-  let orders = [];
+  let orderItems = [];
+  let loading = true;
+  let error = '';
 
-  const unsubscribe = orderService.subscribe(allOrders => {
-    orders = allOrders;
+  onMount(async () => {
+    try {
+      loading = true;
+      orderItems = await orderService.loadAllOrders();
+    } catch (err) {
+      error = 'Failed to load orders. Please try again later.';
+      console.error(err);
+    } finally {
+      loading = false;
+    }
   });
 
   function goToMenu() {
@@ -25,18 +38,26 @@
 <div class="orders-container">
   <h1>My Orders</h1>
 
-  {#if orders.length === 0}
-    <div class="empty-orders">
-      <p>You haven't placed any orders yet</p>
-      <Button label="Browse Menu" onClick={goToMenu} />
-    </div>
+  {#if loading}
+    <LoadingSpinner message="Loading your orders..." />
+  {:else if error}
+    <ErrorMessage message={error} />
   {:else}
-    <div class="orders-list">
-      {#each orders as order (order.id)}
-        <OrderCard {order} />
-      {/each}
-    </div>
+    {#if orderItems.length === 0}
+      <div class="empty-orders">
+        <p>You haven't placed any orders yet</p>
+        <Button label="Browse Menu" onClick={goToMenu} />
+      </div>
+    {:else}
+      <div class="orders-list">
+        {#each orderItems as order (order.id)}
+          <OrderCard {order} />
+        {/each}
+      </div>
+    {/if}
   {/if}
+
+
 </div>
 
 <style>

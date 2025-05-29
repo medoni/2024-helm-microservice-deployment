@@ -6,8 +6,6 @@
   import { goto } from '$app/navigation';
   import { onMount } from 'svelte';
 
-  let ignoreLoadFullCart = 0;
-
   /**
    * @type {import('$lib/services/pizza-ordering-service-api').CartDto?}
    */
@@ -38,25 +36,14 @@
   });
 
   async function loadFullCart() {
-    if (ignoreLoadFullCart !== 0) return;
-    ++ignoreLoadFullCart;
-
-    try {
-      cart = await cartService.loadFullCart();
-    }
-    finally {
-      --ignoreLoadFullCart;
-    }
+    cart = await cartService.loadFullCart();
   }
 
-  function placeOrder() {
-    if (cartItems.length === 0) return;
+  async function placeOrder() {
+    if (cartItems.length === 0 || !cart) return;
 
-    throw 'Not implemented';
-
-    // const newOrder = orderService.createOrder(cartItems, getTotalAmount());
-    // cartService.clearCart();
-    // goto(`/orders/${newOrder.id}`);
+    const checkoutDto = await cartService.checkoutCart();
+    goto(`/orders/${checkoutDto.orderId}`);
   }
 
   function continueShopping() {

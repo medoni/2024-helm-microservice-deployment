@@ -1,20 +1,36 @@
 <script>
-  import { page } from '$app/stores';
   import { orderService } from '$lib/services/order-service';
   import Button from '$lib/components/button.svelte';
   import { goto } from '$app/navigation';
+  import { onMount } from 'svelte';
+  import LoadingSpinner from '$lib/components/loading-spinner.svelte';
+  import ErrorMessage from '$lib/components/error-message.svelte';
+  import { page } from '$app/state'
 
-  const orderId = $page.params.id;
-  const order = orderService.getOrderById(orderId);
+  const orderId = page.params.id;
+  /** @type {import('$lib/services/pizza-ordering-service-api').OrderDto?} */
+  let order = null;
+  let loading = true;
+  let error = '';
+
+  onMount(async () => {
+    try {
+      loading = true;
+      order = await orderService.getOrderById(orderId);
+    } catch (err) {
+      error = 'Failed to load order. Please try again later.';
+      console.error(err);
+    } finally {
+      loading = false;
+    }
+  });
 
   // Format date
-  const formattedDate = order ? new Date(order.date).toLocaleDateString('en-US', {
-    year: 'numeric',
-    month: 'short',
-    day: 'numeric',
-    hour: '2-digit',
-    minute: '2-digit'
-  }) : '';
+  /**
+   *
+   * @param {string | Date} date
+   */
+  const dateFormatter = date => new Date(date).toLocaleDateString();
 
   function goBack() {
     goto('/orders');
@@ -28,52 +44,60 @@
 <div class="order-detail-container">
   <button class="back-button" on:click={goBack}>← Back to Orders</button>
 
-  {#if !order}
-    <div class="not-found">
-      <h2>Order not found</h2>
-      <p>The order you're looking for doesn't exist.</p>
-      <Button label="View All Orders" onClick={goBack} />
-    </div>
+  {#if loading}
+    <LoadingSpinner message="Loading you order..." />
+  {:else if error}
+    <ErrorMessage message={error} />
   {:else}
-    <div class="order-header">
-      <h1>Order #{order.id}</h1>
-      <div class="order-meta">
-        <p class="date">Placed on: {formattedDate}</p>
-        <p class="status">Status: <span class="status-badge">{order.status}</span></p>
+    {#if !order}
+      <div class="not-found">
+        <h2>Order not found</h2>
+        <p>The order you're looking for doesn't exist.</p>
+        <Button label="View All Orders" onClick={goBack} />
       </div>
-    </div>
+    {:else}
+      <div class="order-header">
+        <h1>Order #{order.id}</h1>
+        <div class="order-meta">
+          <p class="date">Placed on: {dateFormatter(order.createdAt)}</p>
+          <p class="status">Status: <span class="status-badge">{order.state}</span></p>
+        </div>
+      </div>
 
-    <div class="order-items">
-      <h2>Order Items</h2>
-      <table>
-        <thead>
-          <tr>
-            <th>Item</th>
-            <th>Price</th>
-            <th>Quantity</th>
-            <th>Total</th>
-          </tr>
-        </thead>
-        <tbody>
-          {#each order.items as item}
+      <div class="order-items">
+        <h2>Order Items</h2>
+        <table>
+          <thead>
             <tr>
-              <td>{item.pizza.name}</td>
-              <td>${item.pizza.price.toFixed(2)}</td>
-              <td>{item.quantity}</td>
-              <td>${item.totalPrice.toFixed(2)}</td>
+              <th>Item</th>
+              <th>Price</th>
+              <th>Quantity</th>
+              <th>Total</th>
             </tr>
-          {/each}
-        </tbody>
-      </table>
-    </div>
-
-    <div class="order-summary">
-      <div class="total">
-        <span>Total Amount:</span>
-        <span class="total-amount">${order.totalAmount.toFixed(2)}</span>
+          </thead>
+          <tbody>
+            {#each order.items as item}
+              <tr>
+                <td>{item.name}</td>
+                <td>{item.unitPrice.price.gross.toFixed(2)} {item.unitPrice.price.currency}</td>
+                <td>{item.quantity}</td>
+                <td>{item.totalPrice.gross.toFixed(2)} {item.totalPrice.currency}</td>
+              </tr>
+            {/each}
+          </tbody>
+        </table>
       </div>
-    </div>
+
+      <div class="order-summary">
+        <div class="total">
+          <span>Total Amount:</span>
+          <span class="total-amount">{order.priceSummary.totalPrice.gross.toFixed(2)} {order.priceSummary.totalPrice.currency}</span>
+        </div>
+      </div>
+    {/if}
   {/if}
+
+
 </div>
 
 <style>

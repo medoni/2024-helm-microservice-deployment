@@ -143,6 +143,36 @@ class PizzaOrderingServiceApi {
           body: JSON.stringify(patchDto)
       });
     }
+
+    /**
+     *
+     * @param {string} cartId
+     * @returns {Promise<CartCheckedOutDto>}
+     */
+    async cartCheckout(cartId) {
+      const checkoutDto = { checkoutAt: new Date() };
+      const result = this.fetchWithErrorHandling(`${this.baseUrl}/v1/Cart/${cartId}/checkout`, {
+          method: 'POST',
+          headers: this.headers,
+          body: JSON.stringify(checkoutDto)
+      });
+
+      return result;
+    }
+
+    /**
+     *
+     * @param {string} orderId
+     * @returns {Promise<OrderDto>}
+     */
+    async getOrderById(orderId) {
+      const result = this.fetchWithErrorHandling(`${this.baseUrl}/v1/Order/${orderId}`, {
+          method: 'GET',
+          headers: this.headers
+      });
+
+      return result;
+    }
   }
 
 // Create and export a singleton instance
