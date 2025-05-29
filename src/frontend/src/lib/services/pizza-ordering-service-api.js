@@ -89,6 +89,29 @@ class PizzaOrderingServiceApi {
     /**
      *
      * @param {string} cartId
+     * @returns {Promise<CartItemDto[]>}
+     */
+    async getCartItemsById(cartId) {
+      let items = [];
+      let paginationToken = null;
+
+      for(;;) {
+        const resultset = await this.fetchWithErrorHandling(`${this.baseUrl}/v1/Cart/${cartId}/items?token=${paginationToken || ''}`, {
+            method: 'GET',
+            headers: this.headers
+        });
+
+        items = [...resultset.data];
+        paginationToken = resultset.nextPageToken;
+        if (!paginationToken) break;
+      }
+
+      return items;
+    }
+
+    /**
+     *
+     * @param {string} cartId
      * @param {string} menuItemId
      * @param {number} newQuantity
      * @returns {Promise<CartItemDto>}

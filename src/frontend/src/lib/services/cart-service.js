@@ -1,10 +1,12 @@
-import { writable } from 'svelte/store';
-import { CartItem } from '../models/cart-item';
+import { writable, get } from 'svelte/store';
 import { pizzaOrderingApi as api } from './pizza-ordering-service-api';
+
+const CART_ID_STORAGE_KEY = 'pizza-ordering-cart-id';
 
 class CartService {
   constructor() {
     this.cartId = '';
+
     /**
      * @type import('svelte/store').Writable<import('./pizza-ordering-service-api').CartItemDto[]>
      */
@@ -22,9 +24,40 @@ class CartService {
 
   async ensureCartIsCreated() {
     if (this.cartId) return;
+    if (await this.tryLoadExistingCart()) return;
 
     const createdId = await api.createCart();
     this.cartId = createdId;
+    localStorage.setItem(CART_ID_STORAGE_KEY, this.cartId);
+    this.cartStore.set([]);
+  }
+
+  async tryLoadExistingCart() {
+    const cartId = localStorage.getItem(CART_ID_STORAGE_KEY) || '';
+    if (cartId) {
+      try {
+        await this.loadCartById(cartId);
+        this.cartId = cartId;
+
+        return true;
+      } catch(ex) {
+        console.log(ex);
+      }
+    }
+
+    return false;
+  }
+
+  /**
+   *
+   * @param {string} id
+   */
+  async loadCartById(id) {
+    const items = await api.getCartItemsById(id);
+
+    this.cartId = id;
+    localStorage.setItem(CART_ID_STORAGE_KEY, id);
+    this.cartStore.set(items);
   }
 
   /**
@@ -35,14 +68,18 @@ class CartService {
   async addToCart(item, quantity = 1) {
     await this.ensureCartIsCreated();
 
+    const existingItems = get(this.cartStore),
+      existingItem = existingItems.find(x => x.menuItemId === item.id),
+      newQuantity = existingItem ? existingItem.quantity + quantity : quantity;
+
     var cartItem = await api.patchCartItem(
       this.cartId,
       item.id,
-      quantity
+      newQuantity
     )
 
     this.cartStore.update(items => {
-      const existingItemIndex = items.findIndex(x => x.id === cartItem.id);
+      const existingItemIndex = items.findIndex(x => x.menuItemId === cartItem.menuItemId);
 
       if (existingItemIndex >= 0) {
         const updatedItems = [...items];
@@ -102,7 +139,7 @@ class CartService {
 
   async clearCart() {
     this.cartId = '';
-    this.cartStore.set([]);
+    localStorage.removeItem(CART_ID_STORAGE_KEY)
     await this.ensureCartIsCreated();
   }
 
