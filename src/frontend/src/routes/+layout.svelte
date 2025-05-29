@@ -55,6 +55,7 @@
     color: #ff3e00;
     text-decoration: none;
     font-weight: bold;
+    margin-right: 5rem;
   }
 
   nav a:hover {
@@ -72,7 +73,7 @@
   .cart-badge {
     position: absolute;
     top: -8px;
-    right: -12px;
+    right: -22px;
     background: #ff3e00;
     color: white;
     border-radius: 50%;

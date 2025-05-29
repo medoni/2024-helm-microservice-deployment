@@ -56,7 +56,7 @@ class CartService {
    * @param {string} id
    */
   async loadCartById(id) {
-    if (!this.ignoreLoadCartById) return;
+    if (this.ignoreLoadCartById) return;
 
     ++this.ignoreLoadCartById;
     try {
