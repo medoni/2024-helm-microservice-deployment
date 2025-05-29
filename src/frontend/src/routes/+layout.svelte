@@ -1,11 +1,26 @@
 <script>
   import '../app.css';
+  import { cartService } from '$lib/services/cart-service';
+
+  let cartItemsCount = 0;
+
+  const unsubscribe = cartService.subscribe(items => {
+    cartItemsCount = items.reduce((count, item) => count + item.quantity, 0);
+  });
 </script>
 
 <div class="app">
   <header>
     <nav>
       <a href="/">Home</a>
+        <a href="/menu">Menu</a>
+        <a href="/cart" class="cart-link">
+          Cart
+          {#if cartItemsCount > 0}
+            <span class="cart-badge">{cartItemsCount}</span>
+          {/if}
+        </a>
+        <a href="/orders">My Orders</a>
     </nav>
   </header>
 
@@ -43,6 +58,25 @@
 
   main {
     flex: 1;
+  }
+
+  .cart-link {
+    position: relative;
+  }
+
+  .cart-badge {
+    position: absolute;
+    top: -8px;
+    right: -12px;
+    background: #ff3e00;
+    color: white;
+    border-radius: 50%;
+    width: 20px;
+    height: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.8rem;
   }
 
   footer {

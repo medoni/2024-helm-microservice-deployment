@@ -1,59 +1,110 @@
 <script>
-  import Button from '$lib/components/button.svelte';
-  const title = 'Willkommen bei meiner Webanwendung';
-  const subtitle = 'Einfache SvelteKit-Anwendung mit PNPM';
+  import Button from '$lib/components/Button.svelte';
+  import { goto } from '$app/navigation';
 
-  function handleClick() {
-    alert('Hallo! Willkommen bei unserer App.');
+  function goToMenu() {
+    goto('/menu');
   }
 </script>
 
+<svelte:head>
+  <title>Pizza Shop | Home</title>
+</svelte:head>
+
 <main>
-  <section class="welcome-section">
-    <h1>{title}</h1>
-    <p>{subtitle}</p>
-    <Button label="Klick mich" onClick={handleClick} />
+  <section class="hero">
+    <div class="hero-content">
+      <h1>Fresh & Tasty Pizza</h1>
+      <p>Order delicious pizzas online with fast delivery</p>
+      <Button label="View Menu" onClick={goToMenu} />
+    </div>
+  </section>
+
+  <section class="features">
+    <div class="feature">
+      <div class="icon">🍕</div>
+      <h2>Quality Ingredients</h2>
+      <p>We use only the freshest ingredients for our pizzas</p>
+    </div>
+
+    <div class="feature">
+      <div class="icon">🚚</div>
+      <h2>Fast Delivery</h2>
+      <p>Enjoy your pizza while it's hot with our quick delivery</p>
+    </div>
+
+    <div class="feature">
+      <div class="icon">💰</div>
+      <h2>Best Prices</h2>
+      <p>Delicious pizzas at affordable prices</p>
+    </div>
   </section>
 </main>
 
 <style>
   main {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    min-height: 100vh;
-    text-align: center;
-    padding: 1rem;
+    width: 100%;
   }
 
-  .welcome-section {
-    max-width: 600px;
-  }
-
-  h1 {
-    color: #ff3e00;
-    font-size: 2.5rem;
-    margin-bottom: 1rem;
-  }
-
-  p {
-    margin-bottom: 2rem;
-    font-size: 1.2rem;
-  }
-
-  button {
-    background-color: #ff3e00;
+  .hero {
+    background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url('https://images.unsplash.com/photo-1513104890138-7c749659a591?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80');
+    background-size: cover;
+    background-position: center;
     color: white;
-    border: none;
-    padding: 0.75rem 1.5rem;
-    border-radius: 4px;
-    cursor: pointer;
-    font-size: 1rem;
-    transition: background-color 0.2s;
+    padding: 120px 20px;
+    text-align: center;
   }
 
-  button:hover {
-    background-color: #ff6340;
+  .hero-content {
+    max-width: 800px;
+    margin: 0 auto;
+  }
+
+  .hero h1 {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+    color: white;
+  }
+
+  .hero p {
+    font-size: 1.2rem;
+    margin-bottom: 2rem;
+  }
+
+  .features {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    padding: 60px 20px;
+    background: #f9f9f9;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+
+  .feature {
+    flex: 1;
+    min-width: 250px;
+    max-width: 350px;
+    margin: 20px;
+    padding: 30px;
+    text-align: center;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+    transition: transform 0.3s;
+  }
+
+  .feature:hover {
+    transform: translateY(-10px);
+  }
+
+  .icon {
+    font-size: 3rem;
+    margin-bottom: 20px;
+  }
+
+  .feature h2 {
+    margin-bottom: 15px;
+    color: #333;
   }
 </style>
