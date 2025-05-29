@@ -1,28 +1,55 @@
-import { Pizza } from '../models/pizza';
+import { pizzaOrderingApi as api } from './pizza-ordering-service-api'
 
 class MenuService {
-    constructor() {
-      this.pizzas = [
-        new Pizza('1', 'Margherita', 'Classic tomato and mozzarella', 8.99, 'EUR', null, ['Tomato Sauce', 'Mozzarella', 'Basil']),
-        new Pizza('2', 'Pepperoni', 'Pepperoni and cheese', 9.99, 'EUR', null, ['Tomato Sauce', 'Mozzarella', 'Pepperoni']),
-        new Pizza('3', 'Vegetarian', 'Fresh vegetables and cheese', 10.99, 'EUR', null, ['Tomato Sauce', 'Mozzarella', 'Bell Peppers', 'Mushrooms', 'Onions']),
-        new Pizza('4', 'Hawaiian', 'Ham and pineapple', 11.99, 'EUR', null, ['Tomato Sauce', 'Mozzarella', 'Ham', 'Pineapple']),
-        new Pizza('5', 'BBQ Chicken', 'BBQ sauce and chicken', 12.99, 'EUR', null, ['BBQ Sauce', 'Mozzarella', 'Chicken', 'Red Onion']),
-      ];
-    }
-
-    getAllPizzas() {
-      return [...this.pizzas];
-    }
+  constructor() {
+    /**
+     * @type {import('./pizza-ordering-service-api').MenuItemDto[]}
+     */
+    this.menuItems = [];
 
     /**
-     *
-     * @param {string} id
-     * @returns
+     * @type {import('./pizza-ordering-service-api').MenuSectionDto[]}
      */
-    getPizzaById(id) {
-      return this.pizzas.find(pizza => pizza.id === id);
-    }
+    this.menuSections = [];
   }
 
-  export const menuService = new MenuService();
+  async ensureItemsAreLoaded() {
+    if (this.menuItems && this.menuItems.length) return;
+
+    const menuDto = await api.getActiveMenu();
+    this.menuSections = menuDto.sections;
+
+    this.menuItems = this.menuSections.map(section => section.items).reduce((res, items) => res.concat(items), [])
+  }
+
+  /**
+   * @returns {Promise<import('./pizza-ordering-service-api').MenuSectionDto[]>}
+   */
+  async getAllSections() {
+    await this.ensureItemsAreLoaded();
+
+    return [...this.menuSections];
+  }
+
+  /**
+   * @returns {Promise<import('./pizza-ordering-service-api').MenuItemDto[]>}
+   */
+  async getAllMenuItems() {
+    await this.ensureItemsAreLoaded();
+
+    return [...this.menuItems];
+  }
+
+  /**
+   *
+   * @param {string} id
+   * @returns {Promise<import('./pizza-ordering-service-api').MenuItemDto?>}
+   */
+  async getMenuItemById(id) {
+    await this.ensureItemsAreLoaded();
+
+    return this.menuItems.find(item => item.id === id) ?? null;
+  }
+}
+
+export const menuService = new MenuService();

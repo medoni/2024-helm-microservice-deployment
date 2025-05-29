@@ -1,35 +1,34 @@
 <script>
   import Button from './button.svelte';
   import { cartService } from '$lib/services/cart-service';
-  import { Pizza } from '$lib/models/pizza';
 
   /**
-   * @type Pizza
+   * @type import('$lib/services/pizza-ordering-service-api').MenuItemDto
    */
-  export let pizza;
+  export let item;
 
   function addToCart() {
-    cartService.addToCart(pizza);
+    cartService.addToCart(item);
   }
 </script>
 
-<div class="pizza-card">
-  <img src={pizza.imageUrl} alt={pizza.name} />
+<div class="menu-card">
+  <img src={'https://dummyimage.com/150/000/fff.png&text=unknown'} alt={item.name} />
   <div class="content">
-    <h3>{pizza.name}</h3>
-    <p class="description">{pizza.description}</p>
+    <h3>{item.name}</h3>
+    <p class="description">{item.description}</p>
     <p class="ingredients">
-      <small>{pizza.ingredients.join(', ')}</small>
+      <small>{item.ingredients.join(', ')}</small>
     </p>
     <div class="footer">
-      <span class="price">${pizza.price.toFixed(2)}</span>
+      <span class="price">${item.price.price.gross.toFixed(2)} {item.price.price.currency}</span>
       <Button label="Add to Cart" onClick={addToCart} />
     </div>
   </div>
 </div>
 
 <style>
-  .pizza-card {
+  .menu-card {
     border: 1px solid #ddd;
     border-radius: 8px;
     overflow: hidden;
@@ -37,7 +36,7 @@
     background: white;
   }
 
-  .pizza-card:hover {
+  .menu-card:hover {
     transform: translateY(-5px);
     box-shadow: 0 5px 15px rgba(0,0,0,0.1);
   }
