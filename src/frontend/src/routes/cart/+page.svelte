@@ -4,20 +4,34 @@
   import CartItemCard from '$lib/components/cart-item.svelte';
   import Button from '$lib/components/button.svelte';
   import { goto } from '$app/navigation';
-  import { CartItem } from '$lib/models/cart-item';
+  import { onMount } from 'svelte';
+
+  /**
+   * @type {import('$lib/services/pizza-ordering-service-api').CartDto?}
+   */
+  let cart = null;
 
   /**
    * @type import('$lib/services/pizza-ordering-service-api').CartItemDto[]
    */
   let cartItems = [];
-
-  const unsubscribe = cartService.subscribe(items => {
+  const unsubscribe = cartService.subscribe(async items => {
     cartItems = items;
   });
 
-  function getTotalAmount() {
-    return cartItems.reduce((sum, item) => sum + item.quantity * item.unitPrice.price.gross, 0);
-  }
+  let loading = true;
+  let error = '';
+  onMount(async () => {
+    try {
+      loading = true;
+      cart = await cartService.loadFullCart();
+    } catch (err) {
+      error = 'Failed to load cart. Please try again later.';
+      console.error(err);
+    } finally {
+      loading = false;
+    }
+  });
 
   function placeOrder() {
     if (cartItems.length === 0) return;
@@ -56,7 +70,12 @@
     <div class="cart-summary">
       <div class="total">
         <span>Total Amount:</span>
-        <span class="total-amount">${getTotalAmount().toFixed(2)}</span>
+        <span class="total-amount">{cart?.totalPrice.gross.toFixed(2)} {cart?.totalPrice.currency}</span>
+      </div>
+
+      <div class="vat">
+        <span>Vat:</span>
+        <span class="vat-amount">{cart?.totalPrice.vat.toFixed(2)} {cart?.totalPrice.currency}</span>
       </div>
 
       <div class="actions">
@@ -103,6 +122,7 @@
     border-radius: 8px;
   }
 
+  .vat,
   .total {
     display: flex;
     justify-content: space-between;
@@ -111,6 +131,7 @@
     font-size: 1.2rem;
   }
 
+  .vat-amount,
   .total-amount {
     font-weight: bold;
     color: #ff3e00;

@@ -13,7 +13,7 @@
 </script>
 
 <div class="menu-card">
-  <img src={'https://dummyimage.com/150/000/fff.png&text=unknown'} alt={item.name} />
+  <img src="https://dummyimage.com/150/000/fff.png&text={item.name}" alt={item.name} />
   <div class="content">
     <h3>{item.name}</h3>
     <p class="description">{item.description}</p>
@@ -21,7 +21,7 @@
       <small>{item.ingredients.join(', ')}</small>
     </p>
     <div class="footer">
-      <span class="price">${item.price.price.gross.toFixed(2)} {item.price.price.currency}</span>
+      <span class="price">{item.price.price.gross.toFixed(2)} {item.price.price.currency}</span>
       <Button label="Add to Cart" onClick={addToCart} />
     </div>
   </div>

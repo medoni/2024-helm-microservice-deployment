@@ -89,6 +89,20 @@ class PizzaOrderingServiceApi {
     /**
      *
      * @param {string} cartId
+     * @returns {Promise<CartDto?>}
+     */
+    async getCartById(cartId) {
+      const cart = await this.fetchWithErrorHandling(`${this.baseUrl}/v1/Cart/${cartId}`, {
+          method: 'GET',
+          headers: this.headers
+      });
+
+      return cart;
+    }
+
+    /**
+     *
+     * @param {string} cartId
      * @returns {Promise<CartItemDto[]>}
      */
     async getCartItemsById(cartId) {

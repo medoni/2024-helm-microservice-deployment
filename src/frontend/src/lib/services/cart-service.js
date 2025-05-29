@@ -62,6 +62,18 @@ class CartService {
 
   /**
    *
+   * @returns {Promise<import('./pizza-ordering-service-api').CartDto?>}
+   */
+  async loadFullCart() {
+    if (!await this.tryLoadExistingCart()) return null;
+
+    const cart = await api.getCartById(this.cartId);
+
+    return cart;
+  }
+
+  /**
+   *
    * @param {import('./pizza-ordering-service-api').MenuItemDto} item
    * @param {number} quantity
    */
