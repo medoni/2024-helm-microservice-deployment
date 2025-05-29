@@ -62,12 +62,50 @@ class PizzaOrderingServiceApi {
      * @returns {Promise<MenuDto>}
      */
     async getActiveMenu() {
-        return this.fetchWithErrorHandling(`${this.baseUrl}/v1/Menu/active`, {
-            method: 'GET',
-            headers: this.headers
-        });
+      return this.fetchWithErrorHandling(`${this.baseUrl}/v1/Menu/active`, {
+          method: 'GET',
+          headers: this.headers,
+      });
     }
 
+    /**
+     * @returns {Promise<string>}
+     */
+    async createCart() {
+      const createDto = {
+        id: crypto.randomUUID(),
+        requestedAt: new Date()
+      };
+
+      await this.fetchWithErrorHandling(`${this.baseUrl}/v1/Cart/`, {
+          method: 'POST',
+          headers: this.headers,
+          body: JSON.stringify(createDto)
+      });
+
+      return createDto.id;
+    }
+
+    /**
+     *
+     * @param {string} cartId
+     * @param {string} menuItemId
+     * @param {number} newQuantity
+     * @returns {Promise<CartItemDto>}
+     */
+    async patchCartItem(cartId, menuItemId, newQuantity) {
+      const patchDto = {
+        menuItemId: menuItemId,
+        requestedAt: new Date(),
+        quantity: newQuantity
+      };
+
+      return this.fetchWithErrorHandling(`${this.baseUrl}/v1/Cart/${cartId}/items`, {
+          method: 'PATCH',
+          headers: this.headers,
+          body: JSON.stringify(patchDto)
+      });
+    }
   }
 
 // Create and export a singleton instance
@@ -115,6 +153,7 @@ export const pizzaOrderingApi = new PizzaOrderingServiceApi();
  * @typedef CartItemDto
  * @property {string} id - UUID of the cart item
  * @property {string} addedAt - Date and time when the item was added to the cart
+ * @property {string} menuItemId - Id of the corresponding menu item
  * @property {string} name - Name of the item
  * @property {string} description - Description of the item
  * @property {PriceInfoDto} unitPrice - Price information for a single unit

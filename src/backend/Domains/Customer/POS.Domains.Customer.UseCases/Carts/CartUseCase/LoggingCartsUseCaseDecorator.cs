@@ -45,15 +45,17 @@ internal class LoggingCartUseCaseDecorator
         }
     }
 
-    public async Task AddItemToCartAsync(Guid id, AddItemDto dto)
+    public async Task<CartItemDto?> AddItemToCartAsync(Guid id, AddItemDto dto)
     {
         try
         {
             logger.LogInformation("Adding item '{menuItemId}' to cart with id '{cartId}'...", dto.MenuItemId, id);
 
-            await next.AddItemToCartAsync(id, dto);
+            var result = await next.AddItemToCartAsync(id, dto);
 
             logger.LogInformation("Successfully added item '{menuItemId}' to cart with id '{cartId}'.", dto.MenuItemId, id);
+
+            return result;
         }
         catch (Exception ex)
         {
@@ -81,15 +83,17 @@ internal class LoggingCartUseCaseDecorator
         }
     }
 
-    public async Task UpdateCartItemAsync(Guid id, UpdateItemDto dto)
+    public async Task<CartItemDto?> UpdateCartItemAsync(Guid id, UpdateItemDto dto)
     {
         try
         {
             logger.LogInformation("Updating item '{menuItemId}' in cart with id '{cartId}'...", dto.MenuItemId, id);
 
-            await next.UpdateCartItemAsync(id, dto);
+            var result = await next.UpdateCartItemAsync(id, dto);
 
             logger.LogInformation("Successfully updated item '{menuItemId}' in cart with id '{cartId}'.", dto.MenuItemId, id);
+
+            return result;
         }
         catch (Exception ex)
         {

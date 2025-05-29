@@ -1,30 +1,29 @@
 <script>
-  import { CartItem } from '$lib/models/cart-item';
   import { cartService } from '$lib/services/cart-service';
 
   /**
-   * @type CartItem
+   * @type import('$lib/services/pizza-ordering-service-api').CartItemDto
    */
   export let item;
 
   function increment() {
-    cartService.updateQuantity(item.pizza.id, item.quantity + 1);
+    cartService.updateQuantity(item.menuItemId, item.quantity + 1);
   }
 
   function decrement() {
-    cartService.updateQuantity(item.pizza.id, item.quantity - 1);
+    cartService.updateQuantity(item.menuItemId, item.quantity - 1);
   }
 
   function remove() {
-    cartService.removeFromCart(item.pizza.id);
+    cartService.removeFromCart(item.menuItemId);
   }
 </script>
 
 <div class="cart-item">
-  <img src={item.pizza.imageUrl} alt={item.pizza.name} />
+  <img src={'https://dummyimage.com/150/000/fff.png&text=unknown'} alt={item.name} />
   <div class="details">
-    <h3>{item.pizza.name}</h3>
-    <p>${item.pizza.price.toFixed(2)} each</p>
+    <h3>{item.name}</h3>
+    <p>${item.unitPrice.price.gross} each</p>
   </div>
   <div class="quantity">
     <button on:click={decrement}>-</button>
@@ -32,7 +31,7 @@
     <button on:click={increment}>+</button>
   </div>
   <div class="total">
-    ${item.totalPrice.toFixed(2)}
+    ${(item.quantity * item.unitPrice.price.gross).toFixed(2)}
   </div>
   <button class="remove" on:click={remove}>×</button>
 </div>

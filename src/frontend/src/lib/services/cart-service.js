@@ -1,81 +1,115 @@
 import { writable } from 'svelte/store';
 import { CartItem } from '../models/cart-item';
-import { Pizza } from '$lib/models/pizza';
+import { pizzaOrderingApi as api } from './pizza-ordering-service-api';
 
 class CartService {
   constructor() {
+    this.cartId = '';
     /**
-     * @type import('svelte/store').Writable<CartItem[]>
+     * @type import('svelte/store').Writable<import('./pizza-ordering-service-api').CartItemDto[]>
      */
     this.cartStore = writable([]);
   }
 
   /**
    *
-   * @param {(param: CartItem[]) => void} callback
+   * @param {(param: import('./pizza-ordering-service-api').CartItemDto[]) => void} callback
    * @returns
    */
   subscribe(callback) {
     return this.cartStore.subscribe(callback);
   }
 
-    /**
-     *
-     * @param {Pizza} pizza
-     * @param {number} quantity
-     */
-  addToCart(pizza, quantity = 1) {
+  async ensureCartIsCreated() {
+    if (this.cartId) return;
+
+    const createdId = await api.createCart();
+    this.cartId = createdId;
+  }
+
+  /**
+   *
+   * @param {import('./pizza-ordering-service-api').MenuItemDto} item
+   * @param {number} quantity
+   */
+  async addToCart(item, quantity = 1) {
+    await this.ensureCartIsCreated();
+
+    var cartItem = await api.patchCartItem(
+      this.cartId,
+      item.id,
+      quantity
+    )
+
     this.cartStore.update(items => {
-      const existingItemIndex = items.findIndex(item => item.pizza.id === pizza.id);
+      const existingItemIndex = items.findIndex(x => x.id === cartItem.id);
 
       if (existingItemIndex >= 0) {
         const updatedItems = [...items];
         updatedItems[existingItemIndex].quantity += quantity;
         return updatedItems;
       } else {
-        return [...items, new CartItem(pizza, quantity)];
+        return [...items, cartItem];
       }
     });
   }
 
   /**
    *
-   * @param {*} pizzaId
+   * @param {string} menuItemId
    */
-  removeFromCart(pizzaId) {
-    this.cartStore.update(items => items.filter(item => item.pizza.id !== pizzaId));
+  async removeFromCart(menuItemId) {
+    await this.ensureCartIsCreated();
+
+    await api.patchCartItem(
+      this.cartId,
+      menuItemId,
+      0
+    )
+
+    this.cartStore.update(items => items.filter(item => item.menuItemId !== menuItemId));
   }
 
   /**
    *
-   * @param {string} pizzaId
+   * @param {string} menuItemId
    * @param {number} quantity
    * @returns
    */
-  updateQuantity(pizzaId, quantity) {
+  async updateQuantity(menuItemId, quantity) {
+    await this.ensureCartIsCreated();
+
     if (quantity <= 0) {
-      this.removeFromCart(pizzaId);
+      await this.removeFromCart(menuItemId);
       return;
     }
 
+    var cartItem = await api.patchCartItem(
+      this.cartId,
+      menuItemId,
+      quantity
+    )
+
     this.cartStore.update(items => {
       return items.map(item => {
-        if (item.pizza.id === pizzaId) {
-          return new CartItem(item.pizza, quantity);
+        if (item.menuItemId === menuItemId) {
+          return cartItem;
         }
         return item;
       });
     });
   }
 
-  clearCart() {
+  async clearCart() {
+    this.cartId = '';
     this.cartStore.set([]);
+    await this.ensureCartIsCreated();
   }
 
   getTotalAmount() {
     let total = 0;
     this.cartStore.subscribe(items => {
-      total = items.reduce((sum, item) => sum + item.totalPrice, 0);
+      total = items.reduce((sum, item) => sum + (item.quantity * item.unitPrice.price.gross), 0);
     })();
     return total;
   }

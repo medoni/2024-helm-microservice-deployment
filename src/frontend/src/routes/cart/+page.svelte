@@ -7,7 +7,7 @@
   import { CartItem } from '$lib/models/cart-item';
 
   /**
-   * @type CartItem[]
+   * @type import('$lib/services/pizza-ordering-service-api').CartItemDto[]
    */
   let cartItems = [];
 
@@ -16,15 +16,17 @@
   });
 
   function getTotalAmount() {
-    return cartItems.reduce((sum, item) => sum + item.totalPrice, 0);
+    return cartItems.reduce((sum, item) => sum + item.quantity * item.unitPrice.price.gross, 0);
   }
 
   function placeOrder() {
     if (cartItems.length === 0) return;
 
-    const newOrder = orderService.createOrder(cartItems, getTotalAmount());
-    cartService.clearCart();
-    goto(`/orders/${newOrder.id}`);
+    throw 'Not implemented';
+
+    // const newOrder = orderService.createOrder(cartItems, getTotalAmount());
+    // cartService.clearCart();
+    // goto(`/orders/${newOrder.id}`);
   }
 
   function continueShopping() {
@@ -46,7 +48,7 @@
     </div>
   {:else}
     <div class="cart-items">
-      {#each cartItems as item (item.pizza.id)}
+      {#each cartItems as item (item.id)}
         <CartItemCard {item} />
       {/each}
     </div>

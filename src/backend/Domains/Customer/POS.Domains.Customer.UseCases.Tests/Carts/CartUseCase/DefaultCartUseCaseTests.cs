@@ -104,9 +104,10 @@ public class DefaultCartUseCaseTests
         // act
         var menuItem = menu.Sections.First().Items.First();
         var dto = new AddItemDto(menuItem.Id, DateTimeOffset.UtcNow, 2);
-        await Sut.AddItemToCartAsync(cartId, dto);
+        var result = await Sut.AddItemToCartAsync(cartId, dto);
 
         // assert
+        Assert.That(result!.Quantity, Is.EqualTo(2));
         Assert.That(
             cart.Items.Select(x => new
             {
@@ -170,9 +171,10 @@ public class DefaultCartUseCaseTests
 
         // act
         var dto = new UpdateItemDto(menuItem.Id, DateTimeOffset.UtcNow, 3);
-        await Sut.UpdateCartItemAsync(cartId, dto);
+        var result = await Sut.UpdateCartItemAsync(cartId, dto);
 
         // assert
+        Assert.That(result!.Quantity, Is.EqualTo(3));
         Assert.That(
             cart.Items.Select(x => new { x.MenuItemId, x.Quantity }),
             Is.EqualTo([new {
