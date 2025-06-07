@@ -37,7 +37,12 @@
   </main>
 
   <footer>
-    <p>© {new Date().getFullYear()} - Meine Webanwendung</p>
+    <p>
+      © {new Date().getFullYear()} - Pizza Ordering App -
+      <a class="github-repo" href="https://github.com/medoni/2024-helm-microservice-deployment"
+        >GitHub</a
+      >
+    </p>
   </footer>
 </div>
 
@@ -93,5 +98,25 @@
     background-color: #f8f8f8;
     text-align: center;
     font-size: 0.8rem;
+  }
+
+  a.github-repo {
+    color: black;
+    position: relative;
+    padding-left: 1.5em;
+    line-height: 1.6;
+    text-decoration: none;
+  }
+  a.github-repo::before {
+    content: '';
+    display: inline-block;
+    background: url('/github-mark.svg') no-repeat left center;
+    background-size: auto 1em;
+    width: 1.2em;
+    height: 1em;
+    position: absolute;
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%);
   }
 </style>
