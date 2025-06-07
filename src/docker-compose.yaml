@@ -19,7 +19,15 @@ services:
         condition: service_healthy
       PizzaDbMigrations:
         condition: service_completed_successfully
-   
+  
+  PizzaApp:
+    image: "${CONTAINER_REGISTRY:-}pizza-app:${IMAGE_TAG:-latest}"
+    build:
+      context: frontend
+      dockerfile: Dockerfile
+    ports:
+      - "5174:80"
+
   PizzaDb:
     image: postgres:16.4
     environment:
