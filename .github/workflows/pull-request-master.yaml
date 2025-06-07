@@ -13,6 +13,10 @@ jobs:
   backend-tests:
     name: Backend unit and integration tests
     uses: ./.github/workflows/_backend-tests.yaml
+  
+  frontend-tests:
+    name: Frontend tests
+    uses: ./.github/workflows/_frontend-tests.yaml
 
   helm-unit-tests:
     name: Helm unit tests
