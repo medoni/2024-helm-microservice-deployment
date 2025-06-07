@@ -9,6 +9,7 @@ internal static class CartItemDtoMapper
     => new CartItemDto(
         item.Id,
         item.CreatedAt,
+        item.MenuItemId,
         item.Name,
         item.Description,
         item.UnitPrice.ToDto(),

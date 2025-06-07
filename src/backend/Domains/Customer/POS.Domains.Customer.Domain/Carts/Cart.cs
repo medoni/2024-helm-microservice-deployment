@@ -114,7 +114,7 @@ public class Cart : AggregateRoot
     /// <param name="menu">The menu where the cart was created from.</param>
     /// <param name="menuItemId">Menu item to add or update.</param>
     /// <param name="newQuantity">New quantity of the item.</param>
-    public void AddOrUpdateItem(
+    public CartItem? AddOrUpdateItem(
         DateTimeOffset changedAt,
         Menu menu,
         Guid menuItemId,
@@ -130,11 +130,11 @@ public class Cart : AggregateRoot
         var item = _state.Items.FirstOrDefault(x => x.MenuItemId == menuItemId);
         if (newQuantity == 0)
         {
-            if (item is null) return;
+            if (item is null) return null;
 
             _state.Items.Remove(item);
             Apply(new CartItemRemovedEvent(Id, item.Id, changedAt, item.UnitPrice.ToDto(), item.Quantity));
-            return;
+            return null;
         }
 
         IDomainEvent domainEvent;
@@ -161,6 +161,7 @@ public class Cart : AggregateRoot
         item.Quantity = newQuantity;
         item.LastChangedAt = changedAt;
         Apply(domainEvent);
+        return item;
     }
 
     /// <summary>
