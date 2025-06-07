@@ -75,7 +75,7 @@
           </tr>
         </thead>
         <tbody>
-          {#each order.items as item}
+          {#each order.items as item (item.itemId)}
             <tr>
               <td>{item.name}</td>
               <td>{item.unitPrice.price.gross.toFixed(2)} {item.unitPrice.price.currency}</td>

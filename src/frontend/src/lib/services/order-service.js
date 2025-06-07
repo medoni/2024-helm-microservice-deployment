@@ -16,7 +16,7 @@ class OrderService {
     const rawOrderIds = localStorage.getItem(ORDER_STORAGE_KEY) || '[]';
     const orderIds = JSON.parse(rawOrderIds);
 
-    this.orderIds.update((_) => orderIds);
+    this.orderIds.update(() => orderIds);
   }
 
   async storeOrderIds() {

@@ -1,16 +1,19 @@
 <script>
   import '../app.css';
   import { cartService } from '$lib/services/cart-service';
-  import { onMount } from 'svelte';
+  import { onMount, onDestroy } from 'svelte';
 
   let cartItemsCount = 0;
+
+  const unsubscribe = cartService.subscribe((items) => {
+    cartItemsCount = items.reduce((count, item) => count + item.quantity, 0);
+  });
 
   onMount(async () => {
     cartService.tryLoadExistingCart();
   });
-
-  const unsubscribe = cartService.subscribe((items) => {
-    cartItemsCount = items.reduce((count, item) => count + item.quantity, 0);
+  onDestroy(() => {
+    unsubscribe();
   });
 </script>
 

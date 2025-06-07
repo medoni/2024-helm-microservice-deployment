@@ -1,10 +1,11 @@
 <script>
   import { cartService } from '$lib/services/cart-service';
-  import { orderService } from '$lib/services/order-service';
   import CartItemCard from '$lib/components/cart-item.svelte';
   import Button from '$lib/components/button.svelte';
   import { goto } from '$app/navigation';
-  import { onMount } from 'svelte';
+  import { onMount, onDestroy } from 'svelte';
+  import LoadingSpinner from '$lib/components/loading-spinner.svelte';
+  import ErrorMessage from '$lib/components/error-message.svelte';
 
   /**
    * @type {import('$lib/services/pizza-ordering-service-api').CartDto?}
@@ -35,6 +36,10 @@
     }
   });
 
+  onDestroy(() => {
+    unsubscribe();
+  });
+
   async function loadFullCart() {
     cart = await cartService.loadFullCart();
   }
@@ -58,7 +63,11 @@
 <div class="cart-container">
   <h1>Your Cart</h1>
 
-  {#if cartItems.length === 0}
+  {#if loading}
+    <LoadingSpinner message="Loading your cart..." />
+  {:else if error}
+    <ErrorMessage message={error} />
+  {:else if cartItems.length === 0}
     <div class="empty-cart">
       <p>Your cart is empty</p>
       <Button label="Browse Menu" onClick={continueShopping} />

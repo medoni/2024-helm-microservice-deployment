@@ -149,7 +149,7 @@ class CartService {
   async clearCart() {
     this.cartId = '';
     localStorage.removeItem(CART_ID_STORAGE_KEY);
-    this.cartStore.update((_) => []);
+    this.cartStore.update(() => []);
   }
 
   /**
