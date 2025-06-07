@@ -1,10 +1,12 @@
+import { configService } from './config-service';
+
 /**
  * Service to communicate with the Pizza Ordering API
  */
 class PizzaOrderingServiceApi {
     constructor() {
-      // Base URL for API calls - should be configurable for different environments
-      this.baseUrl = import.meta.env.VITE_API_BASE_URL;
+      // Base URL for API calls - dynamically loaded from config
+      this.baseUrl = configService.getConfig('pizzaApiUrl');
       /**
        * @type {Record<string, string>}
        */

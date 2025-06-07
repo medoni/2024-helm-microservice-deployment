@@ -27,6 +27,8 @@ services:
       dockerfile: Dockerfile
     ports:
       - "5174:80"
+    environment:
+      - CONFIG_PIZZA_API_URL=http://localhost:5000
 
   PizzaDb:
     image: postgres:16.4
