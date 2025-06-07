@@ -9,7 +9,7 @@
     cartService.tryLoadExistingCart();
   });
 
-  const unsubscribe = cartService.subscribe(items => {
+  const unsubscribe = cartService.subscribe((items) => {
     cartItemsCount = items.reduce((count, item) => count + item.quantity, 0);
   });
 </script>
@@ -18,14 +18,14 @@
   <header>
     <nav>
       <a href="/">Home</a>
-        <a href="/menu">Menu</a>
-        <a href="/cart" class="cart-link">
-          Cart
-          {#if cartItemsCount > 0}
-            <span class="cart-badge">{cartItemsCount}</span>
-          {/if}
-        </a>
-        <a href="/orders">My Orders</a>
+      <a href="/menu">Menu</a>
+      <a href="/cart" class="cart-link">
+        Cart
+        {#if cartItemsCount > 0}
+          <span class="cart-badge">{cartItemsCount}</span>
+        {/if}
+      </a>
+      <a href="/orders">My Orders</a>
     </nav>
   </header>
 

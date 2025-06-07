@@ -4,182 +4,185 @@ import { configService } from './config-service';
  * Service to communicate with the Pizza Ordering API
  */
 class PizzaOrderingServiceApi {
-    constructor() {
-      // Base URL for API calls - dynamically loaded from config
-      this.baseUrl = configService.getConfig('pizzaApiUrl');
-      /**
-       * @type {Record<string, string>}
-       */
-      this.headers = {
-        'Content-Type': 'application/json',
-        'Accept': 'application/json'
-      };
-    }
-
+  constructor() {
+    // Base URL for API calls - dynamically loaded from config
+    this.baseUrl = configService.getConfig('pizzaApiUrl');
     /**
-     * Set the authentication token for API requests
-     * @param {string} token - JWT or other auth token
+     * @type {Record<string, string>}
      */
-    setAuthToken(token) {
-      if (token) {
-        this.headers['Authorization'] = `Bearer ${token}`;
-      } else {
-        delete this.headers['Authorization'];
-      }
-    }
+    this.headers = {
+      'Content-Type': 'application/json',
+      Accept: 'application/json',
+    };
+  }
 
-    /**
-     * @param {string} url
-     * @param {object} options
-     * General fetch handler with error management
-     */
-    async fetchWithErrorHandling(url, options) {
-      try {
-        const response = await fetch(url, options);
-
-        // Parse JSON response if present
-        const contentType = response.headers.get('content-type');
-        const data = contentType && contentType.includes('application/json')
-          ? await response.json()
-          : await response.text();
-
-        // Handle API errors
-        if (!response.ok) {
-          const error = {
-            status: response.status,
-            statusText: response.statusText,
-            data
-          };
-          throw error;
-        }
-
-        return data;
-      } catch (error) {
-        console.error('API request failed:', error);
-        throw error;
-      }
-    }
-
-    /**
-     * @returns {Promise<MenuDto>}
-     */
-    async getActiveMenu() {
-      return this.fetchWithErrorHandling(`${this.baseUrl}/v1/Menu/active`, {
-          method: 'GET',
-          headers: this.headers,
-      });
-    }
-
-    /**
-     * @returns {Promise<string>}
-     */
-    async createCart() {
-      const createDto = {
-        id: crypto.randomUUID(),
-        requestedAt: new Date()
-      };
-
-      await this.fetchWithErrorHandling(`${this.baseUrl}/v1/Cart/`, {
-          method: 'POST',
-          headers: this.headers,
-          body: JSON.stringify(createDto)
-      });
-
-      return createDto.id;
-    }
-
-    /**
-     *
-     * @param {string} cartId
-     * @returns {Promise<CartDto?>}
-     */
-    async getCartById(cartId) {
-      const cart = await this.fetchWithErrorHandling(`${this.baseUrl}/v1/Cart/${cartId}`, {
-          method: 'GET',
-          headers: this.headers
-      });
-
-      return cart;
-    }
-
-    /**
-     *
-     * @param {string} cartId
-     * @returns {Promise<CartItemDto[]>}
-     */
-    async getCartItemsById(cartId) {
-      let items = [];
-      let paginationToken = null;
-
-      for(;;) {
-        const resultset = await this.fetchWithErrorHandling(`${this.baseUrl}/v1/Cart/${cartId}/items?token=${paginationToken || ''}`, {
-            method: 'GET',
-            headers: this.headers
-        });
-
-        items = [...resultset.data];
-        paginationToken = resultset.nextPageToken;
-        if (!paginationToken) break;
-      }
-
-      return items;
-    }
-
-    /**
-     *
-     * @param {string} cartId
-     * @param {string} menuItemId
-     * @param {number} newQuantity
-     * @returns {Promise<CartItemDto>}
-     */
-    async patchCartItem(cartId, menuItemId, newQuantity) {
-      const patchDto = {
-        menuItemId: menuItemId,
-        requestedAt: new Date(),
-        quantity: newQuantity
-      };
-
-      return this.fetchWithErrorHandling(`${this.baseUrl}/v1/Cart/${cartId}/items`, {
-          method: 'PATCH',
-          headers: this.headers,
-          body: JSON.stringify(patchDto)
-      });
-    }
-
-    /**
-     *
-     * @param {string} cartId
-     * @returns {Promise<CartCheckedOutDto>}
-     */
-    async cartCheckout(cartId) {
-      const checkoutDto = { checkoutAt: new Date() };
-      const result = this.fetchWithErrorHandling(`${this.baseUrl}/v1/Cart/${cartId}/checkout`, {
-          method: 'POST',
-          headers: this.headers,
-          body: JSON.stringify(checkoutDto)
-      });
-
-      return result;
-    }
-
-    /**
-     *
-     * @param {string} orderId
-     * @returns {Promise<OrderDto>}
-     */
-    async getOrderById(orderId) {
-      const result = this.fetchWithErrorHandling(`${this.baseUrl}/v1/Order/${orderId}`, {
-          method: 'GET',
-          headers: this.headers
-      });
-
-      return result;
+  /**
+   * Set the authentication token for API requests
+   * @param {string} token - JWT or other auth token
+   */
+  setAuthToken(token) {
+    if (token) {
+      this.headers['Authorization'] = `Bearer ${token}`;
+    } else {
+      delete this.headers['Authorization'];
     }
   }
 
+  /**
+   * @param {string} url
+   * @param {object} options
+   * General fetch handler with error management
+   */
+  async fetchWithErrorHandling(url, options) {
+    try {
+      const response = await fetch(url, options);
+
+      // Parse JSON response if present
+      const contentType = response.headers.get('content-type');
+      const data =
+        contentType && contentType.includes('application/json')
+          ? await response.json()
+          : await response.text();
+
+      // Handle API errors
+      if (!response.ok) {
+        const error = {
+          status: response.status,
+          statusText: response.statusText,
+          data,
+        };
+        throw error;
+      }
+
+      return data;
+    } catch (error) {
+      console.error('API request failed:', error);
+      throw error;
+    }
+  }
+
+  /**
+   * @returns {Promise<MenuDto>}
+   */
+  async getActiveMenu() {
+    return this.fetchWithErrorHandling(`${this.baseUrl}/v1/Menu/active`, {
+      method: 'GET',
+      headers: this.headers,
+    });
+  }
+
+  /**
+   * @returns {Promise<string>}
+   */
+  async createCart() {
+    const createDto = {
+      id: crypto.randomUUID(),
+      requestedAt: new Date(),
+    };
+
+    await this.fetchWithErrorHandling(`${this.baseUrl}/v1/Cart/`, {
+      method: 'POST',
+      headers: this.headers,
+      body: JSON.stringify(createDto),
+    });
+
+    return createDto.id;
+  }
+
+  /**
+   *
+   * @param {string} cartId
+   * @returns {Promise<CartDto?>}
+   */
+  async getCartById(cartId) {
+    const cart = await this.fetchWithErrorHandling(`${this.baseUrl}/v1/Cart/${cartId}`, {
+      method: 'GET',
+      headers: this.headers,
+    });
+
+    return cart;
+  }
+
+  /**
+   *
+   * @param {string} cartId
+   * @returns {Promise<CartItemDto[]>}
+   */
+  async getCartItemsById(cartId) {
+    let items = [];
+    let paginationToken = null;
+
+    for (;;) {
+      const resultset = await this.fetchWithErrorHandling(
+        `${this.baseUrl}/v1/Cart/${cartId}/items?token=${paginationToken || ''}`,
+        {
+          method: 'GET',
+          headers: this.headers,
+        }
+      );
+
+      items = [...resultset.data];
+      paginationToken = resultset.nextPageToken;
+      if (!paginationToken) break;
+    }
+
+    return items;
+  }
+
+  /**
+   *
+   * @param {string} cartId
+   * @param {string} menuItemId
+   * @param {number} newQuantity
+   * @returns {Promise<CartItemDto>}
+   */
+  async patchCartItem(cartId, menuItemId, newQuantity) {
+    const patchDto = {
+      menuItemId: menuItemId,
+      requestedAt: new Date(),
+      quantity: newQuantity,
+    };
+
+    return this.fetchWithErrorHandling(`${this.baseUrl}/v1/Cart/${cartId}/items`, {
+      method: 'PATCH',
+      headers: this.headers,
+      body: JSON.stringify(patchDto),
+    });
+  }
+
+  /**
+   *
+   * @param {string} cartId
+   * @returns {Promise<CartCheckedOutDto>}
+   */
+  async cartCheckout(cartId) {
+    const checkoutDto = { checkoutAt: new Date() };
+    const result = this.fetchWithErrorHandling(`${this.baseUrl}/v1/Cart/${cartId}/checkout`, {
+      method: 'POST',
+      headers: this.headers,
+      body: JSON.stringify(checkoutDto),
+    });
+
+    return result;
+  }
+
+  /**
+   *
+   * @param {string} orderId
+   * @returns {Promise<OrderDto>}
+   */
+  async getOrderById(orderId) {
+    const result = this.fetchWithErrorHandling(`${this.baseUrl}/v1/Order/${orderId}`, {
+      method: 'GET',
+      headers: this.headers,
+    });
+
+    return result;
+  }
+}
+
 // Create and export a singleton instance
 export const pizzaOrderingApi = new PizzaOrderingServiceApi();
-
 
 /**
  * @typedef AddItemDto
@@ -348,4 +351,3 @@ export const pizzaOrderingApi = new PizzaOrderingServiceApi();
  * @property {string} id - UUID of the menu to update
  * @property {MenuSectionDto[]} sections - Updated sections of the menu
  */
-

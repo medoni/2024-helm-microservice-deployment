@@ -1,4 +1,4 @@
-import { pizzaOrderingApi as api } from './pizza-ordering-service-api'
+import { pizzaOrderingApi as api } from './pizza-ordering-service-api';
 
 class MenuService {
   constructor() {
@@ -19,7 +19,9 @@ class MenuService {
     const menuDto = await api.getActiveMenu();
     this.menuSections = menuDto.sections;
 
-    this.menuItems = this.menuSections.map(section => section.items).reduce((res, items) => res.concat(items), [])
+    this.menuItems = this.menuSections
+      .map((section) => section.items)
+      .reduce((res, items) => res.concat(items), []);
   }
 
   /**
@@ -48,7 +50,7 @@ class MenuService {
   async getMenuItemById(id) {
     await this.ensureItemsAreLoaded();
 
-    return this.menuItems.find(item => item.id === id) ?? null;
+    return this.menuItems.find((item) => item.id === id) ?? null;
   }
 }
 

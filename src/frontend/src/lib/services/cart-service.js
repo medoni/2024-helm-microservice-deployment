@@ -41,14 +41,13 @@ class CartService {
         this.cartId = cartId;
 
         return true;
-      } catch(ex) {
+      } catch (ex) {
         console.log(ex);
       }
     }
 
     return false;
   }
-
 
   ignoreLoadCartById = 0;
   /**
@@ -65,8 +64,7 @@ class CartService {
       this.cartId = id;
       localStorage.setItem(CART_ID_STORAGE_KEY, id);
       this.cartStore.set(items);
-    }
-    finally {
+    } finally {
       --this.ignoreLoadCartById;
     }
   }
@@ -76,7 +74,7 @@ class CartService {
    * @returns {Promise<import('./pizza-ordering-service-api').CartDto?>}
    */
   async loadFullCart() {
-    if (!await this.tryLoadExistingCart()) return null;
+    if (!(await this.tryLoadExistingCart())) return null;
 
     const cart = await api.getCartById(this.cartId);
 
@@ -92,17 +90,13 @@ class CartService {
     await this.ensureCartIsCreated();
 
     const existingItems = get(this.cartStore),
-      existingItem = existingItems.find(x => x.menuItemId === item.id),
+      existingItem = existingItems.find((x) => x.menuItemId === item.id),
       newQuantity = existingItem ? existingItem.quantity + quantity : quantity;
 
-    var cartItem = await api.patchCartItem(
-      this.cartId,
-      item.id,
-      newQuantity
-    )
+    var cartItem = await api.patchCartItem(this.cartId, item.id, newQuantity);
 
-    this.cartStore.update(items => {
-      const existingItemIndex = items.findIndex(x => x.menuItemId === cartItem.menuItemId);
+    this.cartStore.update((items) => {
+      const existingItemIndex = items.findIndex((x) => x.menuItemId === cartItem.menuItemId);
 
       if (existingItemIndex >= 0) {
         const updatedItems = [...items];
@@ -121,13 +115,9 @@ class CartService {
   async removeFromCart(menuItemId) {
     await this.ensureCartIsCreated();
 
-    await api.patchCartItem(
-      this.cartId,
-      menuItemId,
-      0
-    )
+    await api.patchCartItem(this.cartId, menuItemId, 0);
 
-    this.cartStore.update(items => items.filter(item => item.menuItemId !== menuItemId));
+    this.cartStore.update((items) => items.filter((item) => item.menuItemId !== menuItemId));
   }
 
   /**
@@ -144,14 +134,10 @@ class CartService {
       return;
     }
 
-    var cartItem = await api.patchCartItem(
-      this.cartId,
-      menuItemId,
-      quantity
-    )
+    var cartItem = await api.patchCartItem(this.cartId, menuItemId, quantity);
 
-    this.cartStore.update(items => {
-      return items.map(item => {
+    this.cartStore.update((items) => {
+      return items.map((item) => {
         if (item.menuItemId === menuItemId) {
           return cartItem;
         }
@@ -162,8 +148,8 @@ class CartService {
 
   async clearCart() {
     this.cartId = '';
-    localStorage.removeItem(CART_ID_STORAGE_KEY)
-    this.cartStore.update(_ => []);
+    localStorage.removeItem(CART_ID_STORAGE_KEY);
+    this.cartStore.update((_) => []);
   }
 
   /**
@@ -178,8 +164,8 @@ class CartService {
 
   getTotalAmount() {
     let total = 0;
-    this.cartStore.subscribe(items => {
-      total = items.reduce((sum, item) => sum + (item.quantity * item.unitPrice.price.gross), 0);
+    this.cartStore.subscribe((items) => {
+      total = items.reduce((sum, item) => sum + item.quantity * item.unitPrice.price.gross, 0);
     })();
     return total;
   }

@@ -31,7 +31,8 @@
     <button on:click={increment}>+</button>
   </div>
   <div class="total">
-    {(item.quantity * item.unitPrice.price.gross).toFixed(2)} {item.unitPrice.price.currency}
+    {(item.quantity * item.unitPrice.price.gross).toFixed(2)}
+    {item.unitPrice.price.currency}
   </div>
   <button class="remove" on:click={remove}>×</button>
 </div>

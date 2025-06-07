@@ -15,7 +15,7 @@
    * @type import('$lib/services/pizza-ordering-service-api').CartItemDto[]
    */
   let cartItems = [];
-  const unsubscribe = cartService.subscribe(async items => {
+  const unsubscribe = cartService.subscribe(async (items) => {
     cartItems = items;
 
     loadFullCart();
@@ -73,12 +73,15 @@
     <div class="cart-summary">
       <div class="total">
         <span>Total Amount:</span>
-        <span class="total-amount">{cart?.totalPrice.gross.toFixed(2)} {cart?.totalPrice.currency}</span>
+        <span class="total-amount"
+          >{cart?.totalPrice.gross.toFixed(2)} {cart?.totalPrice.currency}</span
+        >
       </div>
 
       <div class="vat">
         <span>Vat:</span>
-        <span class="vat-amount">{cart?.totalPrice.vat.toFixed(2)} {cart?.totalPrice.currency}</span>
+        <span class="vat-amount">{cart?.totalPrice.vat.toFixed(2)} {cart?.totalPrice.currency}</span
+        >
       </div>
 
       <div class="actions">

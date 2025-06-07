@@ -5,7 +5,7 @@
   import { onMount } from 'svelte';
   import LoadingSpinner from '$lib/components/loading-spinner.svelte';
   import ErrorMessage from '$lib/components/error-message.svelte';
-  import { page } from '$app/state'
+  import { page } from '$app/state';
 
   const orderId = page.params.id;
   /** @type {import('$lib/services/pizza-ordering-service-api').OrderDto?} */
@@ -30,7 +30,7 @@
    *
    * @param {string | Date} date
    */
-  const dateFormatter = date => new Date(date).toLocaleDateString();
+  const dateFormatter = (date) => new Date(date).toLocaleDateString();
 
   function goBack() {
     goto('/orders');
@@ -48,56 +48,55 @@
     <LoadingSpinner message="Loading you order..." />
   {:else if error}
     <ErrorMessage message={error} />
+  {:else if !order}
+    <div class="not-found">
+      <h2>Order not found</h2>
+      <p>The order you're looking for doesn't exist.</p>
+      <Button label="View All Orders" onClick={goBack} />
+    </div>
   {:else}
-    {#if !order}
-      <div class="not-found">
-        <h2>Order not found</h2>
-        <p>The order you're looking for doesn't exist.</p>
-        <Button label="View All Orders" onClick={goBack} />
+    <div class="order-header">
+      <h1>Order #{order.id}</h1>
+      <div class="order-meta">
+        <p class="date">Placed on: {dateFormatter(order.createdAt)}</p>
+        <p class="status">Status: <span class="status-badge">{order.state}</span></p>
       </div>
-    {:else}
-      <div class="order-header">
-        <h1>Order #{order.id}</h1>
-        <div class="order-meta">
-          <p class="date">Placed on: {dateFormatter(order.createdAt)}</p>
-          <p class="status">Status: <span class="status-badge">{order.state}</span></p>
-        </div>
-      </div>
+    </div>
 
-      <div class="order-items">
-        <h2>Order Items</h2>
-        <table>
-          <thead>
+    <div class="order-items">
+      <h2>Order Items</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Item</th>
+            <th>Price</th>
+            <th>Quantity</th>
+            <th>Total</th>
+          </tr>
+        </thead>
+        <tbody>
+          {#each order.items as item}
             <tr>
-              <th>Item</th>
-              <th>Price</th>
-              <th>Quantity</th>
-              <th>Total</th>
+              <td>{item.name}</td>
+              <td>{item.unitPrice.price.gross.toFixed(2)} {item.unitPrice.price.currency}</td>
+              <td>{item.quantity}</td>
+              <td>{item.totalPrice.gross.toFixed(2)} {item.totalPrice.currency}</td>
             </tr>
-          </thead>
-          <tbody>
-            {#each order.items as item}
-              <tr>
-                <td>{item.name}</td>
-                <td>{item.unitPrice.price.gross.toFixed(2)} {item.unitPrice.price.currency}</td>
-                <td>{item.quantity}</td>
-                <td>{item.totalPrice.gross.toFixed(2)} {item.totalPrice.currency}</td>
-              </tr>
-            {/each}
-          </tbody>
-        </table>
-      </div>
+          {/each}
+        </tbody>
+      </table>
+    </div>
 
-      <div class="order-summary">
-        <div class="total">
-          <span>Total Amount:</span>
-          <span class="total-amount">{order.priceSummary.totalPrice.gross.toFixed(2)} {order.priceSummary.totalPrice.currency}</span>
-        </div>
+    <div class="order-summary">
+      <div class="total">
+        <span>Total Amount:</span>
+        <span class="total-amount"
+          >{order.priceSummary.totalPrice.gross.toFixed(2)}
+          {order.priceSummary.totalPrice.currency}</span
+        >
       </div>
-    {/if}
+    </div>
   {/if}
-
-
 </div>
 
 <style>
@@ -137,7 +136,8 @@
     color: #666;
   }
 
-  .date, .status {
+  .date,
+  .status {
     margin: 5px 0;
   }
 
@@ -162,7 +162,8 @@
     margin-bottom: 30px;
   }
 
-  th, td {
+  th,
+  td {
     padding: 10px;
     text-align: left;
     border-bottom: 1px solid #eee;

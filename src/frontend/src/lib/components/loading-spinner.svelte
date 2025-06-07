@@ -5,7 +5,10 @@
 </script>
 
 <div class="spinner-container">
-  <div class="spinner" style="width: {size}; height: {size}; border-color: {color} transparent {color} transparent;"></div>
+  <div
+    class="spinner"
+    style="width: {size}; height: {size}; border-color: {color} transparent {color} transparent;"
+  ></div>
   {#if message}
     <p class="message">{message}</p>
   {/if}
@@ -34,7 +37,11 @@
   }
 
   @keyframes spin {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
+    0% {
+      transform: rotate(0deg);
+    }
+    100% {
+      transform: rotate(360deg);
+    }
   }
 </style>

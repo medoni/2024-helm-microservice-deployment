@@ -1,8 +1,7 @@
-
 import { get, writable } from 'svelte/store';
 import { pizzaOrderingApi as api } from './pizza-ordering-service-api';
 
-const ORDER_STORAGE_KEY = "pizza-ordering-order-ids"
+const ORDER_STORAGE_KEY = 'pizza-ordering-order-ids';
 
 class OrderService {
   constructor() {
@@ -17,7 +16,7 @@ class OrderService {
     const rawOrderIds = localStorage.getItem(ORDER_STORAGE_KEY) || '[]';
     const orderIds = JSON.parse(rawOrderIds);
 
-    this.orderIds.update(_ => orderIds);
+    this.orderIds.update((_) => orderIds);
   }
 
   async storeOrderIds() {
@@ -42,7 +41,7 @@ class OrderService {
   async createOrder(cartId) {
     const checkoutDto = await api.cartCheckout(cartId);
     const orderId = checkoutDto.orderId;
-    this.orderIds.update(ids => [orderId, ...ids]);
+    this.orderIds.update((ids) => [orderId, ...ids]);
     this.storeOrderIds();
     return checkoutDto;
   }
@@ -63,7 +62,7 @@ class OrderService {
   async loadAllOrders() {
     const orderIds = get(this.orderIds);
 
-    const promisses = orderIds.map(id => this.getOrderById(id));
+    const promisses = orderIds.map((id) => this.getOrderById(id));
     const result = await Promise.all(promisses);
 
     return result;

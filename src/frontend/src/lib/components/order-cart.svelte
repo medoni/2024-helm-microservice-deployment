@@ -10,7 +10,7 @@
   // Status color mapping
   /** @type Record<string, string> */
   const statusColors = {
-    'Created': '#FFA500',
+    Created: '#FFA500',
     // 'preparing': '#3498db',
     // 'ready': '#2ecc71',
     // 'delivered': '#27ae60',
@@ -25,13 +25,17 @@
   </div>
 
   <div class="order-status">
-    <span class="status-indicator" style="background-color: {statusColors[order.state] || '#999'}"></span>
+    <span class="status-indicator" style="background-color: {statusColors[order.state] || '#999'}"
+    ></span>
     <span class="status-text">{order.state.charAt(0).toUpperCase() + order.state.slice(1)}</span>
   </div>
 
   <div class="order-summary">
     <span>{order.items.length} item{order.items.length !== 1 ? 's' : ''}</span>
-    <span class="total">{order.priceSummary.totalPrice.gross.toFixed(2)} {order.priceSummary.totalPrice.currency}</span>
+    <span class="total"
+      >{order.priceSummary.totalPrice.gross.toFixed(2)}
+      {order.priceSummary.totalPrice.currency}</span
+    >
   </div>
 </a>
 
@@ -44,13 +48,15 @@
     margin-bottom: 15px;
     text-decoration: none;
     color: inherit;
-    transition: transform 0.2s, box-shadow 0.2s;
+    transition:
+      transform 0.2s,
+      box-shadow 0.2s;
     background: white;
   }
 
   .order-card:hover {
     transform: translateY(-3px);
-    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
   }
 
   .order-header {

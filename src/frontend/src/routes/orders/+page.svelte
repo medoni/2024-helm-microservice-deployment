@@ -42,22 +42,18 @@
     <LoadingSpinner message="Loading your orders..." />
   {:else if error}
     <ErrorMessage message={error} />
+  {:else if orderItems.length === 0}
+    <div class="empty-orders">
+      <p>You haven't placed any orders yet</p>
+      <Button label="Browse Menu" onClick={goToMenu} />
+    </div>
   {:else}
-    {#if orderItems.length === 0}
-      <div class="empty-orders">
-        <p>You haven't placed any orders yet</p>
-        <Button label="Browse Menu" onClick={goToMenu} />
-      </div>
-    {:else}
-      <div class="orders-list">
-        {#each orderItems as order (order.id)}
-          <OrderCard {order} />
-        {/each}
-      </div>
-    {/if}
+    <div class="orders-list">
+      {#each orderItems as order (order.id)}
+        <OrderCard {order} />
+      {/each}
+    </div>
   {/if}
-
-
 </div>
 
 <style>

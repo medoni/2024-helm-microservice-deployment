@@ -6,9 +6,9 @@ export default {
     adapter: adapter({
       pages: 'build',
       assets: 'build',
-      fallback: "index.html",
+      fallback: 'index.html',
       precompress: false,
-      strict: false
-    })
-  }
+      strict: false,
+    }),
+  },
 };
