@@ -1,0 +1,29 @@
+name: 'Playwright E2E Tests'
+description: 'Run Playwright E2E tests'
+
+inputs:
+  working-directory:
+    description: 'Directory containing the tests'
+    required: false
+    default: 'tests'
+  browser:
+    description: 'Browser to run tests on'
+    required: false
+    default: 'chromium'
+
+runs:
+  using: "composite"
+  steps:
+    - name: Install Playwright
+      shell: bash
+      run: |
+        npm install -D @playwright/test
+        npx playwright install --with-deps ${{ inputs.browser }}
+      working-directory: ${{ inputs.working-directory }}
+
+    - name: Run Playwright tests
+      shell: bash
+      run: |
+        cd ${{ inputs.working-directory }}
+        npx playwright test
+      working-directory: ${{ inputs.working-directory }}

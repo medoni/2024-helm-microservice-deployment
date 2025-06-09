@@ -10,6 +10,12 @@ jobs:
     steps:
     - name: "[SETUP] Checkout code"
       uses: actions/checkout@v4
+    
+    - name: "Foo"
+      uses: ./.github/actions/playwright-e2e
+      with:
+        working-directory: ./src/frontend
+        browser: firefox
 
     - name: "[SETUP] Install Helm"
       uses: azure/setup-helm@v4
