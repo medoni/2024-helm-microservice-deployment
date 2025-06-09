@@ -9,12 +9,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - name: "[SETUP] Checkout code"
-      uses: actions/checkout@v4
-    
-    - name: "Foo"
-      uses: ./.github/actions/playwright-e2e
-      with:
-        working-directory: ./src/tests/playwright
+      uses: actions/checkout@v4    
 
     - name: "[SETUP] Install Helm"
       uses: azure/setup-helm@v4
