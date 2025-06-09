@@ -27,5 +27,7 @@ runs:
     - name: Run Playwright tests
       shell: bash
       run: |
+        pwd
+        ls -la
         pnpm exec playwright test
       working-directory: ${{ inputs.working-directory }}
