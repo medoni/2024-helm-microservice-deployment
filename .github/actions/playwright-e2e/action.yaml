@@ -21,13 +21,12 @@ runs:
     - name: Install Playwright
       shell: bash
       run: |
-        pnpm i        
+        pnpm i
+        npx playwright install --with-deps ${{ inputs.browser }}
       working-directory: ${{ inputs.working-directory }}
 
     - name: Run Playwright tests
       shell: bash
       run: |
-        pwd
-        ls -la
         pnpm exec playwright test
       working-directory: ${{ inputs.working-directory }}
