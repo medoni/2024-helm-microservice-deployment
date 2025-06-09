@@ -14,8 +14,7 @@ jobs:
     - name: "Foo"
       uses: ./.github/actions/playwright-e2e
       with:
-        working-directory: ./src/frontend
-        browser: firefox
+        working-directory: ./src/tests/playwright
 
     - name: "[SETUP] Install Helm"
       uses: azure/setup-helm@v4
