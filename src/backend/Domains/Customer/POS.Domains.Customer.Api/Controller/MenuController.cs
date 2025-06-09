@@ -106,8 +106,7 @@ public class MenuController : ControllerBase
     /// Retrieve the currently active menu.
     /// </summary>
     [HttpGet("active")]
-    [ProducesResponseType(StatusCodes.Status204NoContent)]
-    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType<MenuDto>(StatusCodes.Status200OK)]
     public async Task<IActionResult> GetActiveMenuAsync()
     {
         var menu = await _publishMenuUseCase.GetActiveAsync();

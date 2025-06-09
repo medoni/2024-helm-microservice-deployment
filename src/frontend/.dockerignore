@@ -1,0 +1,10 @@
+node_modules
+pnpm-debug.log
+dist
+Dockerfile
+.vscode
+.DS_Store
+*.log
+*.env
+*.swp
+.idea
