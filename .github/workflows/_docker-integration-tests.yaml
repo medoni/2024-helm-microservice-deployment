@@ -99,7 +99,3 @@ jobs:
       with:
         test-dir: ./src/tests/playwright
         base-url: http://localhost:5174
-    
-    - name: "[SETUP] Run E2 tests"
-      uses: ./.github/workflows/_run-e2e-tests.yaml
-
