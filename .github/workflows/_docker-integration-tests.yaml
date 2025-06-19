@@ -94,7 +94,7 @@ jobs:
         BASE_URL: http://localhost:5000
         SLOWMO: "0"
     
-    - name: "E2E Tests"
+    - name: "[TEST] E2E Tests"
       uses: ./.github/actions/playwright-e2e
       with:
         test-dir: ./src/tests/playwright
