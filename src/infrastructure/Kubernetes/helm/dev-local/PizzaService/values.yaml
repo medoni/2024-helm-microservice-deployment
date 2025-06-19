@@ -1,6 +1,7 @@
 
 global:
   domain: dev-local.pos.mycluster.localhost
+  ingress: traefik
 
 image:
   repository: registry.mycluster.localhost/

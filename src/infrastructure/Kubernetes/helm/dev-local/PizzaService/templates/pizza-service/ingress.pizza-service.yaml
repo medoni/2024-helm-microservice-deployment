@@ -1,3 +1,4 @@
+{{ if eq .Values.global.ingress "traefik" }}
 apiVersion: traefik.io/v1alpha1
 kind: IngressRoute
 metadata:
@@ -22,3 +23,5 @@ spec:
   stripPrefix:
     prefixes:
       - /api
+
+{{ end }}
