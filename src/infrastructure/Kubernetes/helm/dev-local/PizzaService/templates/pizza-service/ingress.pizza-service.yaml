@@ -23,5 +23,24 @@ spec:
   stripPrefix:
     prefixes:
       - /api
-
+{{ else if eq .Values.global.ingress "gke" }}
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: pizza-service-ingress
+  annotations:
+    kubernetes.io/ingress.class: "gce"
+    nginx.ingress.kubernetes.io/rewrite-target: /$1
+spec:
+  rules:
+    - host: pizza-service.{{ .Values.global.domain }}
+      http:
+        paths:
+          - path: /api/(.*)
+            pathType: Prefix
+            backend:
+              service:
+                name: pizza-service
+                port:
+                  number: {{ .Values.services.pizza_service.container.port }}
 {{ end }}
