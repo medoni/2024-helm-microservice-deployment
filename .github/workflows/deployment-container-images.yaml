@@ -5,6 +5,15 @@ on:
     branches:
       - master
   workflow_dispatch:
+    inputs:
+      image_tag:
+        description: 'Docker image tag (e.g., latest, preview, v1.0.0)'
+        required: false
+        default: 'latest'
+        type: string
+
+env:
+  IMAGE_TAG: ${{ github.event_name == 'push' && 'preview' || inputs.image_tag }}
 
 jobs:
   backend-tests:
@@ -21,32 +30,32 @@ jobs:
     with:
       dockerfile:           ./src/backend/Deployables/PizzaService.AspNetCore/Dockerfile
       docker_build_context: ./src
-      target_image_tag:     pizza-service:pr-${{ github.sha }}
+      target_image_tag:     pizza-service:${{ env.IMAGE_TAG }}
     secrets: inherit
-  
+
   build-pizza-service-aws-image:
-    name: Build PizzaService
+    name: Build PizzaService AWS
     uses: ./.github/workflows/_build-and-publish-dockerfile.yaml
     with:
       dockerfile:           ./src/backend/Deployables/PizzaService.Aws/Dockerfile
       docker_build_context: ./src
-      target_image_tag:     pizza-service-aws:pr-${{ github.sha }}
+      target_image_tag:     pizza-service-aws:${{ env.IMAGE_TAG }}
     secrets: inherit
-  
+
   build-pizza-db-migrations-image:
     name: Build Pizza DbMigrations
     uses: ./.github/workflows/_build-and-publish-dockerfile.yaml
     with:
       dockerfile:           ./src/backend/Infrastructure/POS.Persistence.PostgreSql.DbMigrations/Dockerfile
       docker_build_context: ./src
-      target_image_tag:     pizza-db-migrations:pr-${{ github.sha }}
+      target_image_tag:     pizza-db-migrations:${{ env.IMAGE_TAG }}
     secrets: inherit
-  
+
   build-pizza-db-seed-image:
     name: Build Pizza DbSeed
     uses: ./.github/workflows/_build-and-publish-dockerfile.yaml
     with:
       dockerfile:           ./src/backend/Infrastructure/POS.Persistence.DbSeed/Dockerfile
       docker_build_context: ./src
-      target_image_tag:     pizza-db-seed:pr-${{ github.sha }}
+      target_image_tag:     pizza-db-seed:${{ env.IMAGE_TAG }}
     secrets: inherit
