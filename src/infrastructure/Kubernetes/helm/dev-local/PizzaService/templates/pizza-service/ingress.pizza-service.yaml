@@ -33,8 +33,7 @@ metadata:
     nginx.ingress.kubernetes.io/use-regex: "true"
 spec:
   rules:
-    - host: pizza-service.{{ .Values.global.domain }}
-      http:
+    - http:
         paths:
           - path: /api(/|$)(.*)
             pathType: Prefix
