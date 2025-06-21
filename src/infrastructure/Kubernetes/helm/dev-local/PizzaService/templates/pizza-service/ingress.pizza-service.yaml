@@ -36,7 +36,7 @@ spec:
     - host: pizza-service.{{ .Values.global.domain }}
       http:
         paths:
-          - path: /*
+          - path: /
             backend:
               service:
                 name: pizza-service
