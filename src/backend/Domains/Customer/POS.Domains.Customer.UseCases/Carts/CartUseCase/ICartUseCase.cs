@@ -23,7 +23,7 @@ public interface ICartUseCase
     /// </summary>
     /// <param name="id">Id of the cart.</param>
     /// <param name="dto">Dto to add.</param>
-    Task AddItemToCartAsync(Guid id, AddItemDto dto);
+    Task<CartItemDto?> AddItemToCartAsync(Guid id, AddItemDto dto);
 
     /// <summary>
     /// Returns all cart items of the cart.
@@ -37,7 +37,7 @@ public interface ICartUseCase
     /// </summary>
     /// <param name="id">Id of the cart.</param>
     /// <param name="dto">Dto to update.</param>
-    Task UpdateCartItemAsync(Guid id, UpdateItemDto dto);
+    Task<CartItemDto?> UpdateCartItemAsync(Guid id, UpdateItemDto dto);
 
     /// <summary>
     /// Checkout a cart.
