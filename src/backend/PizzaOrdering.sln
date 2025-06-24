@@ -51,6 +51,7 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Other", "Other", "{E898B59F-AC60-4CD8-B3B3-C4AD0CEE7206}"
 	ProjectSection(SolutionItems) = preProject
 		Directory.Build.props = Directory.Build.props
+		global.json = global.json
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Testing", "Testing", "{80A141AC-F0C3-4DF1-A696-F419BBD0C7C2}"
@@ -82,6 +83,12 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "POS.Shared.Infrastructure.PubSub.Abstractions", "Shared\Infrastructure\POS.Shared.Infrastructure.PubSub.Abstractions\POS.Shared.Infrastructure.PubSub.Abstractions.csproj", "{D6DDDD81-C8C6-464D-A2DD-3DB0FFC2DAB3}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "POS.Infrastructure.PubSub.Sns", "Infrastructure\POS.Infrastructure.PubSub.Sns\POS.Infrastructure.PubSub.Sns.csproj", "{41A5631E-D866-A448-7B73-240661CEC228}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PizzaService.Gcp", "Deployables\PizzaService.Gcp\PizzaService.Gcp.csproj", "{1FC950F3-80F9-FC8E-5B58-75B0E8DB23FF}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "POS.Domains.Customer.Persistence.FireStore", "Domains\Customer\POS.Domains.Customer.Persistence.FireStore\POS.Domains.Customer.Persistence.FireStore.csproj", "{71C6CEF2-EE27-C2B5-6F76-25376D594547}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "POS.Domains.Customer.Persistence.FireStore.Tests", "Domains\Customer\POS.Domains.Customer.Persistence.FireStore.Tests\POS.Domains.Customer.Persistence.FireStore.Tests.csproj", "{DC400829-8123-4D87-8FAC-657F0556E271}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "POS.Domains.Customer.UseCases.Tests", "Domains\Customer\POS.Domains.Customer.UseCases.Tests\POS.Domains.Customer.UseCases.Tests.csproj", "{0A685D5F-4A2A-46EA-89D5-A83FFEB846BD}"
 EndProject
@@ -201,6 +208,18 @@ Global
 		{41A5631E-D866-A448-7B73-240661CEC228}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{41A5631E-D866-A448-7B73-240661CEC228}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{41A5631E-D866-A448-7B73-240661CEC228}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1FC950F3-80F9-FC8E-5B58-75B0E8DB23FF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1FC950F3-80F9-FC8E-5B58-75B0E8DB23FF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1FC950F3-80F9-FC8E-5B58-75B0E8DB23FF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1FC950F3-80F9-FC8E-5B58-75B0E8DB23FF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{71C6CEF2-EE27-C2B5-6F76-25376D594547}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{71C6CEF2-EE27-C2B5-6F76-25376D594547}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{71C6CEF2-EE27-C2B5-6F76-25376D594547}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{71C6CEF2-EE27-C2B5-6F76-25376D594547}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DC400829-8123-4D87-8FAC-657F0556E271}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DC400829-8123-4D87-8FAC-657F0556E271}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DC400829-8123-4D87-8FAC-657F0556E271}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DC400829-8123-4D87-8FAC-657F0556E271}.Release|Any CPU.Build.0 = Release|Any CPU
 		{0A685D5F-4A2A-46EA-89D5-A83FFEB846BD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{0A685D5F-4A2A-46EA-89D5-A83FFEB846BD}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0A685D5F-4A2A-46EA-89D5-A83FFEB846BD}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -248,6 +267,9 @@ Global
 		{38B2F586-DF35-4656-9C06-1CF96F629D76} = {CFA687FB-6CD6-4A14-BE84-465F271F99FD}
 		{D6DDDD81-C8C6-464D-A2DD-3DB0FFC2DAB3} = {7BA5BE10-C931-4E06-887E-8CB57181EB4F}
 		{41A5631E-D866-A448-7B73-240661CEC228} = {5FD8AA1D-33AA-4C0D-9D17-A2A7EF4C8C0D}
+		{1FC950F3-80F9-FC8E-5B58-75B0E8DB23FF} = {C2748FB2-AC6E-42CD-A53D-4EA329E24FF4}
+		{71C6CEF2-EE27-C2B5-6F76-25376D594547} = {CFA687FB-6CD6-4A14-BE84-465F271F99FD}
+		{DC400829-8123-4D87-8FAC-657F0556E271} = {CFA687FB-6CD6-4A14-BE84-465F271F99FD}
 		{0A685D5F-4A2A-46EA-89D5-A83FFEB846BD} = {CFA687FB-6CD6-4A14-BE84-465F271F99FD}
 		{A19BEE5F-557F-4206-9391-A4399D4DF4B3} = {CFA687FB-6CD6-4A14-BE84-465F271F99FD}
 	EndGlobalSection
