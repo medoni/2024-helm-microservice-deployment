@@ -1,0 +1,21 @@
+site_name: 'Pizza Ordering System'
+site_description: 'Main documentation for the example Pizza-Ordering-System example project'
+repo_url: https://github.com/medoni/2024-helm-microservice-deployment
+edit_uri: edit/master/docs
+
+plugins:
+- techdocs-core
+
+nav:
+- Overview: overview/what-is.md
+- Getting Started:
+  - Deployment: 
+    - Kubernetes: deployment/kubernetes.md
+    - Aws Serverless: deployment/aws-serverless.md
+    - Docker Compose: deployment/docker-compose.md
+- Architecture Decision Records (ADRs):
+  - Overview: 'architecture-decisions/index.md'
+  - ADR001 - Architecture Decision Record (ADR) log: 'architecture-decisions/adr001-add-adr-log.md'
+- FAQ:
+  - Overview: 'faq/index.md'
+  - Technical FAQ: 'faq/technical.md'

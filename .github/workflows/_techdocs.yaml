@@ -1,0 +1,59 @@
+name: Build and publish dockerfile
+
+on:
+  workflow_call:
+    inputs:
+      deploy:
+        required: true
+        type: boolean
+
+concurrency:
+  group: "pages"
+  cancel-in-progress: false
+
+jobs:
+  build:
+    name: Build documentation using TechDocs
+    runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
+    steps: 
+    - name: Checkout code
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+    
+    - name: Setup node
+      uses: actions/setup-node@v4
+      with:
+        node-version: latest
+    
+    - name: Build docs
+      run: npx @techdocs/cli build
+    
+    - name: Setup Pages
+      uses: actions/configure-pages@v3
+    
+    - name: Publish docs artifact
+      if: inputs.deploy
+      uses: actions/upload-pages-artifact@v1
+      with:
+        path: ./site/
+  
+  deploy:
+    name: Deploy documentation
+    if: inputs.deploy
+    runs-on: ubuntu-latest
+    needs: build
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      # environment created automatically by GitHub
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v2
