@@ -1,0 +1,77 @@
+name: Deployment container images
+
+on:
+  push:
+    branches:
+      - master
+  workflow_dispatch:
+    inputs:
+      image_tag:
+        description: 'Docker image tag (e.g., latest, preview, v1.0.0)'
+        required: false
+        default: 'latest'
+        type: string
+
+jobs:
+  determine-image-tag:
+    name: Determine image tag
+    runs-on: ubuntu-latest
+    outputs:
+      image_tag: ${{ steps.tag.outputs.image_tag }}
+    steps:
+      - name: Set image tag
+        id: tag
+        run: |
+          if [ "${{ github.event_name }}" = "push" ]; then
+            echo "image_tag=preview" >> $GITHUB_OUTPUT
+          else
+            echo "image_tag=${{ inputs.image_tag }}" >> $GITHUB_OUTPUT
+          fi
+
+  backend-tests:
+    name: Backend unit and integration tests
+    uses: ./.github/workflows/_backend-tests.yaml
+
+  helm-unit-tests:
+    name: Helm unit tests
+    uses: ./.github/workflows/_helm-unit-tests.yaml
+
+  build-pizza-service-image:
+    name: Build PizzaService
+    needs: determine-image-tag
+    uses: ./.github/workflows/_build-and-publish-dockerfile.yaml
+    with:
+      dockerfile:           ./src/backend/Deployables/PizzaService.AspNetCore/Dockerfile
+      docker_build_context: ./src
+      target_image_tag:     pizza-service:${{ needs.determine-image-tag.outputs.image_tag }}
+    secrets: inherit
+
+  build-pizza-service-aws-image:
+    name: Build PizzaService AWS
+    needs: determine-image-tag
+    uses: ./.github/workflows/_build-and-publish-dockerfile.yaml
+    with:
+      dockerfile:           ./src/backend/Deployables/PizzaService.Aws/Dockerfile
+      docker_build_context: ./src
+      target_image_tag:     pizza-service-aws:${{ needs.determine-image-tag.outputs.image_tag }}
+    secrets: inherit
+
+  build-pizza-db-migrations-image:
+    name: Build Pizza DbMigrations
+    needs: determine-image-tag
+    uses: ./.github/workflows/_build-and-publish-dockerfile.yaml
+    with:
+      dockerfile:           ./src/backend/Infrastructure/POS.Persistence.PostgreSql.DbMigrations/Dockerfile
+      docker_build_context: ./src
+      target_image_tag:     pizza-db-migrations:${{ needs.determine-image-tag.outputs.image_tag }}
+    secrets: inherit
+
+  build-pizza-db-seed-image:
+    name: Build Pizza DbSeed
+    needs: determine-image-tag
+    uses: ./.github/workflows/_build-and-publish-dockerfile.yaml
+    with:
+      dockerfile:           ./src/backend/Infrastructure/POS.Persistence.DbSeed/Dockerfile
+      docker_build_context: ./src
+      target_image_tag:     pizza-db-seed:${{ needs.determine-image-tag.outputs.image_tag }}
+    secrets: inherit
