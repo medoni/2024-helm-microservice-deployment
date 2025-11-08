@@ -46,18 +46,17 @@ jobs:
       run: pnpm install
       working-directory: ./src/frontend
 
-    - name: Start dev server
-      run: pnpm run dev &
-      working-directory: ./src/frontend
+    - name: Install Playwright dependencies
+      run: pnpm install
+      working-directory: ./src/tests/playwright
 
-    - name: Wait for dev server
-      run: npx wait-on http://localhost:5173 --timeout 60000
+    - name: Install Playwright browsers
+      run: pnpm exec playwright install --with-deps
+      working-directory: ./src/tests/playwright
 
-    - name: Run Playwright E2E tests
-      uses: ./.github/actions/playwright-e2e
-      with:
-        test-dir: ./src/tests/playwright
-        base-url: http://localhost:5173
+    - name: Run Playwright tests
+      run: pnpm test
+      working-directory: ./src/tests/playwright
 
     - name: Upload Playwright report
       if: always()
