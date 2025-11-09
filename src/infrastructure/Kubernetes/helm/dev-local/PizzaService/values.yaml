@@ -16,6 +16,7 @@ services:
     image: pizza-app # default
     container:
       port: 5174 # default
+      targetPort: 80 # default
 
   pgweb:
     enabled: true

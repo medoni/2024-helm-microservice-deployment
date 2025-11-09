@@ -6,6 +6,6 @@ spec:
   type: ClusterIP
   ports:
     - port: {{ .Values.services.pizza_app.container.port }}
-      targetPort: {{ .Values.services.pizza_app.container.port }}
+      targetPort: {{ .Values.services.pizza_app.container.targetPort }}
   selector:
     app: pizza-app
