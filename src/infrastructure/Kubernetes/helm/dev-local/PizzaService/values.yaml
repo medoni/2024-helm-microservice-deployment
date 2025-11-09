@@ -11,6 +11,11 @@ services:
     image: pizza-service # default
     container:
       port: 8080 # default
+  
+  pizza_app:
+    image: pizza-app # default
+    container:
+      port: 5174 # default
 
   pgweb:
     enabled: true
@@ -24,7 +29,7 @@ services:
     tag: 16.4 # default
     container:
       host: pizza-db-postgres
-      port: 5432 # default, /postres.port
+      port: 5432 # default, /postgres.port
     database: pizza_service # default
 
 jobs:
