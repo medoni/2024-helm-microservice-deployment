@@ -26,20 +26,20 @@ spec:
           readinessProbe:
             httpGet:
               path: /
-              port: {{ .Values.services.pizza_app.container.port }}
+              port: {{ .Values.services.pizza_app.container.targetPort }}
             initialDelaySeconds: 5
             periodSeconds: 5
 
           livenessProbe:
             httpGet:
               path: /
-              port: {{ .Values.services.pizza_app.container.port }}
+              port: {{ .Values.services.pizza_app.container.targetPort }}
             initialDelaySeconds: 5
             periodSeconds: 5
   
           startupProbe:
             httpGet:
               path: /
-              port: {{ .Values.services.pizza_app.container.port }}
+              port: {{ .Values.services.pizza_app.container.targetPort }}
             failureThreshold: 10
             periodSeconds: 10
