@@ -22,6 +22,10 @@ spec:
           image: "{{ .Values.image.repository }}{{ .Values.services.pizza_app.image }}:{{ .Values.image.tag }}"
           ports:
             - containerPort: {{ .Values.services.pizza_app.container.port }}
+          
+          env:
+            - name: CONFIG_PIZZA_API_URL
+              value: ://pizza-service.{{ .Values.global.domain }}/api
 
           readinessProbe:
             httpGet:
