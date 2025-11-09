@@ -1,0 +1,15 @@
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+metadata:
+  name: ir-pizza-app
+spec:
+  entryPoints:
+    - web
+  routes:
+    - match: Host(`app.{{ .Values.global.domain }}`)
+      kind: Rule
+      services:
+        - name: pizza-app
+          port: {{ .Values.services.pizza_app.container.port }}
+      middlewares:
+        - name: irm-pizza-app
