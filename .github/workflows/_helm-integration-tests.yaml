@@ -61,6 +61,15 @@ jobs:
           --set global.domain=pos.mycluster.localhost \
           -n $POS_NAMESPACE \
           --debug
+    
+    - name: "[TEST] Check ingress / of `app` (frontend)"
+      run: |
+        curl --fail -v app.pos.mycluster.localhost/ \
+          --retry-all-errors \
+          --max-time 10 \
+          --retry 10 \
+          --retry-delay 0 \
+          --retry-max-time 60
 
     - name: "[TEST] Check ingress /health of `pizza-service`"
       run: |
