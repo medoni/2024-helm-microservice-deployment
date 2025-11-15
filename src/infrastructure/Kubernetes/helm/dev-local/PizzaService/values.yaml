@@ -11,6 +11,8 @@ services:
     image: pizza-service # default
     container:
       port: 8080 # default
+    cors:
+      allowedHosts: "//app.{{ .Values.global.domain }}"
   
   pizza_app:
     image: pizza-app # default

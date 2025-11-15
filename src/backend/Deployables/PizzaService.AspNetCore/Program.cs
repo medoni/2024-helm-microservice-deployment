@@ -59,9 +59,18 @@ internal static class Program
         {
             options.AddPolicy(policyName, policy =>
             {
-                var allowedHosts = (
-                    configuration["AllowedHosts"] ?? "*"
-                ).Split(',', StringSplitOptions.RemoveEmptyEntries);
+                var allowedHostsConfig = configuration["AllowedHosts"];
+
+                if (string.IsNullOrWhiteSpace(allowedHostsConfig))
+                {
+                    throw new InvalidOperationException(
+                        "CORS configuration error: 'AllowedHosts' is not configured. " +
+                        "Please set 'AllowedHosts' in appsettings.json or environment variables."
+                    );
+                }
+
+                var allowedHosts = allowedHostsConfig
+                    .Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
 
                 policy.WithOrigins(allowedHosts)
                     .AllowAnyMethod()
