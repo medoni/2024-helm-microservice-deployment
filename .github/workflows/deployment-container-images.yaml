@@ -52,7 +52,7 @@ jobs:
     uses: ./.github/workflows/_build-and-publish-dockerfile.yaml
     with:
       dockerfile:           ./src/frontend/Dockerfile
-      docker_build_context: ./src
+      docker_build_context: ./src/frontend
       target_image_tag:     pizza-app:${{ needs.determine-image-tag.outputs.image_tag }}
     secrets: inherit
 
