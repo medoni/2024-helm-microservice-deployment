@@ -100,7 +100,7 @@ jobs:
       uses: ./.github/actions/playwright-e2e
       with:
         test-dir: ./src/tests/playwright
-        base-url: http://pizza-service.pos.mycluster.localhost
+        base-url: http://app.pos.mycluster.localhost
     
     - name: "[CLEANUP] Kubernetes - Overview"
       if: always()

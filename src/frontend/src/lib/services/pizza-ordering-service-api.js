@@ -1,4 +1,5 @@
 import { configService } from './config-service';
+import { generateUUID } from '../utils/uuid';
 
 /**
  * Service to communicate with the Pizza Ordering API
@@ -76,7 +77,7 @@ class PizzaOrderingServiceApi {
    */
   async createCart() {
     const createDto = {
-      id: crypto.randomUUID(),
+      id: generateUUID(),
       requestedAt: new Date(),
     };
 
