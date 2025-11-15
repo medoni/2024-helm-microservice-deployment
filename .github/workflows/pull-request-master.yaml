@@ -33,7 +33,6 @@ jobs:
 
   build-pizza-app-image:
     name: Build PizzaApp
-    needs: determine-image-tag
     uses: ./.github/workflows/_build-and-publish-dockerfile.yaml
     with:
       dockerfile:           ./src/frontend/Dockerfile
