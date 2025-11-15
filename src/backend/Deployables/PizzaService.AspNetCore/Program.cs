@@ -59,20 +59,20 @@ internal static class Program
         {
             options.AddPolicy(policyName, policy =>
             {
-                var allowedHostsConfig = configuration["AllowedHosts"];
+                var allowedOriginsConfig = configuration["Cors:AllowedOrigins"];
 
-                if (string.IsNullOrWhiteSpace(allowedHostsConfig))
+                if (string.IsNullOrWhiteSpace(allowedOriginsConfig))
                 {
                     throw new InvalidOperationException(
-                        "CORS configuration error: 'AllowedHosts' is not configured. " +
-                        "Please set 'AllowedHosts' in appsettings.json or environment variables."
+                        "CORS configuration error: 'Cors:AllowedOrigins' is not configured. " +
+                        "Please set 'Cors:AllowedOrigins' in appsettings.json or environment variables."
                     );
                 }
 
-                var allowedHosts = allowedHostsConfig
+                var allowedOrigins = allowedOriginsConfig
                     .Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
 
-                policy.WithOrigins(allowedHosts)
+                policy.WithOrigins(allowedOrigins)
                     .AllowAnyMethod()
                     .AllowAnyHeader();
             });

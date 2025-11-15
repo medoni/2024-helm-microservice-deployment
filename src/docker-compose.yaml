@@ -14,7 +14,8 @@ services:
       - ASPNETCORE_ENVIRONMENT=Development
       - Swagger__Enabled=True
       - PizzaDbContext__Connection=Host=PizzaDb;Database=pizza_ordering;Username=postgres;Password=postgres
-      - AllowedHosts=http://localhost:5174
+      - AllowedHosts=*
+      - Cors__AllowedOrigins=http://localhost:5174
     depends_on:
       PizzaDb:
         condition: service_healthy
