@@ -12,7 +12,7 @@ resource "aws_cloudwatch_dashboard" "overview" {
         "properties": {
             "markdown": <<-EOF
 # Pizza-Ordering-Service
-[Api-Gateway-Stage](https://${data.aws_region.current.name}.console.aws.amazon.com/apigateway/main/apis/${aws_api_gateway_rest_api.pos_pizza_service_rest_api.id}/stages?api=${aws_api_gateway_rest_api.pos_pizza_service_rest_api.id}&region=${data.aws_region.current.name}) | [Lambda](https://${data.aws_region.current.name}.console.aws.amazon.com/lambda/home?region=${data.aws_region.current.name}#/functions/${module.pos_pizza_service.lambda_function_name}?tab=image) | [DynamoDb-Tables](https://${data.aws_region.current.name}.console.aws.amazon.com/dynamodbv2/home?region=${data.aws_region.current.name}#item-explorer) | [Documentation](https://github.com/medoni/2024-helm-microservice-deployment/tree/master/src/backend/Deployables/PizzaService.Aws) | [Edit Source](https://github.com/medoni/2024-helm-microservice-deployment/blob/master/src/infrastructure/AWS/modules/pos_pizza_service/service.cloudwatch.dashboard.overview.tf)
+[Api-Gateway-Stage](https://${data.aws_region.current.region}.console.aws.amazon.com/apigateway/main/apis/${aws_api_gateway_rest_api.pos_pizza_service_rest_api.id}/stages?api=${aws_api_gateway_rest_api.pos_pizza_service_rest_api.id}&region=${data.aws_region.current.region}) | [Lambda](https://${data.aws_region.current.region}.console.aws.amazon.com/lambda/home?region=${data.aws_region.current.region}#/functions/${module.pos_pizza_service.lambda_function_name}?tab=image) | [DynamoDb-Tables](https://${data.aws_region.current.region}.console.aws.amazon.com/dynamodbv2/home?region=${data.aws_region.current.region}#item-explorer) | [Documentation](https://github.com/medoni/2024-helm-microservice-deployment/tree/master/src/backend/Deployables/PizzaService.Aws) | [Edit Source](https://github.com/medoni/2024-helm-microservice-deployment/blob/master/src/infrastructure/AWS/modules/pos_pizza_service/service.cloudwatch.dashboard.overview.tf)
 EOF
             "background": "solid"
         }
@@ -25,13 +25,13 @@ EOF
         "type": "metric",
         "properties": {
             "metrics": [
-                [ "AWS/ApiGateway", "Count", "ApiName", aws_api_gateway_rest_api.pos_pizza_service_rest_api.name, "Stage", "api", { "label": "Total requests", "region": data.aws_region.current.name } ],
-                [ ".", "5XXError", ".", ".", ".", ".", { "region": data.aws_region.current.name, "yAxis": "left" } ],
-                [ ".", "4XXError", ".", ".", ".", ".", { "region": data.aws_region.current.name, "color": "#dfb52c" } ]
+                [ "AWS/ApiGateway", "Count", "ApiName", aws_api_gateway_rest_api.pos_pizza_service_rest_api.name, "Stage", "api", { "label": "Total requests", "region": data.aws_region.current.region } ],
+                [ ".", "5XXError", ".", ".", ".", ".", { "region": data.aws_region.current.region, "yAxis": "left" } ],
+                [ ".", "4XXError", ".", ".", ".", ".", { "region": data.aws_region.current.region, "color": "#dfb52c" } ]
             ],
             "sparkline": false,
             "view": "singleValue",
-            "region": data.aws_region.current.name,
+            "region": data.aws_region.current.region,
             "title": "API requests",
             "period": 300,
             "stat": "Sum",
@@ -66,14 +66,14 @@ EOF
         "type": "metric",
         "properties": {
             "metrics": [
-                [ aws_cloudwatch_log_metric_filter.domain_events.metric_transformation[0].namespace, "DomainEventsCount", "DomainEventName", "POS.Domains.Customer.Abstractions.Carts.Events.CartCreatedEvent", { "region": data.aws_region.current.name, "label": "Carts created" } ],
+                [ aws_cloudwatch_log_metric_filter.domain_events.metric_transformation[0].namespace, "DomainEventsCount", "DomainEventName", "POS.Domains.Customer.Abstractions.Carts.Events.CartCreatedEvent", { "region": data.aws_region.current.region, "label": "Carts created" } ],
                 [ "...", "POS.Domains.Customer.Abstractions.Orders.Events.OrderCreatedByCheckoutEvent", { "label": "Orders created (by cart checkout)", "color": "#08aad2" } ],
                 [ "...", "POS.Domains.Customer.Abstractions.Carts.Events.CartCheckedOutEvent", { "stat": "Average", "label": "Orders payed (Not implemented)" } ],
                 [ "...", { "stat": "Average", "label": "Orders delivered (Not implemented)", "color": "#69ae34" } ]
             ],
             "sparkline": true,
             "view": "singleValue",
-            "region": data.aws_region.current.name,
+            "region": data.aws_region.current.region,
             "stat": "Sum",
             "period": 300,
             "liveData": true,
@@ -88,7 +88,7 @@ EOF
         "type": "log",
         "properties": {
             "query": "SOURCE '/aws/lambda/${module.pos_pizza_service.lambda_function_name}' | fields @timestamp, Message, Category, @xrayTraceId\n| filter LogLevel like /(Error|Critical)/\n| sort @timestamp desc\n| limit 10000",
-            "region": data.aws_region.current.name,
+            "region": data.aws_region.current.region,
             "stacked": false,
             "title": "Error messages",
             "view": "table"
@@ -110,7 +110,7 @@ EOF
             ],
             "sparkline": false,
             "view": "singleValue",
-            "region": data.aws_region.current.name,
+            "region": data.aws_region.current.region,
             "stat": "Sum",
             "period": 300,
             "liveData": true,
@@ -135,7 +135,7 @@ EOF
             ],
             "sparkline": false,
             "view": "singleValue",
-            "region": data.aws_region.current.name,
+            "region": data.aws_region.current.region,
             "setPeriodToTimeRange": true,
             "trend": false,
             "stat": "Maximum",
