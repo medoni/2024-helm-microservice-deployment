@@ -38,7 +38,7 @@ module "my_service" {
     variables = {
       "Logging__LogLevel__Default" = "Information"
       "Swagger__Enabled" = "True"
-      "Aws__DynamoDb__Region" = data.aws_region.current.name
+      "Aws__DynamoDb__Region" = data.aws_region.current.region
       "Aws__DynamoDb__MenusTableName" = aws_dynamodb_table.my_service_table.name
     }
   }
