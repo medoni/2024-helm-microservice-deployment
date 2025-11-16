@@ -74,3 +74,9 @@ jobs:
       env:
         BASE_URL: https://m9s12tlge2.execute-api.eu-central-1.amazonaws.com/api
         SLOWMO: "0"
+    
+    - name: "[TEST] E2E Tests"
+      uses: ./.github/actions/playwright-e2e
+      with:
+        test-dir: ./src/tests/playwright
+        base-url: https://d196j5q3zji2op.cloudfront.net
