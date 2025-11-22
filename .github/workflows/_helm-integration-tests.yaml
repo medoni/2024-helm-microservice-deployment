@@ -107,10 +107,15 @@ jobs:
     
     - name: "[DEBUG] Check frontend config.js"
       run: |
-        echo "=== Frontend config.js content ==="
-        curl -v http://app.pos.mycluster.localhost/config.js
+        echo "=== Frontend config.js content from HTTP ==="
+        curl -s http://app.pos.mycluster.localhost/config.js
         echo ""
-        echo "=== Checking what API URL the frontend will use ==="
+        echo ""
+        echo "=== Frontend pod logs (should show config.js generation) ==="
+        kubectl logs -n $POS_NAMESPACE deployment/pizza-app --tail=50
+        echo ""
+        echo "=== Check environment variable in pod ==="
+        kubectl exec -n $POS_NAMESPACE deployment/pizza-app -- printenv | grep CONFIG
 
     - name: "[TEST] E2E Tests"
       uses: ./.github/actions/playwright-e2e
