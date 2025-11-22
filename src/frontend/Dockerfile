@@ -11,4 +11,4 @@ FROM nginx:latest
     COPY nginx.conf /etc/nginx/conf.d/default.conf
 
     EXPOSE 80
-    CMD sh -c "envsubst < /usr/share/nginx/html/config.example.js > /usr/share/nginx/html/config.js && nginx -g 'daemon off;'"
+    CMD sh -c "envsubst '\$CONFIG_PIZZA_API_URL' < /usr/share/nginx/html/config.example.js > /usr/share/nginx/html/config.js && cat /usr/share/nginx/html/config.js && nginx -g 'daemon off;'"

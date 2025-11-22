@@ -19,6 +19,16 @@ test('Debug: Check frontend config', async ({ page }) => {
   console.log('=== window.__env ===');
   console.log(JSON.stringify(envConfig, null, 2));
 
+  // Show what we got
+  if (!envConfig) {
+    console.error('ERROR: window.__env is undefined! config.js was not loaded or did not execute properly.');
+    console.log('This means the config.js file either:');
+    console.log('1. Does not exist at /config.js');
+    console.log('2. Has a syntax error');
+    console.log('3. The envsubst substitution failed');
+    throw new Error('window.__env is undefined - config.js failed to load');
+  }
+
   // Verify that pizzaApiUrl is set
   expect(envConfig).toHaveProperty('pizzaApiUrl');
   console.log(`API URL: ${envConfig.pizzaApiUrl}`);
