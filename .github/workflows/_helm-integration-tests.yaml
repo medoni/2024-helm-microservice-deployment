@@ -105,6 +105,13 @@ jobs:
         BASE_URL: http://pizza-service.pos.mycluster.localhost/api
         SLOWMO: "0"
     
+    - name: "[DEBUG] Check frontend config.js"
+      run: |
+        echo "=== Frontend config.js content ==="
+        curl -v http://app.pos.mycluster.localhost/config.js
+        echo ""
+        echo "=== Checking what API URL the frontend will use ==="
+
     - name: "[TEST] E2E Tests"
       uses: ./.github/actions/playwright-e2e
       with:
