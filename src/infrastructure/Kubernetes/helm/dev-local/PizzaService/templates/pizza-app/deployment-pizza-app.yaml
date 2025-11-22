@@ -25,7 +25,7 @@ spec:
           
           env:
             - name: CONFIG_PIZZA_API_URL
-              value: //pizza-service.{{ .Values.global.domain }}/api
+              value: http://pizza-service.{{ .Values.global.domain }}/api
 
           readinessProbe:
             httpGet:
