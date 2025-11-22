@@ -1,17 +1,17 @@
 import { test, expect } from '@playwright/test';
 
 test('Debug: Check frontend config', async ({ page }) => {
-  // Navigate to the app
+  // Navigate to the app first
   await page.goto('/');
 
-  // Fetch the config.js file
-  const configResponse = await page.goto('/config.js');
+  // Fetch the config.js file content via request (not navigation)
+  const configResponse = await page.request.get('/config.js');
   const configContent = await configResponse.text();
 
   console.log('=== config.js content ===');
   console.log(configContent);
 
-  // Check window.__env in the browser context
+  // Now check window.__env in the browser context (on the main page)
   const envConfig = await page.evaluate(() => {
     return window.__env;
   });
