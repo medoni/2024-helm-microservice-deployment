@@ -130,11 +130,16 @@ jobs:
       if: always()
       run: |
         kubectl describe pod -n $POS_NAMESPACE
-
+    
     - name: "[CLEANUP] Kubernetes - Logs pizza-service"
       if: always()
       run: |
         kubectl logs -n $POS_NAMESPACE deployment/pizza-service --all-containers=true
+
+    - name: "[CLEANUP] Kubernetes - Logs pizza app (frontend)"
+      if: always()
+      run: |
+        kubectl logs -n $POS_NAMESPACE deployment/pizza-app --all-containers=true
     
     - name: "[CLEANUP] Kubernetes - Logs postgres"
       if: always()
