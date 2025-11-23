@@ -72,7 +72,7 @@ jobs:
       uses: actions/upload-artifact@v4
       if: always()
       with:
-        name: trivy-image-results-${{ inputs.target_image_tag }}
+        name: trivy-image-results-${{ replace(inputs.target_image_tag, ':', '_') }}
         path: trivy-image-results.sarif
 
     - name: Push Docker image
