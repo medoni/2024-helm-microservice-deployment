@@ -7,7 +7,7 @@ spec:
   project: 2024-helm-microservice-deployment
   source:
     repoURL: https://github.com/medoni/2024-helm-microservice-deployment.git
-    targetRevision: stories/frontend-svelte
+    targetRevision: master
     path: src/infrastructure/Kubernetes/helm/dev-local/PizzaService/
   destination:
     server: https://kubernetes.default.svc

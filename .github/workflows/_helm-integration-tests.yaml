@@ -104,18 +104,6 @@ jobs:
       env:
         BASE_URL: http://pizza-service.pos.mycluster.localhost/api
         SLOWMO: "0"
-    
-    - name: "[DEBUG] Check frontend config.js"
-      run: |
-        echo "=== Frontend config.js content from HTTP ==="
-        curl -s http://app.pos.mycluster.localhost/config.js
-        echo ""
-        echo ""
-        echo "=== Frontend pod logs (should show config.js generation) ==="
-        kubectl logs -n $POS_NAMESPACE deployment/pizza-app --tail=50
-        echo ""
-        echo "=== Check environment variable in pod ==="
-        kubectl exec -n $POS_NAMESPACE deployment/pizza-app -- printenv | grep CONFIG
 
     - name: "[TEST] E2E Tests"
       uses: ./.github/actions/playwright-e2e
@@ -147,11 +135,23 @@ jobs:
       if: always()
       run: |
         kubectl logs -n $POS_NAMESPACE deployment/pizza-service --all-containers=true
+    
+    - name: "[CLEANUP] Frontend logs"
+      run: |
+        echo "=== Frontend config.js content from HTTP ==="
+        curl -s http://app.pos.mycluster.localhost/config.js
+        echo ""
+        echo ""
+        echo "=== Frontend pod logs (should show config.js generation) ==="
+        kubectl logs -n $POS_NAMESPACE deployment/pizza-app --all-containers=true --tail=100
+        echo ""
+        echo "=== Check environment variable in pod ==="
+        kubectl exec -n $POS_NAMESPACE deployment/pizza-app -- printenv | grep CONFIG
 
     - name: "[CLEANUP] Kubernetes - Logs pizza app (frontend)"
       if: always()
       run: |
-        kubectl logs -n $POS_NAMESPACE deployment/pizza-app --all-containers=true
+        kubectl logs -n $POS_NAMESPACE deployment/pizza-app 
     
     - name: "[CLEANUP] Kubernetes - Logs postgres"
       if: always()
