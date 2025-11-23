@@ -1,0 +1,26 @@
+name: Frontend tests
+
+on:
+  workflow_call:
+
+jobs:
+  frontend-lint:
+    name: Frontend linting
+    runs-on: ubuntu-latest
+    steps:
+    - name: "[SETUP] Checkout code"
+      uses: actions/checkout@v4
+    - name: Install Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '20'
+    - name: "Install dependencies"
+      run: |
+        npm install -g pnpm
+        pnpm install
+      working-directory: ./src/frontend
+
+    - name: Run linter
+      run: |
+        pnpm run lint
+      working-directory: ./src/frontend

@@ -6,6 +6,8 @@ using POS.Persistence.PostgreSql;
 
 internal static class Program
 {
+    private const string CorsPolicyName = "CorsPolicy";
+
     private static async Task Main(string[] args)
     {
         var builder = WebApplication.CreateBuilder(args);
@@ -18,6 +20,8 @@ internal static class Program
         builder.Services.AddHealthChecks()
             .AddPOSDbHealthCheck();
 
+        builder.Services.AddCorsSupport(CorsPolicyName, builder.Configuration);
+
         builder.Services.AddPOSDb(builder.Configuration);
 
         var app = builder.Build();
@@ -28,6 +32,8 @@ internal static class Program
         {
             ResponseWriter = JsonResponseWriter.WriteResponse
         });
+        app.UseCors(CorsPolicyName);
+
 
         await app.RunAsync();
     }
@@ -40,6 +46,38 @@ internal static class Program
         var connectionString = configuration.GetValue<string>("PizzaDbContext:Connection")!;
 
         services.ConfigurePostgreSql(connectionString);
+        return services;
+    }
+
+    internal static IServiceCollection AddCorsSupport(
+        this IServiceCollection services,
+        string policyName,
+        IConfiguration configuration
+    )
+    {
+        services.AddCors(options =>
+        {
+            options.AddPolicy(policyName, policy =>
+            {
+                var allowedOriginsConfig = configuration["Cors:AllowedOrigins"];
+
+                if (string.IsNullOrWhiteSpace(allowedOriginsConfig))
+                {
+                    throw new InvalidOperationException(
+                        "CORS configuration error: 'Cors:AllowedOrigins' is not configured. " +
+                        "Please set 'Cors:AllowedOrigins' in appsettings.json or environment variables."
+                    );
+                }
+
+                var allowedOrigins = allowedOriginsConfig
+                    .Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
+
+                policy.WithOrigins(allowedOrigins)
+                    .AllowAnyMethod()
+                    .AllowAnyHeader();
+            });
+        });
+
         return services;
     }
 }

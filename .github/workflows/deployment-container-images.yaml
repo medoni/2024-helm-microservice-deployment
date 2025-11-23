@@ -45,6 +45,16 @@ jobs:
       docker_build_context: ./src
       target_image_tag:     pizza-service:${{ needs.determine-image-tag.outputs.image_tag }}
     secrets: inherit
+  
+  build-pizza-app-image:
+    name: Build PizzaApp
+    needs: determine-image-tag
+    uses: ./.github/workflows/_build-and-publish-dockerfile.yaml
+    with:
+      dockerfile:           ./src/frontend/Dockerfile
+      docker_build_context: ./src/frontend
+      target_image_tag:     pizza-app:${{ needs.determine-image-tag.outputs.image_tag }}
+    secrets: inherit
 
   build-pizza-service-aws-image:
     name: Build PizzaService AWS

@@ -14,12 +14,24 @@ services:
       - ASPNETCORE_ENVIRONMENT=Development
       - Swagger__Enabled=True
       - PizzaDbContext__Connection=Host=PizzaDb;Database=pizza_ordering;Username=postgres;Password=postgres
+      - AllowedHosts=*
+      - Cors__AllowedOrigins=http://localhost:5174
     depends_on:
       PizzaDb:
         condition: service_healthy
       PizzaDbMigrations:
         condition: service_completed_successfully
-   
+  
+  PizzaApp:
+    image: "${CONTAINER_REGISTRY:-}pizza-app:${IMAGE_TAG:-latest}"
+    build:
+      context: frontend
+      dockerfile: Dockerfile
+    ports:
+      - "5174:80"
+    environment:
+      - CONFIG_PIZZA_API_URL=http://localhost:5000
+
   PizzaDb:
     image: postgres:16.4
     environment:

@@ -8,6 +8,7 @@ namespace POS.Domains.Customer.UseCases.Carts.CartUseCase.Dtos;
 /// </summary>
 /// <param name="Id">Unique id of the cart item. Same as <see cref="MenuItemDto.Id"/>.</param>
 /// <param name="AddedAt">Date and time when the item was added.</param>
+/// <param name="MenuItemId">Id of the corresponding menu item.</param>
 /// <param name="Name">Name of the item.</param>
 /// <param name="Description">Description of the item.</param>
 /// <param name="UnitPrice">Unit price of the item.</param>
@@ -16,6 +17,7 @@ public record CartItemDto
 (
     Guid Id,
     DateTimeOffset AddedAt,
+    Guid MenuItemId,
     string Name,
     string Description,
     PriceInfoDto UnitPrice,

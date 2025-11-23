@@ -53,3 +53,9 @@ variable "docker_build_git_sha" {
   type        = string
   description = "GIT Sha of the build commit"
 }
+
+variable "cors_allowed_origins" {
+  type        = list(string)
+  description = "List of allowed origins for CORS. Use ['*'] to allow all origins."
+  default     = ["*"]
+}

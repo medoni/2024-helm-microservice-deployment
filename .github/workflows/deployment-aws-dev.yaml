@@ -33,6 +33,16 @@ jobs:
       with:
         terraform_version: "1.10.2"
     
+    - name: Install Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '20'
+    - name: "Install dependencies"
+      run: |
+        npm install -g pnpm
+        pnpm install
+      working-directory: ./src/frontend
+    
     - name: "[Setup] Install minver CLI"
       run: dotnet tool install --tool-path ./minver minver-cli --version 4.3.0
     - name: "[SETUP] Calculate build date and version"
@@ -64,3 +74,9 @@ jobs:
       env:
         BASE_URL: https://m9s12tlge2.execute-api.eu-central-1.amazonaws.com/api
         SLOWMO: "0"
+    
+    - name: "[TEST] E2E Tests"
+      uses: ./.github/actions/playwright-e2e
+      with:
+        test-dir: ./src/tests/playwright
+        base-url: https://d196j5q3zji2op.cloudfront.net

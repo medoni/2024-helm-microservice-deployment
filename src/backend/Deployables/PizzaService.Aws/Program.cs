@@ -39,10 +39,13 @@ internal class Program
         builder.Services.AddPizzaServiceDynamoDbSupport(builder.Configuration);
         builder.Services.AddSnsEventPublisher(options => builder.Configuration.Bind("Aws:Sns", options));
 
+        builder.Services.ConfigureCors(builder.Configuration);
+
         var app = builder
             .Build();
 
         app.UseXRay("PizzaService");
+        app.UseCors();  // Enable CORS middleware
         app.ConfigureSwagger(builder.Configuration);
         app.MapControllers();
         app.MapHealthChecks("/health", new HealthCheckOptions
@@ -77,6 +80,33 @@ internal static class ProgramExtension
     )
     {
         AWSXRayRecorder.InitializeInstance(configuration);
+
+        return services;
+    }
+
+    internal static IServiceCollection ConfigureCors(
+        this IServiceCollection services,
+        IConfiguration configuration
+    ) 
+    {
+        // Configure CORS - allowed origins from infrastructure configuration
+        var allowedOrigins = configuration["Cors:AllowedOrigins"]?.Split(',') ?? new[] { "*" };
+        services.AddCors(options =>
+        {
+            options.AddDefaultPolicy(policy =>
+            {
+                if (allowedOrigins.Length == 1 && allowedOrigins[0] == "*")
+                {
+                    policy.AllowAnyOrigin();
+                }
+                else
+                {
+                    policy.WithOrigins(allowedOrigins);
+                }
+                policy.AllowAnyMethod();
+                policy.AllowAnyHeader();
+            });
+        });
 
         return services;
     }

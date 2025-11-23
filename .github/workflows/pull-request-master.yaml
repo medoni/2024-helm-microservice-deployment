@@ -13,11 +13,15 @@ jobs:
   backend-tests:
     name: Backend unit and integration tests
     uses: ./.github/workflows/_backend-tests.yaml
+  
+  frontend-tests:
+    name: Frontend tests
+    uses: ./.github/workflows/_frontend-tests.yaml
 
   helm-unit-tests:
     name: Helm unit tests
     uses: ./.github/workflows/_helm-unit-tests.yaml
-
+  
   build-pizza-service-image:
     name: Build PizzaService
     uses: ./.github/workflows/_build-and-publish-dockerfile.yaml
@@ -25,15 +29,24 @@ jobs:
       dockerfile:           ./src/backend/Deployables/PizzaService.AspNetCore/Dockerfile
       docker_build_context: ./src
       target_image_tag:     pizza-service:pr-${{ github.sha }}
-    secrets: inherit
+    secrets: inherit  
   
   build-pizza-service-aws-image:
-    name: Build PizzaService
+    name: Build PizzaService (Aws)
     uses: ./.github/workflows/_build-and-publish-dockerfile.yaml
     with:
       dockerfile:           ./src/backend/Deployables/PizzaService.Aws/Dockerfile
       docker_build_context: ./src
       target_image_tag:     pizza-service-aws:pr-${{ github.sha }}
+    secrets: inherit
+
+  build-pizza-app-image:
+    name: Build PizzaApp
+    uses: ./.github/workflows/_build-and-publish-dockerfile.yaml
+    with:
+      dockerfile:           ./src/frontend/Dockerfile
+      docker_build_context: ./src/frontend
+      target_image_tag:     pizza-app:pr-${{ github.sha }}
     secrets: inherit
   
   build-pizza-db-migrations-image:
@@ -69,8 +82,9 @@ jobs:
     name: Helm integration tests
     needs:
       - build-pizza-service-image
+      - build-pizza-app-image
       - build-pizza-db-migrations-image
-      - build-pizza-db-seed-image
+      - build-pizza-db-seed-image      
     uses: ./.github/workflows/_helm-integration-tests.yaml
     with:
       image-tag: pr-${{ github.sha }}

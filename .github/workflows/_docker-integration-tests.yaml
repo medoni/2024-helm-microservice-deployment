@@ -57,6 +57,15 @@ jobs:
         docker compose \
           -f ./src/docker-compose.yaml \
           up -d
+    
+    - name: "[TEST] Check / of `app` (Frontend)"
+      run: |
+        curl --fail -v localhost:5174/health \
+          --retry-all-errors \
+          --max-time 10 \
+          --retry 10 \
+          --retry-delay 0 \
+          --retry-max-time 60 \
  
     - name: "[TEST] Check /health of `pizza-service`"
       run: |
@@ -93,3 +102,9 @@ jobs:
       env:
         BASE_URL: http://localhost:5000
         SLOWMO: "0"
+    
+    - name: "[TEST] E2E Tests"
+      uses: ./.github/actions/playwright-e2e
+      with:
+        test-dir: ./src/tests/playwright
+        base-url: http://localhost:5174

@@ -33,6 +33,10 @@ spec:
               value: Information
             - name: Swagger__Enabled
               value: "true"
+            - name: AllowedHosts
+              value: "*"
+            - name: Cors__AllowedOrigins
+              value: {{ tpl .Values.services.pizza_service.cors.allowedOrigins . | quote }}
             
             - name: PGUSER
               valueFrom:

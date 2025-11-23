@@ -1,0 +1,49 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: pizza-app
+  labels:
+    app: pizza-app
+  annotations:
+    link.argocd.argoproj.io/external-link: http://app.{{ .Values.global.domain }}
+spec:
+  replicas: 1
+  revisionHistoryLimit: 0
+  selector:
+    matchLabels:
+      app: pizza-app
+  template:
+    metadata:
+      labels:
+        app: pizza-app
+    spec:
+      containers:
+        - name: pizza-app
+          image: "{{ .Values.image.repository }}{{ .Values.services.pizza_app.image }}:{{ .Values.image.tag }}"
+          ports:
+            - containerPort: {{ .Values.services.pizza_app.container.port }}
+          
+          env:
+            - name: CONFIG_PIZZA_API_URL
+              value: http://pizza-service.{{ .Values.global.domain }}/api
+
+          readinessProbe:
+            httpGet:
+              path: /
+              port: {{ .Values.services.pizza_app.container.targetPort }}
+            initialDelaySeconds: 5
+            periodSeconds: 5
+
+          livenessProbe:
+            httpGet:
+              path: /
+              port: {{ .Values.services.pizza_app.container.targetPort }}
+            initialDelaySeconds: 5
+            periodSeconds: 5
+  
+          startupProbe:
+            httpGet:
+              path: /
+              port: {{ .Values.services.pizza_app.container.targetPort }}
+            failureThreshold: 10
+            periodSeconds: 10

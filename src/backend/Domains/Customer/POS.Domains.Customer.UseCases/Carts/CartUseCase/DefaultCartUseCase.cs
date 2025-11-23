@@ -46,13 +46,13 @@ internal class DefaultCartUseCase : ICartUseCase
         return cart.ToDto();
     }
 
-    public async Task AddItemToCartAsync(Guid id, AddItemDto dto)
+    public async Task<CartItemDto?> AddItemToCartAsync(Guid id, AddItemDto dto)
     {
         var uow = _uowFactory();
         var cart = await uow.GetAsync<Cart>(id);
         var menu = await uow.GetAsync<Menu>(cart.MenuId);
 
-        cart.AddOrUpdateItem(
+        var cartItem = cart.AddOrUpdateItem(
             dto.RequestedAt,
             menu: menu,
             menuItemId: dto.MenuItemId,
@@ -60,6 +60,7 @@ internal class DefaultCartUseCase : ICartUseCase
         );
 
         await uow.CommitAsync();
+        return cartItem?.ToDto();
     }
 
     public async Task<ResultSetDto<CartItemDto>> GetCartItemsAsync(
@@ -75,13 +76,13 @@ internal class DefaultCartUseCase : ICartUseCase
             .ToInMemoryPaginatedResultSet(token);
     }
 
-    public async Task UpdateCartItemAsync(Guid id, UpdateItemDto dto)
+    public async Task<CartItemDto?> UpdateCartItemAsync(Guid id, UpdateItemDto dto)
     {
         var uow = _uowFactory();
         var cart = await uow.GetAsync<Cart>(id);
         var menu = await uow.GetAsync<Menu>(cart.MenuId);
 
-        cart.AddOrUpdateItem(
+        var cartItem = cart.AddOrUpdateItem(
             dto.RequestedAt,
             menu: menu,
             menuItemId: dto.MenuItemId,
@@ -89,6 +90,7 @@ internal class DefaultCartUseCase : ICartUseCase
         );
 
         await uow.CommitAsync();
+        return cartItem?.ToDto();
     }
 
     public async Task<CartCheckedOutDto> CheckoutCartAsync(Guid cartId, CartCheckOutDto dto)

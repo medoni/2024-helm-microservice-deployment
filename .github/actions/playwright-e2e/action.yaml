@@ -1,0 +1,41 @@
+name: 'Playwright E2E Tests'
+description: 'Run Playwright E2E tests'
+
+inputs:
+  test-dir:
+    description: 'Directory containing the tests'
+    required: true
+  base-url:
+    description: Url of the app to test
+    required: true
+
+runs:
+  using: "composite"
+  steps:
+    - uses: pnpm/action-setup@v4
+      with:
+        version: 10
+
+    - name: Install Playwright
+      shell: bash
+      run: |
+        pnpm i
+        pnpm exec playwright install --with-deps
+      working-directory: ${{ inputs.test-dir }}
+
+    - name: Run Playwright tests
+      shell: bash
+      run: |
+        pnpm exec playwright test
+      working-directory: ${{ inputs.test-dir }}
+      env:
+        BASE_URL: ${{ inputs.base-url }}
+
+    - name: Upload Playwright report
+      uses: actions/upload-artifact@v4
+      if: always()
+      with:
+        name: playwright-report
+        path: ${{ inputs.test-dir }}/test-results/
+        retention-days: 30
+        if-no-files-found: ignore

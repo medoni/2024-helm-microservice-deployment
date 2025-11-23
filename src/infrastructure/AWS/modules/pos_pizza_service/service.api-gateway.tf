@@ -28,7 +28,10 @@ resource "aws_api_gateway_deployment" "pos_pizza_service_deployment" {
   rest_api_id = aws_api_gateway_rest_api.pos_pizza_service_rest_api.id
 
   triggers = {
-    redeployment = sha1(jsonencode(aws_api_gateway_rest_api.pos_pizza_service_rest_api.body))
+    redeployment = sha1(jsonencode([
+      aws_api_gateway_integration.pos_pizza_service_lambda_integration.id,
+      aws_api_gateway_method.pos_pizza_service_proxy_service.id,
+    ]))
   }
 
   lifecycle {

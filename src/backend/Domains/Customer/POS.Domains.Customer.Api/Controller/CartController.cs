@@ -61,12 +61,12 @@ public class CartController : ControllerBase
     /// <response code="201">The item was successfully added.</response>
     /// <response code="400">The cart or the item was invalid.</response>
     [HttpPost("{id}/items")]
-    [ProducesResponseType(StatusCodes.Status201Created)]
+    [ProducesResponseType<CartItemDto>(StatusCodes.Status200OK)]
     [ProducesResponseType<ProblemDetails>(StatusCodes.Status400BadRequest, "application/json")]
     public async Task<IActionResult> AddItemAsync(Guid id, AddItemDto dto)
     {
-        await _cartService.AddItemToCartAsync(id, dto);
-        return Created();
+        var createdItem = await _cartService.AddItemToCartAsync(id, dto);
+        return Ok(createdItem);
     }
 
     /// <summary>
@@ -75,12 +75,12 @@ public class CartController : ControllerBase
     /// <response code="200">The item was successfully updated.</response>
     /// <response code="400">The cart or the item was invalid.</response>
     [HttpPatch("{id}/items")]
-    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType<CartItemDto>(StatusCodes.Status200OK)]
     [ProducesResponseType<ProblemDetails>(StatusCodes.Status400BadRequest, "application/json")]
     public async Task<IActionResult> UpdateItemAsync(Guid id, UpdateItemDto dto)
     {
-        await _cartService.UpdateCartItemAsync(id, dto);
-        return Ok();
+        var updatedItemDto = await _cartService.UpdateCartItemAsync(id, dto);
+        return Ok(updatedItemDto);
     }
 
     /// <summary>
