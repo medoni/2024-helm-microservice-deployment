@@ -23,8 +23,8 @@ jobs:
     uses: ./.github/workflows/_helm-unit-tests.yaml
   
   trivy-fs-scan:
-    name: Trivy fs scan
-    uses: ./.github/workflows/_trivy-fs-scan.yaml
+    name: Security scanning
+    uses: ./.github/workflows/_security_scanning.yaml
   
   build-pizza-service-image:
     name: Build PizzaService

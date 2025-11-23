@@ -59,5 +59,21 @@ jobs:
           -f ${{ inputs.dockerfile }} \
           ${{ inputs.docker_build_context }}
 
+    - name: Run Trivy vulnerability scanner on image
+      uses: aquasecurity/trivy-action@0.28.0
+      with:
+        image-ref: ghcr.io/${{ github.repository }}/${{ inputs.target_image_tag }}
+        format: 'sarif'
+        output: 'trivy-image-results.sarif'
+        severity: 'CRITICAL,HIGH'
+        exit-code: '1'
+
+    - name: Upload Trivy scan results
+      uses: actions/upload-artifact@v4
+      if: always()
+      with:
+        name: trivy-image-results-${{ inputs.target_image_tag }}
+        path: trivy-image-results.sarif
+
     - name: Push Docker image
       run: docker push ghcr.io/${{ github.repository }}/${{ inputs.target_image_tag }}
