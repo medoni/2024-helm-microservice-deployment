@@ -12,6 +12,10 @@ on:
       target_image_tag:
         required: true
         type: string
+      trivy_severity:
+        required: false
+        type: string
+        default: 'CRITICAL,HIGH'
 
 jobs:
   build-and-publish-docker-image:
@@ -62,17 +66,25 @@ jobs:
     - name: Prepare artifact name
       id: artifact-name
       run: |
-        SAFE_NAME=$(echo "${{ inputs.target_image_tag }}" | tr ':/' '_')
-        echo "name=trivy-image-results-${SAFE_NAME}" >> "$GITHUB_OUTPUT"
+        IMAGE_NAME=$(echo "${{ inputs.target_image_tag }}" | cut -d':' -f1 | tr '/' '_')
+        echo "name=trivy-image-results-${IMAGE_NAME}" >> "$GITHUB_OUTPUT"
 
-    - name: Run Trivy vulnerability scanner on image
+    - name: Run Trivy vulnerability scanner on image (table output)
       uses: aquasecurity/trivy-action@0.28.0
+      with:
+        image-ref: ghcr.io/${{ github.repository }}/${{ inputs.target_image_tag }}
+        format: 'table'
+        severity: ${{ inputs.trivy_severity }}
+        exit-code: '1'
+
+    - name: Run Trivy vulnerability scanner on image (SARIF output)
+      uses: aquasecurity/trivy-action@0.28.0
+      if: always()
       with:
         image-ref: ghcr.io/${{ github.repository }}/${{ inputs.target_image_tag }}
         format: 'sarif'
         output: 'trivy-image-results.sarif'
-        severity: 'CRITICAL,HIGH'
-        exit-code: '1'
+        severity: ${{ inputs.trivy_severity }}
 
     - name: Upload Trivy scan results
       uses: actions/upload-artifact@v4
