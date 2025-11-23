@@ -24,7 +24,7 @@ jobs:
   
   trivy-fs-scan:
     name: Security scanning
-    uses: ./.github/workflows/_security_scanning.yaml
+    uses: ./.github/workflows/_security-scanning.yaml
   
   build-pizza-service-image:
     name: Build PizzaService
