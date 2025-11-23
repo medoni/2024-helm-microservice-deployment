@@ -10,6 +10,25 @@ jobs:
     steps:
     - name: "[SETUP] Checkout code"
       uses: actions/checkout@v4
+    - name: Install Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '20'
+    
+    - name: "Install dependencies"
+      run: |
+        npm install -g pnpm
+    
+    - name: "Install pnpm dependencies for frontend"
+      run: |
+        pnpm install
+      working-directory: ./src/frontend
+    
+    - name: "Install pnpm dependencies for playright"
+      run: |
+        pnpm install
+      working-directory: ./src/tests/playwright
+
     - name: Run Trivy vulnerability scanner in fs mode
       uses: aquasecurity/trivy-action@0.28.0
       with:
