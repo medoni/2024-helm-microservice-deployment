@@ -5,7 +5,7 @@ ARG BUILD_VERSION="0.1.0-alpha-1"
 ARG BUILD_DATE="1970-01-01T00:00:00Z"
 ARG GIT_SHA="0000000000000000000000000000000000000000"
 
-FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
+FROM mcr.microsoft.com/dotnet/sdk:8.0-jammy AS build
     ARG BUILD_VERSION
     ARG GIT_SHA
 
@@ -24,7 +24,7 @@ FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
         /p:MINVERVERSIONOVERRIDE=$BUILD_VERSION \
         /p:SourceRevisionId=$GIT_SHA
 
-FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS final
+FROM mcr.microsoft.com/dotnet/aspnet:8.0-jammy-chiseled AS final
     ARG BUILD_VERSION
     ARG BUILD_DATE
     ARG GIT_SHA
