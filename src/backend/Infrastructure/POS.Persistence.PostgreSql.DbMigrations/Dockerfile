@@ -5,7 +5,7 @@ ARG BUILD_VERSION="0.1.0-alpha-1"
 ARG BUILD_DATE="1970-01-01T00:00:00Z"
 ARG GIT_SHA="0000000000000000000000000000000000000000"
 
-FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
+FROM mcr.microsoft.com/dotnet/sdk:8.0-jammy AS build
     WORKDIR /src
     COPY --parents **/*.Build.props .
     COPY --parents **/*.Build.targets .
@@ -15,7 +15,7 @@ FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
     COPY / .
     RUN dotnet build backend/Infrastructure/POS.Persistence.PostgreSql.DbMigrations/*.csproj
 
-FROM mcr.microsoft.com/dotnet/sdk:8.0 AS publish
+FROM mcr.microsoft.com/dotnet/runtime:8.0-jammy-chiseled AS publish
     ARG BUILD_VERSION
     ARG BUILD_DATE
     ARG GIT_SHA

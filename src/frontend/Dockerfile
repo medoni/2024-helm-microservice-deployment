@@ -6,7 +6,7 @@ FROM node:20-slim AS build
     COPY . .
     RUN pnpm run build
 
-FROM nginx:latest
+FROM ubuntu/nginx:latest
     COPY --from=build /app/build /usr/share/nginx/html
     COPY nginx.conf /etc/nginx/conf.d/default.conf
 
