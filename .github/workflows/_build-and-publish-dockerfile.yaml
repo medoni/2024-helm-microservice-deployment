@@ -70,31 +70,33 @@ jobs:
         echo "name=trivy-image-results-${IMAGE_NAME}" >> "$GITHUB_OUTPUT"
 
     - name: Run Trivy vulnerability scanner on image (sarif output)
-      uses: aquasecurity/trivy-action@0.28.0
       if: always()
-      with:
-        image-ref: ghcr.io/${{ github.repository }}/${{ inputs.target_image_tag }}
-        format: 'sarif'
-        output: 'trivy-image-results.sarif'
+      run: |
+        docker run --rm \
+          -v /var/run/docker.sock:/var/run/docker.sock \
+          -v ${{ github.workspace }}:/workspace \
+          aquasec/trivy:0.56.1 image \
+          --format sarif \
+          --output /workspace/trivy-image-results.sarif \
+          ghcr.io/${{ github.repository }}/${{ inputs.target_image_tag }}
 
     - name: Run Trivy vulnerability scanner on image (table output)
-      uses: aquasecurity/trivy-action@0.28.0
       if: always()
-      with:
-        image-ref: ghcr.io/${{ github.repository }}/${{ inputs.target_image_tag }}
-        format: 'table'
-        output: 'trivy-image-results.txt'
-        severity: 'CRITICAL,HIGH'
-        exit-code: '1'
+      run: |
+        docker run --rm \
+          -v /var/run/docker.sock:/var/run/docker.sock \
+          aquasec/trivy:0.56.1 image \
+          --format table \
+          --severity ${{ inputs.trivy_severity }} \
+          --exit-code 1 \
+          ghcr.io/${{ github.repository }}/${{ inputs.target_image_tag }}
 
     - name: Upload Trivy scan results
       uses: actions/upload-artifact@v4
       if: always()
       with:
         name: ${{ steps.artifact-name.outputs.name }}
-        path: |
-          trivy-image-results.sarif
-          trivy-image-results.txt
+        path: trivy-image-results.sarif
 
     - name: Push Docker image
       run: docker push ghcr.io/${{ github.repository }}/${{ inputs.target_image_tag }}
