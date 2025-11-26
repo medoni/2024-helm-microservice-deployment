@@ -1,0 +1,62 @@
+swagger: '2.0'
+info:
+  title: PizzaService Api
+  description: API to cover a sample ordering process for pizzas.
+  contact:
+    name: GitHub
+    url: https://github.com/medoni/2024-helm-microservice-deployment
+  license:
+    name: MIT License
+    url: https://github.com/medoni/2024-helm-microservice-deployment/blob/master/LICENSE.TXT
+  version: v1
+host: gateway-host.example.com
+schemes:
+  - https
+paths:
+  /api/{path=**}:
+    parameters:
+      - name: path
+        in: path
+        required: true
+        type: string
+        description: "Path parameter for routing requests"
+    get:
+      operationId: apiGet
+      x-google-backend:
+        address: ${TARGET_URL}
+        path_translation: APPEND_PATH_TO_ADDRESS
+      responses:
+        '200':
+          description: OK
+    post:
+      operationId: apiPost
+      x-google-backend:
+        address: ${TARGET_URL}
+        path_translation: APPEND_PATH_TO_ADDRESS
+      responses:
+        '200':
+          description: OK
+    put:
+      operationId: apiPut
+      x-google-backend:
+        address: ${TARGET_URL}
+        path_translation: APPEND_PATH_TO_ADDRESS
+      responses:
+        '200':
+          description: OK
+    delete:
+      operationId: apiDelete
+      x-google-backend:
+        address: ${TARGET_URL}
+        path_translation: APPEND_PATH_TO_ADDRESS
+      responses:
+        '200':
+          description: OK
+    patch:
+      operationId: apiPatch
+      x-google-backend:
+        address: ${TARGET_URL}
+        path_translation: APPEND_PATH_TO_ADDRESS
+      responses:
+        '200':
+          description: OK
