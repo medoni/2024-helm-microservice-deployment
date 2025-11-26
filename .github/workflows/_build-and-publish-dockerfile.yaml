@@ -83,6 +83,7 @@ jobs:
       with:
         image-ref: ghcr.io/${{ github.repository }}/${{ inputs.target_image_tag }}
         format: 'table'
+        output: 'trivy-image-results.txt'
         severity: 'CRITICAL,HIGH'
         exit-code: '1'
 
@@ -91,7 +92,9 @@ jobs:
       if: always()
       with:
         name: ${{ steps.artifact-name.outputs.name }}
-        path: trivy-image-results.sarif
+        path: |
+          trivy-image-results.sarif
+          trivy-image-results.txt
 
     - name: Push Docker image
       run: docker push ghcr.io/${{ github.repository }}/${{ inputs.target_image_tag }}
